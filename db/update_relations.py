@@ -4,10 +4,10 @@ import psycopg2
 import pandas as pd
 
 
-def load_aut_nums(data, conn):
+def update_aut_nums(data, conn):
     """
     Receives a dictionary of the parsed aut_num object data.
-    Inserts this data into the corresponding relation in the database.
+    Updates this data into the corresponding relation in the database.
     """
     # Converts the data into a dataframe
     aut_nums = pd.DataFrame.from_dict(data, orient="index")
@@ -15,21 +15,21 @@ def load_aut_nums(data, conn):
     # Open a cursor to perform database operations
     cur = conn.cursor()
 
-    # Traverses the data in the dataframe and inserts it into the database
-    # If the key is already present, updates it
+    # Traverses the data in the dataframe, updating applicable rows
     for i in range(aut_nums.shape[0]):
         entry = aut_nums.iloc[i]
         # try:
         cur.execute(
             """
-            insert into aut_num (as_num, imports, exports, body) 
-            values (%s, %s, %s, %s)
+            update aut_num 
+            set imports=%s, exports=%s, body=%s
+            where as_num=%s
             """,
             (
-                entry.name,
                 json.dumps(entry["imports"]),
                 json.dumps(entry["exports"]),
                 entry["body"],
+                entry.name,
             ),
         )
 
@@ -46,8 +46,8 @@ user = os.environ["DB_USER"]
 dbname = os.environ["DB_NAME"]
 conn = psycopg2.connect("dbname=rpsl user=bernardo-ubuntu")
 
-# Loads the data from each RPSL class
-load_aut_nums(data["aut_nums"], conn)
+# Updates the data from each RPSL class
+update_aut_nums(data["aut_nums"], conn)
 
 # Make the changes to the database persistent
 # and closes the connection

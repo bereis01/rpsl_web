@@ -12,12 +12,7 @@ cur = conn.cursor()
 # Creates tables
 cur.execute(
     """
-	create table if not exists aut_num(
-		as_num int primary key,
-		imports json not null,
-		exports json not null,
-		body text not null
-	);
+	drop table if exists aut_num cascade
 	"""
 )
 
