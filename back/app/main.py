@@ -1,29 +1,18 @@
-import psycopg2
-import pandas as pd
 from fastapi import FastAPI
+from .routers import aut_nums
+from .routers import as_sets
+from .routers import route_sets
+from .routers import peering_sets
+from .routers import filter_sets
+from .routers import as_routes
 
+# Initializes app
 app = FastAPI()
 
-
-@app.get("/aut_num/{as_num}")
-def as_num(as_num: int):
-    # Connect to your postgres DB
-    conn = psycopg2.connect("dbname=rpsl user=bernardo-ubuntu")
-
-    # Open a cursor to perform database operations
-    cur = conn.cursor()
-
-    # Execute a query
-    cur.execute("select * from aut_num where as_num=%s", (as_num,))
-
-    # Retrieve query results
-    records = cur.fetchall()
-    records = [
-        {"as_num": a, "imports": b, "exports": c, "body": d} for (a, b, c, d) in records
-    ]
-
-    # Closes connection
-    cur.close()
-    conn.close()
-
-    return {"data": records}
+# Includes all routers
+app.include_router(aut_nums.router)
+app.include_router(as_sets.router)
+app.include_router(route_sets.router)
+app.include_router(peering_sets.router)
+app.include_router(filter_sets.router)
+app.include_router(as_routes.router)
