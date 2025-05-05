@@ -5,6 +5,7 @@ from .routers import route_sets
 from .routers import peering_sets
 from .routers import filter_sets
 from .routers import as_routes
+from .routers import search
 
 # Initializes app
 app = FastAPI()
@@ -16,3 +17,4 @@ app.include_router(route_sets.router)
 app.include_router(peering_sets.router)
 app.include_router(filter_sets.router)
 app.include_router(as_routes.router)
+app.include_router(search.router)
