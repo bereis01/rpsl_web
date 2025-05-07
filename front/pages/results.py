@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 import streamlit as st
-from utils import elements
+from utils import elements, parsing
 
 # Page configs
 st.set_page_config(
@@ -18,12 +18,17 @@ logo_space.image("assets/internet.png")
 with search_space:
     query = st.text_input(
         label="Enter a prefix, IP address, AS number or AS/route set name.",
-        value=st.session_state.query,
+        value=st.session_state.query if "query" in st.session_state else None,
         placeholder="Prefix, IP, ASN or AS/route-set",
     )
 
 # Query results
-if query:
+if not query:
+    st.markdown("#####")
+    st.title("No results")
+    st.divider()
+
+else:
     st.markdown("#####")
     st.title(f"Results for {query}")
 
@@ -33,27 +38,30 @@ if query:
 
     # Showing the aut_nums data
     st.header("Routing Policies", divider="gray")
-    with st.container(height=200, border=True):
+    with st.container(
+        height=min(data["aut_nums"]["body"].count("\n") * 30, 300), border=True
+    ):
         st.text(data["aut_nums"]["body"])
+
     st.subheader("Imports")
     df = pd.DataFrame.from_records(
-        data["aut_nums"]["imports"], columns=["Type", "Peers", "Filter"]
+        data["aut_nums"]["imports"], columns=["Type", "Peer", "Filter", "Comments"]
     )
-    with st.container(height=300, border=True):
-        st.table(df)
+    with st.container(
+        height=min(100 + ((len(df) - 1 if len(df) > 0 else 0) * 35), 300), border=True
+    ):
+        st.table(parsing.parse_rule_df(df))
+
     st.subheader("Exports")
     df = pd.DataFrame.from_records(
-        data["aut_nums"]["exports"], columns=["Type", "Peers", "Filter"]
+        data["aut_nums"]["exports"], columns=["Type", "Peer", "Filter", "Comments"]
     )
-    with st.container(height=300, border=True):
-        st.table(df)
-    st.divider()
+    with st.container(
+        height=min(100 + ((len(df) - 1 if len(df) > 0 else 0) * 35), 300), border=True
+    ):
+        st.table(parsing.parse_rule_df(df))
 
-    # Showing the as_sets data
-    """ st.header("AS Sets", divider="gray")
-    df = pd.DataFrame.from_records(data["as_sets"])
-    st.table(df)
-    st.divider() """
+    st.divider()
 
 # Footer
 elements.footer()

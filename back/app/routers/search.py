@@ -30,8 +30,8 @@ def search_asn(asn: int):
     if record:
         aut_nums_results = {
             "as_num": record[0],
-            "imports": parsing.process_tags(record[1]),
-            "exports": parsing.process_tags(record[2]),
+            "imports": parsing.process_rules(record[1]),
+            "exports": parsing.process_rules(record[2]),
             "body": record[3],
         }
     else:
