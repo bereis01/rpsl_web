@@ -1,4 +1,4 @@
-# Parses a list of tags refering to import/export rules
+# Parses a list of tags refering to import/export rules into colorful markdown badges
 def parse_tags(tags, color="green"):
     result = ""
     for tag in tags:
@@ -12,7 +12,7 @@ def parse_tags(tags, color="green"):
     return result
 
 
-# Parses a rules (import/export) dataframe
+# Parses a rules dataframe (import/export) into colorful markdown badges
 def parse_rule_df(df):
     df["Type"] = df["Type"].apply(parse_tags, args=("gray",))
     df["Peer"] = df["Peer"].apply(parse_tags, args=("blue",))

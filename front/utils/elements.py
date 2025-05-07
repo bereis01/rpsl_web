@@ -1,18 +1,22 @@
 import streamlit as st
 
 
+# Returns a big version of the page's header
 def big_header():
     _, col2, _ = st.columns([0.3, 0.4, 0.3])
     col2.image("assets/internet.png", use_container_width=True)
     st.html('<h1 style="text-align: center"> RPSL Explorer (please, dont sue me) </h1>')
 
 
+# Returns a small version of the page's header
 def small_header():
     _, col2, _ = st.columns([0.45, 0.1, 0.45])
     col2.image("assets/internet.png", use_container_width=True)
     st.html('<h1 style="text-align: center"> RPSL Explorer (please, dont sue me) </h1>')
 
 
+# Returns navigation controls for a dataframe
+# Utilizes state keys 'skip' and 'limit' for paging
 def navigation_controls(key: str = ""):
     st.markdown(
         """
@@ -60,6 +64,7 @@ def navigation_controls(key: str = ""):
             st.rerun()
 
 
+# Returns the footer of the website
 def footer():
     st.markdown(
         """
