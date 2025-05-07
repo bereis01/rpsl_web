@@ -14,8 +14,8 @@ def parse_tags(tags, color="green"):
 
 # Parses a rules (import/export) dataframe
 def parse_rule_df(df):
-    df["Type"] = df["Type"].apply(parse_tags, args=("blue",))
-    df["Peer"] = df["Peer"].apply(parse_tags, args=("green",))
+    df["Type"] = df["Type"].apply(parse_tags, args=("gray",))
+    df["Peer"] = df["Peer"].apply(parse_tags, args=("blue",))
     df["Filter"] = df["Filter"].apply(parse_tags, args=("orange",))
     df["Comments"] = df["Comments"].apply(parse_tags, args=("green",))
     return df
