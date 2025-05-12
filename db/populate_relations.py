@@ -196,7 +196,7 @@ def load_as_routes(data, conn):
 
 
 # Opens raw data
-f = open("./parsed_data/0.json")
+f = open("./parsed_data/full.json")
 data = json.load(f)
 
 # Connect to your postgres DB

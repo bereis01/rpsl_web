@@ -1,4 +1,3 @@
-import json
 import psycopg2
 from ..utils import parsing
 from fastapi import APIRouter
@@ -19,7 +18,6 @@ def search_asn(asn: int):
     cur = conn.cursor()
 
     # Queries the aut_nums database
-    # Formats results
     cur.execute(
         """
         select * from aut_nums where as_num = %s
@@ -27,11 +25,13 @@ def search_asn(asn: int):
         (asn,),
     )
     record = cur.fetchone()
+
+    # Formats results
     if record:
         aut_nums_results = {
             "as_num": record[0],
-            "imports": parsing.process_rules(record[1]),
-            "exports": parsing.process_rules(record[2]),
+            "imports": parsing.process_import_export_rules(record[1]),
+            "exports": parsing.process_import_export_rules(record[2]),
             "body": record[3],
         }
     else:
@@ -56,8 +56,29 @@ def search_asn(asn: int):
         for (a, b, c, d) in records
     ]
 
+    # Queries the as_routes database
+    # Formats results
+    cur.execute(
+        """
+        select * from as_routes where as_num = %s
+        """,
+        (asn,),
+    )
+    record = cur.fetchone()
+    if record:
+        as_routes_results = {
+            "as_num": record[0],
+            "routes": record[1],
+        }
+    else:
+        as_routes_results = {"as_num": "", "routes": []}
+
     # Closes connection
     cur.close()
     conn.close()
 
-    return {"aut_nums": aut_nums_results, "as_sets": as_sets_results}
+    return {
+        "aut_nums": aut_nums_results,
+        "as_sets": as_sets_results,
+        "as_routes": as_routes_results,
+    }

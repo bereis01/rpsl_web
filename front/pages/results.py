@@ -38,28 +38,45 @@ else:
 
     # Showing the aut_nums data
     st.header("Routing Policies", divider="gray")
+
+    st.subheader("RPSL Object")
     with st.container(
         height=min(data["aut_nums"]["body"].count("\n") * 30, 300), border=True
     ):
         st.text(data["aut_nums"]["body"])
 
-    st.subheader("Imports")
+    st.subheader("Import Rules")
     df = pd.DataFrame.from_records(
         data["aut_nums"]["imports"], columns=["Type", "Peer", "Filter", "Comments"]
     )
-    with st.container(
-        height=min(100 + ((len(df) - 1 if len(df) > 0 else 0) * 35), 300), border=True
-    ):
-        st.table(parsing.parse_rule_df(df))
+    st.dataframe(df)
 
-    st.subheader("Exports")
+    st.subheader("Export Rules")
     df = pd.DataFrame.from_records(
         data["aut_nums"]["exports"], columns=["Type", "Peer", "Filter", "Comments"]
     )
-    with st.container(
-        height=min(100 + ((len(df) - 1 if len(df) > 0 else 0) * 35), 300), border=True
-    ):
-        st.table(parsing.parse_rule_df(df))
+    st.dataframe(df)
+
+    st.divider()
+
+    # Showing as_sets data
+    st.header("Contained in AS Sets", divider="gray")
+    df = pd.DataFrame.from_records(data["as_sets"]).rename(
+        columns={
+            "as_set_name": "Set Name",
+            "as_members": "AS Members",
+            "set_members": "Set Members",
+            "is_any": "Is Any",
+        }
+    )
+    st.dataframe(df)
+
+    st.divider()
+
+    # Showing as_routes data
+    st.header("Divulged Routes", divider="gray")
+    routes = data["as_routes"]["routes"]
+    st.dataframe(routes)
 
     st.divider()
 

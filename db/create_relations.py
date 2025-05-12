@@ -25,7 +25,7 @@ cur.execute(
     """
 	create table if not exists as_sets(
 		as_set_name text primary key,
-		as_members integer[] not null,
+		as_members bigint[] not null,
 		set_members text[] not null,
 		is_any boolean not null
 	);

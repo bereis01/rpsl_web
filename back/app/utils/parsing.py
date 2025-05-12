@@ -1,67 +1,76 @@
 import copy
-from . import analysis
 
 
 # Auxiliary function for traversing a dict as a tree
-def process_tree_aux(tree, prefix, result):
+# Stops at the first non-dict value
+# Returns list of tuples (prefixes, value),
+# where prefixes is a list of seen keys
+def process_dict_as_tree(tree, prefix, result):
     if isinstance(tree, dict):
         for key in tree.keys():
             prefix += [key]
-            process_tree_aux(tree[key], prefix, result)
+            process_dict_as_tree(tree[key], prefix, result)
             prefix.pop()
     else:
         result.append((copy.copy(prefix), copy.copy(tree)))
 
 
-# Processes import/export rules
-def process_rules(tree):
-    # Traverses the tree to get all unique tags and their rules
-    prefix, result = [], []
-    process_tree_aux(tree, prefix, result)
+# Processes peering from import/export rule
+# Converts the dictionary into a single string
+def process_peering_from_import_export_rule(tree):
+    # Traverses the tree to get all unique tags and their peers
+    aux, peering_types = [], []
+    process_dict_as_tree(tree, aux, peering_types)
 
-    # Multiply list entries to form individual records
-    records = []
-    for tags, rules in result:
-        for rule in rules:
-            for peer in rule["mp_peerings"]:
-                # Processes peer/filter dict separetely
-                processed_peer = process_peering_type(peer["mp_peering"])
-                processed_filter = process_filter_type(rule["mp_filter"])
-                # Generates comments based on the rule's structure
-                comment = analysis.generate_comment(
-                    {"tags": tags, "peer": processed_peer, "filter": processed_filter}
-                )
-                records.append((tags, processed_peer, processed_filter, comment))
+    # Formats the results into a list of string values
+    peerings = []
+    for type, peering in peering_types:
+        peerings.append(str(peering))
 
-    return records
+    return peerings
 
 
-# Processes peerings' type
-def process_peering_type(tree):
+# Processes filter from import/export rule
+# Converts the dictionary into a single string
+def process_filter_from_import_export_rule(tree):
     # Traverses the tree to get all unique tags and their elements
-    prefix, result = [], []
-    process_tree_aux(tree, prefix, result)
+    aux, filter_types = [], []
+    process_dict_as_tree(tree, aux, filter_types)
 
-    # Formats the results into unique entries
-    records = []
-    for tags, peer in result:
-        records.append(tags + [str(peer)])
-
-    return records
-
-
-# Processes filters' type
-def process_filter_type(tree):
-    # Traverses the tree to get all unique tags and their elements
-    prefix, result = [], []
-    process_tree_aux(tree, prefix, result)
-
-    # Formats the results into unique entries
-    records = []
-    for tags, filter in result:
+    # Formats the results into a list of string values
+    filters = []
+    for type, filter in filter_types:
         if isinstance(filter, list):
-            records.append(tags + [str(x) for x in filter])
+            filters.append(
+                (" ".join(type) + " " + " ".join([str(x) for x in filter])).strip()
+            )
         else:
-            records.append(tags + [str(filter)])
+            filters.append((" ".join(type) + " " + str(filter)).strip())
 
-    return records
+    return filters
+
+
+# Processes import/export rules
+# Transforms the dictionary into a list of records, one for each rule
+# Each record contains the columns 'type', 'peerings', 'filter' and 'comments'
+def process_import_export_rules(tree):
+    # Traverses the tree to get all unique tags and their rules
+    aux, rule_types = [], []
+    process_dict_as_tree(tree, aux, rule_types)
+
+    # Multiply the type by the rules to get list of individual rules
+    individual_rules = []
+    for type, rules in rule_types:
+        for rule in rules:
+            # Processes the list of peers
+            peerings = []
+            for peering in rule["mp_peerings"]:
+                peerings += process_peering_from_import_export_rule(peering)
+
+            # Processes the filter
+            filter = process_filter_from_import_export_rule(rule["mp_filter"])
+
+            # Appens the record
+            individual_rules.append((type, peerings, filter, ["comment"]))
+
+    return individual_rules
