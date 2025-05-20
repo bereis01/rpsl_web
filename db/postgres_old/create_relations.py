@@ -64,16 +64,6 @@ cur.execute(
 
 cur.execute(
     """
-	create table if not exists filter_sets(
-		filter_set_name text primary key,
-		body text not null,
-		filters json[] not null
-	);
-	"""
-)
-
-cur.execute(
-    """
 	create table if not exists as_routes(
 		as_num bigint primary key,
 		routes text[] not null

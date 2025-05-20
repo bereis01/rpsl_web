@@ -11,9 +11,7 @@ st.set_page_config(
 elements.big_header()
 
 # Description
-st.write(
-    "RPSL Explorer shows various data related to RPSL policies stored within the IRR."
-)
+st.write("RPSL Web shows various data related to RPSL policies stored within the IRR.")
 
 # Search box
 query = st.text_input(

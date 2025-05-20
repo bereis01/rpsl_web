@@ -44,8 +44,8 @@ for option in options:
     data = r.json()
 
     # Showing the data
-    st.header(f"RPSL [{option}] Objects", divider="gray")
-    df = pd.DataFrame.from_dict(data["data"])
+    st.header(option, divider="gray")
+    df = pd.DataFrame.from_dict(data["data"], orient="index")
     st.dataframe(df)
 
     # Data navigation controls

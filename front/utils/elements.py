@@ -5,14 +5,14 @@ import streamlit as st
 def big_header():
     _, col2, _ = st.columns([0.3, 0.4, 0.3])
     col2.image("assets/internet.png", use_container_width=True)
-    st.html('<h1 style="text-align: center"> RPSL Explorer (please, dont sue me) </h1>')
+    st.html('<h1 style="text-align: center"> RPSL Web (please, dont sue me) </h1>')
 
 
 # Returns a small version of the page's header
 def small_header():
     _, col2, _ = st.columns([0.45, 0.1, 0.45])
     col2.image("assets/internet.png", use_container_width=True)
-    st.html('<h1 style="text-align: center"> RPSL Explorer (please, dont sue me) </h1>')
+    st.html('<h1 style="text-align: center"> RPSL Web (please, dont sue me) </h1>')
 
 
 # Returns navigation controls for a dataframe

@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 import streamlit as st
-from utils import elements, parsing
+from utils import elements
 
 # Page configs
 st.set_page_config(
@@ -36,7 +36,7 @@ else:
     r = requests.get(f"http://localhost:8000/search/asn/{query}")
     data = r.json()
 
-    # Showing the aut_nums data
+    # Showing the data
     st.header("Routing Policies", divider="gray")
 
     st.subheader("RPSL Object")
@@ -46,37 +46,16 @@ else:
         st.text(data["aut_nums"]["body"])
 
     st.subheader("Import Rules")
-    df = pd.DataFrame.from_records(
-        data["aut_nums"]["imports"], columns=["Type", "Peer", "Filter", "Comments"]
-    )
+    df = pd.DataFrame.from_records(data["imports"])
     st.dataframe(df)
 
     st.subheader("Export Rules")
-    df = pd.DataFrame.from_records(
-        data["aut_nums"]["exports"], columns=["Type", "Peer", "Filter", "Comments"]
-    )
+    df = pd.DataFrame.from_records(data["exports"])
     st.dataframe(df)
 
-    st.divider()
-
-    # Showing as_sets data
-    st.header("Contained in AS Sets", divider="gray")
-    df = pd.DataFrame.from_records(data["as_sets"]).rename(
-        columns={
-            "as_set_name": "Set Name",
-            "as_members": "AS Members",
-            "set_members": "Set Members",
-            "is_any": "Is Any",
-        }
-    )
+    st.subheader("Relationships")
+    df = pd.DataFrame.from_records(data["relationships"])
     st.dataframe(df)
-
-    st.divider()
-
-    # Showing as_routes data
-    st.header("Divulged Routes", divider="gray")
-    routes = data["as_routes"]["routes"]
-    st.dataframe(routes)
 
     st.divider()
 
