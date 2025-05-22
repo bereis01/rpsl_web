@@ -1,32 +1,26 @@
+from .. import search
 from ..storage import ObjStr
 from fastapi import APIRouter
-from ..analysis.relationships.import_export_heuristic import import_export_heuristic
 
 # Initializes router
-router = APIRouter(prefix="/search")
+router = APIRouter()
 
 # Initializes connection to storage
 storage = ObjStr("../db/data/")
 
 
-@router.get("/asn/{asn}")
-def search_asn(asn: int):
+@router.get("/search")
+def search_asn(query: str = ""):
     """
-    Searches buckets for entries related to the given AS number.
+    Processes the query. Generates search results based on it.
     """
-    # Gets basic info from aut_nums bucket
-    aut_nums = storage.get("aut_nums", str(asn))
+    # Processes the query
+    query_type, processed_query = search.process_query(query)
 
-    # Gets import and export rules from respective buckets
-    imports = storage.get("imports", str(asn))
-    exports = storage.get("exports", str(asn))
+    # Generates search results
+    results = {}
+    match query_type:
+        case "asn":
+            results = search.search_asn(processed_query, storage)
 
-    # Calculates relationships
-    relationships = import_export_heuristic(asn, imports, exports)
-
-    return {
-        "aut_nums": aut_nums,
-        "imports": imports,
-        "exports": exports,
-        "relationships": relationships,
-    }
+    return {"type": query_type, "results": results}

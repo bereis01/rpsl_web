@@ -19,7 +19,7 @@ def process_rules(rules):
                             "actions": (
                                 peering["actions"]
                                 if "actions" in peering.keys()
-                                else None
+                                else "None"
                             ),
                             "filter": process_filter(import_statement["mp_filter"]),
                         }

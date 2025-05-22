@@ -6,7 +6,6 @@ from utils import elements
 # Page configs
 st.set_page_config(
     page_title="My App",
-    layout="wide",
     initial_sidebar_state="collapsed",
 )
 
@@ -33,8 +32,8 @@ else:
     st.title(f"Results for {query}")
 
     # Getting the data
-    r = requests.get(f"http://localhost:8000/search/asn/{query}")
-    data = r.json()
+    r = requests.get(f"http://localhost:8000/search?query={query}")
+    data = r.json()["results"]
 
     # Showing the data
     st.header("Routing Policies", divider="gray")

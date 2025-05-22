@@ -7,7 +7,7 @@ Extracted from the keys of 'aut_nums'.
 
 ## aut_nums
 
-Keys are AS numbers. Returns the following object.
+Keys are AS numbers as strings. Returns the following object.
 
 ```json
 {
@@ -19,7 +19,7 @@ Keys are AS numbers. Returns the following object.
 
 ## imports and exports
 
-Keys are AS numbers. Returns list of the following object.
+Keys are AS numbers as strings. Returns list of the following object.
 
 ```json
 {
@@ -83,7 +83,7 @@ Keys are AS numbers. Returns list of the following object.
 
 ## as_sets
 
-Keys are AS set names. Returns the following object.
+Keys are AS set names as strings. Returns the following object.
 
 ```json
 {
@@ -96,11 +96,11 @@ Keys are AS set names. Returns the following object.
 
 ## as_sets_inverted
 
-Keys are AS numbers. Returns list of strings refering to AS sets in which the AS number is a member in 'as_sets'.
+Keys are AS numbers as strings. Returns list of strings refering to AS sets in which the AS number is a member in 'as_sets'.
 
 ## route_sets
 
-Keys are route set names. Returns the following object.
+Keys are route set names as strings. Returns the following object.
 
 ```json
 {
@@ -111,7 +111,7 @@ Keys are route set names. Returns the following object.
 
 ## peering_sets
 
-Keys are peering set names. Returns the following object.
+Keys are peering set names as strings. Returns the following object.
 
 ```json
 {
@@ -122,7 +122,7 @@ Keys are peering set names. Returns the following object.
 
 ## filter_sets
 
-Keys are filter set names. Returns the following object.
+Keys are filter set names as strings. Returns the following object.
 
 ```json
 {
@@ -133,7 +133,7 @@ Keys are filter set names. Returns the following object.
 
 ## as_routes
 
-Keys are AS numbers. Returns the following object.
+Keys are AS numbers as strings. Returns the following object.
 
 ```json
 {
