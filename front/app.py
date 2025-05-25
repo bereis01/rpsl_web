@@ -1,10 +1,13 @@
-import requests
-import pandas as pd
 import streamlit as st
-from utils.results.asn import show_results_asn
+from utils.state import clear_cache
+from utils.regex import process_query
+from streamlit import session_state as ss
+from pages.results.asn import show_results_asn
+from pages.results.as_set import show_results_as_set
+from pages.results.prefix import show_results_prefix
 
 st.set_page_config(
-    page_title="RPSLweb",
+    page_title="rpslweb.",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -17,11 +20,13 @@ _, search_space, _ = st.columns([0.2, 0.6, 0.2], vertical_alignment="top")
 logo_space.image("assets/logo.png")
 
 # Search box
+if "query" not in ss:
+    ss["query"] = None
+
 with search_space:
     query = st.text_input(
-        label="Enter an AS number.",
-        value=st.session_state.query if "query" in st.session_state else None,
-        placeholder="ASN",
+        label="Enter an AS number, AS set name or route/prefix.",
+        placeholder="ASN, AS Set, Route/Prefix",
     )
 
 # Body
@@ -46,14 +51,23 @@ if not query:
 
 # Shows results after query was made
 else:
+    # Clears cache if query has changed
+    if query != ss["query"]:
+        ss["query"] = query
+        clear_cache(["query"])
+
+    # Matches the results function to the query type
     with results_space:
-        st.title(f"Results for {query}")
-
-        # Getting the data
-        r = requests.get(f"http://localhost:8000/search?query={query}")
-        data = r.json()
-
-        # Showing the data
-        match data["type"]:
+        query_type, processed_query = process_query(query)
+        match query_type:
             case "asn":
-                show_results_asn(data["results"])
+                st.title(f"Results for AS{query}")
+                show_results_asn(processed_query)
+            case "asset":
+                st.title(f"Results for {query}")
+                show_results_as_set(processed_query)
+            case "prefix":
+                st.title(f"Results for {query}")
+                show_results_prefix(processed_query)
+            case "invalid":
+                st.title(f"No results for {query}")

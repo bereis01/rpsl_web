@@ -17,7 +17,7 @@ Keys are AS numbers as strings. Returns the following object.
 }
 ```
 
-## imports and exports
+## imports and exports (RULE_OBJ)
 
 Keys are AS numbers as strings. Returns list of the following object.
 
@@ -138,5 +138,19 @@ Keys are AS numbers as strings. Returns the following object.
 ```json
 {
     'routes': [Str]
+}
+```
+
+## relationships
+
+Keys are AS numbers as strings. Returns a list of the following object.
+
+```json
+{
+    'asn': Str,
+    'peer': PEERING_OBJ,
+    'tor': ["Provider", "Customer", "Peer"],
+    'import': RULE_OBJ,
+    'export': RULE_OBJ,
 }
 ```

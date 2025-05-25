@@ -23,7 +23,7 @@ data = json.load(
 
 print("DONE")
 
-# Processes the 'aut_nums' key
+""" # Processes the 'aut_nums' key
 print("Processing 'aut_nums'...", end="", flush=True)
 
 aut_nums = data["aut_nums"]
@@ -61,7 +61,7 @@ print("Processing 'filter_sets'...", end="", flush=True)
 filter_sets = data["filter_sets"]
 process_filter_sets(filter_sets, output_path)
 
-print("DONE")
+print("DONE") """
 
 # Processes the 'as_routes' key
 print("Processing 'as_routes'...", end="", flush=True)

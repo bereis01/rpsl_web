@@ -6,7 +6,7 @@ from fastapi import APIRouter
 router = APIRouter()
 
 # Initializes connection to storage
-storage = ObjStr("../db/data/")
+storage = ObjStr("./data/")
 
 
 @router.get("/search")

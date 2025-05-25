@@ -1,4 +1,4 @@
-from ...search.regex import process_query
+from utils.regex import process_query
 
 asn_1 = "738129"
 asn_2 = "AS:123"

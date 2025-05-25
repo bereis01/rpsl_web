@@ -32,7 +32,7 @@ def navigation_controls(key: str = ""):
     _, left, middle, right, _ = st.columns([0.3, 0.1, 0.2, 0.1, 0.3])
 
     with middle:
-        count = st.session_state.count
+        count = st.session_state[f"{key}_count"]
         lower_bound = st.session_state[f"{key}_skip"]
         upper_bound = min(
             st.session_state[f"{key}_skip"] + st.session_state[f"{key}_limit"], count
@@ -50,6 +50,7 @@ def navigation_controls(key: str = ""):
             st.session_state[f"{key}_skip"] = (
                 st.session_state[f"{key}_skip"] - st.session_state[f"{key}_limit"]
             )
+            st.session_state[f"{key}_changed"] = True
             st.rerun()
     with right:
         right_click = st.button("Next →", key=f"{key}_next_button")
@@ -61,6 +62,7 @@ def navigation_controls(key: str = ""):
             st.session_state[f"{key}_skip"] = (
                 st.session_state[f"{key}_skip"] + st.session_state[f"{key}_limit"]
             )
+            st.session_state[f"{key}_changed"] = True
             st.rerun()
 
 

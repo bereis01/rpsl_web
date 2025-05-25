@@ -1,4 +1,4 @@
-from ...as_sets.inverted import process_as_sets_inverted
+from ....parsing.as_sets.inverted import process_as_sets_inverted
 
 
 as_sets_simple = {

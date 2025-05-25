@@ -1,4 +1,4 @@
-from ...aut_nums.rules import process_rules
+from ....parsing.aut_nums.rules import process_rules
 
 imports_example = {
     "ipv4": {
