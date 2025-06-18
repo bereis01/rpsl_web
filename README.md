@@ -83,7 +83,7 @@ Instantiate the back-end server.
 fastapi run app/main.py
 ```
 
-The back-end server will be accessible through the informed URL. For more information on changing server instantiation parameters - such as address, port, number of workers, and such -, visit <a href="https://fastapi.tiangolo.com/reference/">FastAPI</a>.
+The back-end server will be accessible through the informed URL. For more information on changing server instantiation parameters - such as address, port, number of workers, ... -, visit <a href="https://fastapi.tiangolo.com/reference/">FastAPI</a>.
 
 ## Front-end
 
@@ -107,4 +107,4 @@ Instantiate the front-end server.
 streamlit run app.py
 ```
 
-The front-end server will be accessible through the informed URL. For more information on changing server instantiation parameters - such as address, port, number of workers, and such -, visit <a href="https://docs.streamlit.io/">Streamlit</a>.
+The front-end server will be accessible through the informed URL. For more information on changing server instantiation parameters - such as address, port, number of workers, ... -, visit <a href="https://docs.streamlit.io/">Streamlit</a>.

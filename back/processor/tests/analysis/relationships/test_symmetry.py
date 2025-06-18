@@ -61,8 +61,8 @@ simple_relationships = {
 
 
 def test_check_symmetry():
-    simple_relationships = check_symmetry(simple_relationships)
+    result = check_symmetry(simple_relationships)
 
-    assert simple_relationships["395127"][0]["sym"] == True
-    assert simple_relationships["395127"][1]["sym"] == False
-    assert simple_relationships["174"][0]["sym"] == True
+    assert result["395127"][0]["sym"] == True
+    assert result["395127"][1]["sym"] == False
+    assert result["174"][0]["sym"] == True
