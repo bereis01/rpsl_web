@@ -4,8 +4,6 @@
 
 <div align="center">
     <img src="https://github.com/bereis01/rpsl_web/actions/workflows/tests.yml/badge.svg">
-    <img src="https://github.com/<user>/<rep>/actions/workflows/core_build.yml/badge.svg">
-    <img src="https://github.com/<user>/<rep>/actions/workflows/windows_build.yml/badge.svg">
 </div>
 
 # **rpslweb.** Availability of Interpretable Internet Routing Information
