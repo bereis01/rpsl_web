@@ -1,11 +1,3 @@
-<style>
-.showcase {
-  border-radius: 25px;
-  margin-top: 25px;
-  margin-bottom: 25px;
-}
-</style>
-
 <p align="center">
   <img src="./assets/rpslweb_logo_light.png" />
 </p>
