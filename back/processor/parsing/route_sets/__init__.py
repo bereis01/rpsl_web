@@ -1,8 +1,9 @@
-import pickle
+from storage import ObjStr
 
 
 def process_route_sets(route_sets, output_path="./"):
+    # Instantiates storage connection
+    storage = ObjStr(output_path)
+
     # Writes the dictionary to a bucket
-    route_sets_output = open(output_path + "route_sets", "wb")
-    pickle.dump(route_sets, route_sets_output)
-    route_sets_output.close()
+    storage.set("route_sets", route_sets)

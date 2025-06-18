@@ -36,7 +36,7 @@ exports = [
 ]
 
 
-def test_process_filter():
+def test_import_export_heuristic():
     result_simple = import_export_heuristic(asn, imports, exports)
 
     assert len(result_simple) == 2

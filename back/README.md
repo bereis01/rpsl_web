@@ -1,9 +1,23 @@
 # Format of Objects in Buckets
 
-## as_nums
+## metadata
+
+Various information about the data stored.
+
+### as_nums
 
 List of unique AS numbers in the database.
 Extracted from the keys of 'aut_nums'.
+
+### as_sets
+
+List of unique AS set names in the database.
+Extracted from the keys of 'as_sets'.
+
+### prefixes
+
+List of unique prefixes in the database.
+Extracted from the keys of 'as_routes'.
 
 ## aut_nums
 
@@ -81,6 +95,20 @@ Keys are AS numbers as strings. Returns list of the following object.
 }
 ```
 
+## relationships
+
+Keys are AS numbers as strings. Returns a list of the following object.
+
+```json
+{
+    'asn': Str,
+    'peer': PEERING_OBJ,
+    'tor': ["Provider", "Customer", "Peer"],
+    'import': RULE_OBJ,
+    'export': RULE_OBJ,
+}
+```
+
 ## as_sets
 
 Keys are AS set names as strings. Returns the following object.
@@ -97,6 +125,10 @@ Keys are AS set names as strings. Returns the following object.
 ## as_sets_inverted
 
 Keys are AS numbers as strings. Returns list of strings refering to AS sets in which the AS number is a member in 'as_sets'.
+
+## membership
+
+Keys are AS numbers as strings. Inside each, there are keys corresponding to AS set names of which the corresponding AS number is a member of. Inside each, there is the corresponding as_set object.
 
 ## route_sets
 
@@ -141,16 +173,16 @@ Keys are AS numbers as strings. Returns the following object.
 }
 ```
 
-## relationships
+## as_routes_inverted
 
-Keys are AS numbers as strings. Returns a list of the following object.
+Keys are routes/prefixes as strings. Returns the following object.
 
 ```json
 {
-    'asn': Str,
-    'peer': PEERING_OBJ,
-    'tor': ["Provider", "Customer", "Peer"],
-    'import': RULE_OBJ,
-    'export': RULE_OBJ,
+    'announced_by': [Str]
 }
 ```
+
+## announcement
+
+Keys are AS numbers as strings. Inside each, there are keys corresponding to prefixes/routes that are announced by the corresponding AS number. Inside each, there is the corresponding as_routes_inverted object.

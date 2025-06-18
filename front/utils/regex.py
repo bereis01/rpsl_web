@@ -30,6 +30,7 @@ def process_query(query: str):
         processed_query = match.groups()[0] + (
             match.groups()[1] if match.groups()[1] else ""
         )
+        processed_query = processed_query.replace("/", "\\")
         return query_type, processed_query
 
     return "invalid", None

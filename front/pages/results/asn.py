@@ -5,6 +5,11 @@ from streamlit import session_state as ss
 from utils.parsing import parse_relationships, parse_membership, parse_announcement
 from utils.elements import navigation_controls
 
+SEARCH_HELP = (
+    "The search is made based on the objects in the source data. "
+    "For example, if searching for an AS of number 123, type only the number '123', and not 'AS123'."
+)
+
 
 def show_results_asn(query: str):
     # Basic info
@@ -23,17 +28,42 @@ def show_results_asn(query: str):
     st.divider()
 
     # Relationships inference
+    st.header("Relationship Inference", divider="gray")
+    st.write(
+        "Infered relationships with other ASes based on the import and export rules of the given AS."
+    )
+
+    # Simple Relationships
+    ## Getting the data
+    with st.spinner("Getting results..."):
+        if "summary" not in ss:
+            ss["summary"] = requests.get(
+                f"http://localhost:8000/asn/summary/{query}"
+            ).json()["result"]
+
+    ## Showing the data
+    st.subheader(
+        "Simple Relationships",
+        help="This relationships are of the form: the customer exports all the routes defined by itself (its AS number) to the provider, who exports all of its routes to the customer.",
+    )
+    st.write("This AS is possibly a customer/provider of the following ASes:")
+    df = pd.DataFrame.from_dict(
+        {
+            "Customer": [ss["summary"]["simple_customer"]],
+            "Provider": [ss["summary"]["simple_provider"]],
+        },
+        orient="index",
+        columns=["AS Number"],
+    )
+    st.dataframe(df)
+
+    # Detailed relationships
+    ## Formatting
     tor_header, tor_search = st.columns([0.7, 0.3], vertical_alignment="center")
 
+    ## Key instantiation
     if "tor_search" not in ss:
         ss["tor_search"] = None
-
-    with tor_search:
-        tor_search = st.text_input("Search")
-        if tor_search != ss["tor_search"]:
-            ss["tor_search"] = tor_search
-            ss["tor_changed"] = True
-
     if "tor_changed" not in ss:
         ss["tor_changed"] = True
     if "tor_skip" not in ss:
@@ -41,7 +71,24 @@ def show_results_asn(query: str):
     if "tor_limit" not in ss:
         ss["tor_limit"] = 10
 
-    with st.spinner():
+    ## Header
+    with tor_header:
+        st.subheader("Detailed Relationships")
+    st.write(
+        "This AS possibly establishes the following relationships with other ASes:"
+    )
+
+    ## Search bar
+    with tor_search:
+        tor_search = st.text_input("Search", help=SEARCH_HELP, key="tor_text_input")
+        if tor_search != ss["tor_search"]:
+            ss["tor_search"] = tor_search
+            ss["tor_changed"] = True
+            ss["tor_skip"] = 0
+            ss["tor_limit"] = 10
+
+    ## Getting data
+    with st.spinner("Getting results..."):
         if ss["tor_changed"]:
             ss["relationships_page"] = requests.get(
                 f"http://localhost:8000/asn/tor/{query}?skip={ss["tor_skip"]}&limit={ss["tor_limit"]}"
@@ -49,117 +96,182 @@ def show_results_asn(query: str):
             ).json()
             ss["tor_changed"] = False
         parsed_relationships = parse_relationships(ss["relationships_page"]["result"])
+        ss["tor_count"] = ss["relationships_page"]["count"]
 
-    ss["tor_count"] = ss["relationships_page"]["count"]
-
-    with tor_header:
-        st.header("Relationships Inference", divider="gray")
-    st.write(
-        "Infered relationships with other ASes based on the import and export rules of the given AS."
-    )
-
+    ## Showing results
     with st.container(
-        height=min(parsed_relationships.count("\n") * 30, 400), border=False
+        height=min(int(len(parsed_relationships) * 0.25), 400), border=False
     ):
         st.write(
             parsed_relationships
             if parsed_relationships
-            else "*No relationships could be infered*"
+            else "*No relationships could be infered or the search yielded no results*"
         )
     navigation_controls("tor")
 
-    # Source for relationships inference
-    with st.expander("Source data"):
+    ## Getting source data
+    with st.spinner("Getting source data..."):
         if "relationships" not in ss:
             ss["relationships"] = requests.get(
                 f"http://localhost:8000/asn/tor/{query}"
             ).json()
-        st.subheader("Relationships")
-        df = pd.DataFrame.from_records(ss["relationships"]["result"])
-        st.dataframe(df)
 
         if "imports" not in ss:
             ss["imports"] = requests.get(
                 f"http://localhost:8000/asn/imports/{query}"
             ).json()
-        st.subheader("Import Rules")
-        df = pd.DataFrame.from_records(ss["imports"]["result"])
-        st.dataframe(df)
 
         if "exports" not in ss:
             ss["exports"] = requests.get(
                 f"http://localhost:8000/asn/exports/{query}"
             ).json()
+
+    ## Showing source data
+    with st.expander("Source data"):
+        st.subheader("Relationships")
+        df = pd.DataFrame.from_records(ss["relationships"]["result"]).astype(str)
+        st.dataframe(df)
+
+        st.subheader("Import Rules")
+        df = pd.DataFrame.from_records(ss["imports"]["result"]).astype(str)
+        st.dataframe(df)
+
         st.subheader("Export Rules")
-        df = pd.DataFrame.from_records(ss["exports"]["result"])
+        df = pd.DataFrame.from_records(ss["exports"]["result"]).astype(str)
         st.dataframe(df)
 
     st.divider()
 
-    # AS set membership
-    member_header, member_search = st.columns([0.7, 0.3], vertical_alignment="center")
-    with member_header:
-        st.header("AS Set Membership", divider="gray")
-    with member_search:
-        member_search = st.text_input("Search", key="member_search")
+    # Set membership
+    ## Formatting
+    memb_header, memb_search = st.columns([0.7, 0.3], vertical_alignment="center")
 
-    with st.spinner():
+    # Key instantiation
+    if "memb_search" not in ss:
+        ss["memb_search"] = None
+    if "memb_changed" not in ss:
+        ss["memb_changed"] = True
+    if "memb_skip" not in ss:
+        ss["memb_skip"] = 0
+    if "memb_limit" not in ss:
+        ss["memb_limit"] = 10
+
+    ## Header
+    with memb_header:
+        st.header("AS Set Membership", divider="gray")
+    st.write("Information about the AS set membership of the given AS.")
+
+    ## Search bar
+    with memb_search:
+        memb_search = st.text_input("Search", help=SEARCH_HELP, key="memb_text_input")
+        if memb_search != ss["memb_search"]:
+            ss["memb_search"] = memb_search
+            ss["memb_changed"] = True
+            ss["memb_skip"] = 0
+            ss["memb_limit"] = 10
+
+    ## Getting data
+    with st.spinner("Getting results..."):
+        if ss["memb_changed"]:
+            ss["membership_page"] = requests.get(
+                f"http://localhost:8000/asn/membership/{query}?skip={ss["memb_skip"]}&limit={ss["memb_limit"]}"
+                + (f"&search={memb_search}" if memb_search else "")
+            ).json()
+            ss["memb_changed"] = False
+        parsed_membership = parse_membership(ss["membership_page"]["result"])
+        ss["memb_count"] = ss["membership_page"]["count"]
+
+    ## Showing results
+    with st.container(
+        height=min(int(len(parsed_membership) * 0.75), 400), border=False
+    ):
+        st.write(
+            parsed_membership
+            if parsed_membership
+            else "*This AS is not member of any AS sets or the search yielded no results*"
+        )
+    navigation_controls("memb")
+
+    ## Getting source data
+    with st.spinner("Getting source data..."):
         if "membership" not in ss:
             ss["membership"] = requests.get(
                 f"http://localhost:8000/asn/membership/{query}"
             ).json()
-        parsed_membership = parse_membership(ss["membership"]["result"], member_search)
 
-    if parsed_membership != "":
-        st.write("This AS is member of the following AS sets:")
-        with st.container(
-            height=min(parsed_membership.count("\n") * 30, 400), border=False
-        ):
-            st.write(parsed_membership)
-    else:
-        st.write(
-            "*This AS is not member of any AS sets or the search yielded no results*"
-        )
-
-    # Source for set membership
+    ## Showing source data
     with st.expander("Source data"):
         st.subheader("AS Sets")
-        df = pd.DataFrame.from_dict(ss["membership"]["result"], orient="index")
+        df = pd.DataFrame.from_dict(ss["membership"]["result"], orient="index").astype(
+            str
+        )
         st.dataframe(df)
 
     st.divider()
 
-    # Exported routes
+    # Announced routes
+    ## Formatting
     route_header, route_search = st.columns([0.7, 0.3], vertical_alignment="center")
+
+    # Key instantiation
+    if "route_search" not in ss:
+        ss["route_search"] = None
+    if "route_changed" not in ss:
+        ss["route_changed"] = True
+    if "route_skip" not in ss:
+        ss["route_skip"] = 0
+    if "route_limit" not in ss:
+        ss["route_limit"] = 10
+
+    ## Header
     with route_header:
         st.header("Announced Routes", divider="gray")
-    with route_search:
-        route_search = st.text_input("Search", key="route_search")
+    st.write("Information about the routes and prefixes announced by the given AS.")
 
-    with st.spinner():
+    ## Search bar
+    with route_search:
+        route_search = st.text_input("Search", help=SEARCH_HELP, key="route_text_input")
+        if route_search != ss["route_search"]:
+            ss["route_search"] = route_search
+            ss["route_changed"] = True
+            ss["route_skip"] = 0
+            ss["route_limit"] = 10
+
+    ## Getting data
+    with st.spinner("Getting results..."):
+        if ss["route_changed"]:
+            ss["announcement_page"] = requests.get(
+                f"http://localhost:8000/asn/announcement/{query}?skip={ss["route_skip"]}&limit={ss["route_limit"]}"
+                + (f"&search={route_search}" if route_search else "")
+            ).json()
+            ss["route_changed"] = False
+        parsed_announcement = parse_announcement(ss["announcement_page"]["result"])
+        ss["route_count"] = ss["announcement_page"]["count"]
+
+    ## Showing results
+    with st.container(
+        height=min(int(len(parsed_announcement) * 1.25), 400), border=False
+    ):
+        st.write(
+            parsed_announcement
+            if parsed_announcement
+            else "*This AS does not announce any routes/prefixes or the search yielded no results*"
+        )
+    navigation_controls("route")
+
+    ## Getting source data
+    with st.spinner("Getting source data..."):
         if "announcement" not in ss:
             ss["announcement"] = requests.get(
-                f"http://localhost:8000/asn/routes/{query}"
+                f"http://localhost:8000/asn/announcement/{query}"
             ).json()
-        parsed_announcement = parse_announcement(
-            ss["announcement"]["result"], route_search
-        )
 
-    if parsed_announcement != "":
-        st.write("This AS announces the following routes:")
-        with st.container(
-            height=min(parsed_announcement.count("\n") * 30, 400), border=False
-        ):
-            st.write(parsed_announcement)
-    else:
-        st.write(
-            "*This AS does not announce any route or the search yielded no results*"
-        )
-
-    # Source for route announcement
+    ## Showing source data
     with st.expander("Source data"):
         st.subheader("AS Routes")
-        df = pd.DataFrame.from_dict(ss["announcement"]["result"], orient="index")
+        df = pd.DataFrame.from_dict(
+            ss["announcement"]["result"], orient="index"
+        ).astype(str)
         st.dataframe(df)
 
     st.divider()

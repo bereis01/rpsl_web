@@ -10,10 +10,10 @@ print("***STARTING***\n")
 # Processes the 'aut_nums' key
 print("Processing relationships...", end="", flush=True)
 
-as_nums = storage.get("as_nums")
+asns = storage.get_key("metadata", "as_nums")
 imports = storage.get("imports")
 exports = storage.get("exports")
-process_relationships(storage, as_nums, imports, exports)
+process_relationships(storage, asns, imports, exports)
 
 print("DONE")
 

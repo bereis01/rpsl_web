@@ -26,10 +26,19 @@ def parse_relationships(relationships):
     relationship_str = ""
 
     for relationship in relationships:
+        sym = relationship["sym"]
         tor = relationship["tor"]
         peer = relationship["peer"]
         export_rule = relationship["export"]
         import_rule = relationship["import"]
+
+        # Parses badges (symmetry, ...)
+        if sym:
+            relationship_str += ":green-badge[Symmetric] "
+        else:
+            relationship_str += ":red-badge[Asymmetric] "
+
+        relationship_str += "\n\n"
 
         # Parses relationship type
         relationship_str += "Possible "
@@ -43,13 +52,8 @@ def parse_relationships(relationships):
         relationship_str += "relationship with "
 
         # Parses peer description
-        if (
-            peer["remote_as"]["field"] == "Single"
-            and peer["remote_as"]["type"] == "Num"
-        ):  # AS Number
-            relationship_str += (
-                f":green-background[**AS{peer["remote_as"]["value"]}**] "
-            )
+        if peer["field"] == "Single" and peer["type"] == "Num":  # AS Number
+            relationship_str += f":green-background[**AS{peer["value"]}**] "
 
         # Parses exchanged routes
         relationship_str += "over which it shares "
@@ -62,6 +66,8 @@ def parse_relationships(relationships):
             relationship_str += f":blue-background[**the routes originated by AS{export_rule["filter"]["value"]}**] "
         elif export_rule["filter"]["type"] == "AsSet":
             relationship_str += f":blue-background[**the routes originated by any AS in AS set {export_rule["filter"]["value"]}**] "
+        elif export_rule["filter"]["type"] == "RouteSet":
+            relationship_str += f":blue-background[**the routes in the route set {export_rule["filter"]["value"]}**] "
 
         relationship_str += "and receives "
         if (
@@ -73,6 +79,8 @@ def parse_relationships(relationships):
             relationship_str += f":blue-background[**the routes originated by AS{import_rule["filter"]["value"]}**] "
         elif import_rule["filter"]["type"] == "AsSet":
             relationship_str += f":blue-background[**the routes originated by any AS in AS set {import_rule["filter"]["value"]}**] "
+        elif import_rule["filter"]["type"] == "RouteSet":
+            relationship_str += f":blue-background[**the routes in the route set {import_rule["filter"]["value"]}**] "
 
         relationship_str += "\n"
 
@@ -127,6 +135,8 @@ def parse_relationships(relationships):
                 )
 
         relationship_str += "\n\n"
+        relationship_str += "---"
+        relationship_str += "\n\n"
 
     return relationship_str
 
@@ -135,12 +145,21 @@ def parse_membership(membership, search: str = None):
     full_membership_str = ""
     for as_set, value in membership.items():
         members = value["members"]
+        set_members = value["set_members"]
 
         membership_str = f":orange-background[**{as_set}**]\n"
 
-        membership_str += f"- **Members:** AS{members[0]}"
-        for member in members[1:]:
-            membership_str += f", AS{member}"
+        if members:
+            membership_str += f"- **Members:** AS{members[0]}"
+            for member in members[1:]:
+                membership_str += f", AS{member}"
+
+        membership_str += "\n"
+
+        if set_members:
+            membership_str += f"- **Set members:** {set_members[0]}"
+            for set_member in set_members[1:]:
+                membership_str += f", {set_member}"
 
         membership_str += "\n\n"
 
@@ -159,9 +178,10 @@ def parse_announcement(announcement, search: str = None):
 
         announcement_str = f":violet-background[**{route}**]\n"
 
-        announcement_str += f"- **Also announced by:** AS{announced_by[0]}"
-        for asn in announced_by[1:]:
-            announcement_str += f", AS{asn}"
+        if announced_by:
+            announcement_str += f"- **Announced by:** AS{announced_by[0]}"
+            for asn in announced_by[1:]:
+                announcement_str += f", AS{asn}"
 
         announcement_str += "\n\n"
 

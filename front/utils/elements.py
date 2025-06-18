@@ -42,7 +42,7 @@ def navigation_controls(key: str = ""):
             unsafe_allow_html=True,
         )
     with left:
-        left_click = st.button("← Back", key=f"{key}_back_button")
+        left_click = st.button("←", key=f"{key}_back_button")
         if (
             left_click
             and st.session_state[f"{key}_skip"] >= st.session_state[f"{key}_limit"]
@@ -53,7 +53,7 @@ def navigation_controls(key: str = ""):
             st.session_state[f"{key}_changed"] = True
             st.rerun()
     with right:
-        right_click = st.button("Next →", key=f"{key}_next_button")
+        right_click = st.button("→", key=f"{key}_next_button")
         if (
             right_click
             and st.session_state[f"{key}_skip"] + st.session_state[f"{key}_limit"]

@@ -11,7 +11,7 @@ as_sets_simple = {
 }
 
 
-def test_process_filter():
+def test_process_as_sets_inverted():
     result_simple = process_as_sets_inverted(as_sets_simple)
 
     assert result_simple == {"204617": ["m#as-xipe1#SBMT"]}

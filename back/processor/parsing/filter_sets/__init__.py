@@ -1,8 +1,9 @@
-import pickle
+from storage import ObjStr
 
 
 def process_filter_sets(filter_sets, output_path="./"):
+    # Instantiates storage connection
+    storage = ObjStr(output_path)
+
     # Writes the dictionary to a bucket
-    filter_sets_output = open(output_path + "filter_sets", "wb")
-    pickle.dump(filter_sets, filter_sets_output)
-    filter_sets_output.close()
+    storage.set("filter_sets", filter_sets)

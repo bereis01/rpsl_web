@@ -1,3 +1,4 @@
+import requests
 import streamlit as st
 from utils.state import clear_cache
 from utils.regex import process_query
@@ -61,13 +62,31 @@ else:
         query_type, processed_query = process_query(query)
         match query_type:
             case "asn":
-                st.title(f"Results for AS{query}")
-                show_results_asn(processed_query)
+                r = requests.get(
+                    f"http://localhost:8000/asn/{processed_query}"
+                )  # Checks if asn is in database
+                if r.json()["result"]:
+                    st.title(f"Results for AS{processed_query}")
+                    show_results_asn(processed_query)
+                else:
+                    st.title(f"No results for AS{query}")
             case "asset":
-                st.title(f"Results for {query}")
-                show_results_as_set(processed_query)
+                r = requests.get(
+                    f"http://localhost:8000/as_set/{processed_query}"
+                )  # Checks if as_set is in database
+                if r.json()["result"]:
+                    st.title(f"Results for {processed_query}")
+                    show_results_as_set(processed_query)
+                else:
+                    st.title(f"No results for {query}")
             case "prefix":
-                st.title(f"Results for {query}")
-                show_results_prefix(processed_query)
+                r = requests.get(
+                    f"http://localhost:8000/prefix/{processed_query}"
+                )  # Checks if prefix is in database
+                if r.json()["result"]:
+                    st.title(f"Results for {processed_query}")
+                    show_results_prefix(processed_query)
+                else:
+                    st.title(f"No results for {query}")
             case "invalid":
                 st.title(f"No results for {query}")

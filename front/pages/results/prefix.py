@@ -7,7 +7,7 @@ def show_results_prefix(query: str):
     # Announced by
     if "announced_by" not in ss:
         ss["announced_by"] = requests.get(
-            f"http://localhost:8000/prefix/announced_by/{query.replace("/", "\\")}"
+            f"http://localhost:8000/prefix/announced_by/{query}"
         ).json()
 
     st.header("Announced By", divider="gray")
