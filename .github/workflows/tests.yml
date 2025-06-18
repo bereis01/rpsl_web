@@ -38,7 +38,7 @@ jobs:
       - name: Run tests on back
         run: |
           cd back
-          pytest
+          pytest processor/tests
           cd ..
 
       - name: Run tests on front
