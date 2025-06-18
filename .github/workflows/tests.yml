@@ -1,0 +1,47 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Create virtual environment
+        run: python -m venv ./.venv
+
+      - name: Activate virtual environment
+        run: |
+          source ./.venv/bin/activate
+        shell: bash
+
+      - name: Install dependencies
+        run: pip install -r back/requirements.txt \
+             pip install -r front/requirements.txt
+
+      - name: Run tests on back
+        run: cd back \
+             pytest \
+             cd ..
+
+      - name: Run tests on front
+        run: cd front \
+             pytest \
+             cd ..
