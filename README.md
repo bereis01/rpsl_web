@@ -88,7 +88,7 @@ The back-end server will be accessible through the informed URL. For more inform
 From the project's root, go to the front-end folder.
 
 ```console
-cd ./back
+cd ./front
 ```
 
 Create a new python environment, activate it and install requirements.
