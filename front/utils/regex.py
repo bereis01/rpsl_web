@@ -26,7 +26,6 @@ def process_query(query: str):
     )
     if match:
         query_type = "prefix"
-        print(match.groups())
         processed_query = match.groups()[0] + (
             match.groups()[1] if match.groups()[1] else ""
         )

@@ -1,0 +1,11 @@
+services:
+  back:
+    image: e6c17514971e
+    container_name: fastapi
+    ports:
+      - "8000:8000"
+  front:
+    image: ebec55056261
+    container_name: streamlit
+    ports:
+      - "8501:8501"

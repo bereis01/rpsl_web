@@ -15,7 +15,7 @@ def show_results_asn(query: str):
     # Basic info
     if "aut_num" not in ss:
         ss["aut_num"] = requests.get(
-            f"http://localhost:8000/asn/aut_num/{query}"
+            f"http://fastapi:8000/asn/aut_num/{query}"
         ).json()
 
     st.header("Basic Info", divider="gray")
@@ -38,7 +38,7 @@ def show_results_asn(query: str):
     with st.spinner("Getting results..."):
         if "summary" not in ss:
             ss["summary"] = requests.get(
-                f"http://localhost:8000/asn/summary/{query}"
+                f"http://fastapi:8000/asn/summary/{query}"
             ).json()["result"]
 
     ## Showing the data
@@ -91,7 +91,7 @@ def show_results_asn(query: str):
     with st.spinner("Getting results..."):
         if ss["tor_changed"]:
             ss["relationships_page"] = requests.get(
-                f"http://localhost:8000/asn/tor/{query}?skip={ss["tor_skip"]}&limit={ss["tor_limit"]}"
+                f"http://fastapi:8000/asn/tor/{query}?skip={ss["tor_skip"]}&limit={ss["tor_limit"]}"
                 + (f"&search={tor_search}" if tor_search else "")
             ).json()
             ss["tor_changed"] = False
@@ -113,17 +113,17 @@ def show_results_asn(query: str):
     with st.spinner("Getting source data..."):
         if "relationships" not in ss:
             ss["relationships"] = requests.get(
-                f"http://localhost:8000/asn/tor/{query}"
+                f"http://fastapi:8000/asn/tor/{query}"
             ).json()
 
         if "imports" not in ss:
             ss["imports"] = requests.get(
-                f"http://localhost:8000/asn/imports/{query}"
+                f"http://fastapi:8000/asn/imports/{query}"
             ).json()
 
         if "exports" not in ss:
             ss["exports"] = requests.get(
-                f"http://localhost:8000/asn/exports/{query}"
+                f"http://fastapi:8000/asn/exports/{query}"
             ).json()
 
     ## Showing source data
@@ -174,7 +174,7 @@ def show_results_asn(query: str):
     with st.spinner("Getting results..."):
         if ss["memb_changed"]:
             ss["membership_page"] = requests.get(
-                f"http://localhost:8000/asn/membership/{query}?skip={ss["memb_skip"]}&limit={ss["memb_limit"]}"
+                f"http://fastapi:8000/asn/membership/{query}?skip={ss["memb_skip"]}&limit={ss["memb_limit"]}"
                 + (f"&search={memb_search}" if memb_search else "")
             ).json()
             ss["memb_changed"] = False
@@ -196,7 +196,7 @@ def show_results_asn(query: str):
     with st.spinner("Getting source data..."):
         if "membership" not in ss:
             ss["membership"] = requests.get(
-                f"http://localhost:8000/asn/membership/{query}"
+                f"http://fastapi:8000/asn/membership/{query}"
             ).json()
 
     ## Showing source data
@@ -241,7 +241,7 @@ def show_results_asn(query: str):
     with st.spinner("Getting results..."):
         if ss["route_changed"]:
             ss["announcement_page"] = requests.get(
-                f"http://localhost:8000/asn/announcement/{query}?skip={ss["route_skip"]}&limit={ss["route_limit"]}"
+                f"http://fastapi:8000/asn/announcement/{query}?skip={ss["route_skip"]}&limit={ss["route_limit"]}"
                 + (f"&search={route_search}" if route_search else "")
             ).json()
             ss["route_changed"] = False
@@ -263,7 +263,7 @@ def show_results_asn(query: str):
     with st.spinner("Getting source data..."):
         if "announcement" not in ss:
             ss["announcement"] = requests.get(
-                f"http://localhost:8000/asn/announcement/{query}"
+                f"http://fastapi:8000/asn/announcement/{query}"
             ).json()
 
     ## Showing source data

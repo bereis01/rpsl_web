@@ -63,7 +63,7 @@ else:
         match query_type:
             case "asn":
                 r = requests.get(
-                    f"http://localhost:8000/asn/{processed_query}"
+                    f"http://fastapi:8000/asn/{processed_query}"
                 )  # Checks if asn is in database
                 if r.json()["result"]:
                     st.title(f"Results for AS{processed_query}")
@@ -72,7 +72,7 @@ else:
                     st.title(f"No results for AS{query}")
             case "asset":
                 r = requests.get(
-                    f"http://localhost:8000/as_set/{processed_query}"
+                    f"http://fastapi:8000/as_set/{processed_query}"
                 )  # Checks if as_set is in database
                 if r.json()["result"]:
                     st.title(f"Results for {processed_query}")
@@ -81,7 +81,7 @@ else:
                     st.title(f"No results for {query}")
             case "prefix":
                 r = requests.get(
-                    f"http://localhost:8000/prefix/{processed_query}"
+                    f"http://fastapi:8000/prefix/{processed_query}"
                 )  # Checks if prefix is in database
                 if r.json()["result"]:
                     st.title(f"Results for {processed_query}")

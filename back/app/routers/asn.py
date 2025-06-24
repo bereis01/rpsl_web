@@ -1,17 +1,13 @@
 import itertools
-from storage import ObjStr
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 # Initializes router
 router = APIRouter(prefix="/asn")
 
-# Initializes connection to storage
-storage = ObjStr("./data/")
-
 
 @router.get("/{asn}")
-def get_as_num_exist(asn: str):
-    result = storage.get_key("metadata", "as_nums")
+def get_as_num_exist(request: Request, asn: str):
+    result = request.app.state.storage.get_key("metadata", "as_nums")
 
     if asn in result:
         return {"result": True}
@@ -20,16 +16,20 @@ def get_as_num_exist(asn: str):
 
 
 @router.get("/aut_num/{asn}")
-def get_aut_num(asn: str):
-    result = storage.get("aut_nums", asn)
+def get_aut_num(request: Request, asn: str):
+    result = request.app.state.storage.get("aut_nums", asn)
 
     return {"result": result}
 
 
 @router.get("/summary/{asn}")
-def get_relationships_summary(asn: str):
-    simple_customer = storage.get("relationships_simple_customer", asn)
-    simple_provider = storage.get("relationships_simple_provider", asn)
+def get_relationships_summary(request: Request, asn: str):
+    simple_customer = request.app.state.storage.get(
+        "relationships_simple_customer", asn
+    )
+    simple_provider = request.app.state.storage.get(
+        "relationships_simple_provider", asn
+    )
 
     # If nothing is found
     if (simple_customer == None) and (simple_provider == None):
@@ -45,9 +45,9 @@ def get_relationships_summary(asn: str):
 
 @router.get("/tor/{asn}")
 def get_relationships(
-    asn: str, skip: int = None, limit: int = None, search: str = None
+    request: Request, asn: str, skip: int = None, limit: int = None, search: str = None
 ):
-    result = storage.get("relationships", asn)
+    result = request.app.state.storage.get("relationships", asn)
 
     # If nothing is found
     if result == None:
@@ -76,8 +76,8 @@ def get_relationships(
 
 
 @router.get("/imports/{asn}")
-def get_imports(asn: str, skip: int = None, limit: int = None):
-    result = storage.get("imports", asn)
+def get_imports(request: Request, asn: str, skip: int = None, limit: int = None):
+    result = request.app.state.storage.get("imports", asn)
 
     # If nothing is found
     if result == None:
@@ -97,8 +97,8 @@ def get_imports(asn: str, skip: int = None, limit: int = None):
 
 
 @router.get("/exports/{asn}")
-def get_exports(asn: str, skip: int = None, limit: int = None):
-    result = storage.get("exports", asn)
+def get_exports(request: Request, asn: str, skip: int = None, limit: int = None):
+    result = request.app.state.storage.get("exports", asn)
 
     # If nothing is found
     if result == None:
@@ -119,9 +119,9 @@ def get_exports(asn: str, skip: int = None, limit: int = None):
 
 @router.get("/membership/{asn}")
 def get_set_membership(
-    asn: str, skip: int = None, limit: int = None, search: str = None
+    request: Request, asn: str, skip: int = None, limit: int = None, search: str = None
 ):
-    result = storage.get("membership", asn)
+    result = request.app.state.storage.get("membership", asn)
 
     # If nothing is found
     if result == None:
@@ -150,8 +150,10 @@ def get_set_membership(
 
 
 @router.get("/announcement/{asn}")
-def get_routes(asn: str, skip: int = None, limit: int = None, search: str = None):
-    result = storage.get("announcement", asn)
+def get_routes(
+    request: Request, asn: str, skip: int = None, limit: int = None, search: str = None
+):
+    result = request.app.state.storage.get("announcement", asn)
 
     # If nothing is found
     if result == None:
