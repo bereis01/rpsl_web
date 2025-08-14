@@ -23,7 +23,9 @@ def process_body(body: str):
             continue
 
         key, value = attribute
-        result[key] = value.strip()
+        result[key] = (
+            value.strip() if key != last_key else result[key] + "\n" + value.strip()
+        )  # Appends if the key is the same
         last_key = key
 
     return result
