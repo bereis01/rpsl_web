@@ -1,4 +1,29 @@
-from utils.parsing import parse_relationships, parse_membership, parse_announcement
+from utils.parsing import (
+    parse_attributes,
+    parse_relationships,
+    parse_membership,
+    parse_announcement,
+)
+
+attributes = {
+    "as-name": "Level3",
+    "descr": "Level 3 Communications",
+    "admin-c": "LV3-LEVEL3",
+    "tech-c": "LV3-LEVEL3",
+    "mnt-by": "LEVEL3-MNT",
+    "changed": "ipadmin@centurylink.com 20200611",
+    "source": "LEVEL3",
+}
+
+
+def test_parse_attributes(attributes):
+    parsed_text = parse_attributes(attributes)
+
+    assert (
+        parsed_text
+        == "'**Name:** Level3\n\n**Description:** Level 3 Communications\n\n**Technical Contact:** LV3-LEVEL3\n\n**Administrative Contact:** LV3-LEVEL3\n\n**Maintained By:** LEVEL3-MNT\n\n**Last Changed By:** ipadmin@centurylink.com 20200611\n\n'"
+    )
+
 
 relationship = [
     {

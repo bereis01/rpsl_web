@@ -21,6 +21,35 @@ def parse_rule_df(df):
     return df
 
 
+# Parses a dictionary of attributes
+def parse_attributes(attributes):
+    attributes_str = ""
+
+    attributes_str += "**Name:** " + attributes["as-name"] + "\n\n"
+
+    if "descr" in attributes.keys():
+        attributes_str += "**Description:** " + attributes["descr"] + "\n\n"
+
+    if "tech-c" in attributes.keys():
+        attributes_str += "**Technical Contact:** " + attributes["tech-c"] + "\n\n"
+
+    if "admin-c" in attributes.keys():
+        attributes_str += (
+            "**Administrative Contact:** " + attributes["admin-c"] + "\n\n"
+        )
+
+    if "mnt-by" in attributes.keys():
+        attributes_str += "**Maintained By:** " + attributes["mnt-by"] + "\n\n"
+
+    if "changed" in attributes.keys():
+        attributes_str += "**Last Changed By:** " + attributes["changed"] + "\n\n"
+
+    if "remarks" in attributes.keys():
+        attributes_str += "**Remarks:**\n\n" + attributes["remarks"] + "\n\n"
+
+    return attributes_str
+
+
 # Parses a list of relationship objects
 def parse_relationships(relationships):
     relationship_str = ""

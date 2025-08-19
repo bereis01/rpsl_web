@@ -2,8 +2,13 @@ import pandas as pd
 import streamlit as st
 from utils import backend
 from streamlit import session_state as ss
-from utils.parsing import parse_relationships, parse_membership, parse_announcement
 from utils.elements import navigation_controls
+from utils.parsing import (
+    parse_attributes,
+    parse_relationships,
+    parse_membership,
+    parse_announcement,
+)
 
 SEARCH_HELP = (
     "The search is made based on the objects in the source data. "
@@ -13,15 +18,28 @@ SEARCH_HELP = (
 
 def show_results_asn(query: str):
     # Basic info
-    if "aut_num" not in ss:
-        ss["aut_num"] = backend.get(f"asn/aut_num/{query}").json()
+    if "attributes" not in ss:
+        ss["attributes"] = backend.get(f"asn/attributes/{query}").json()
+        ss["parsed_attributes"] = parse_attributes(ss["attributes"]["result"])
 
     st.header("Basic Info", divider="gray")
-    st.write("General information contained within the AS 'aut_num' RPSL object.")
     with st.container(
-        height=min(ss["aut_num"]["result"]["body"].count("\n") * 30, 300), border=True
+        height=min(ss["parsed_attributes"].count("\n") * 30, 300), border=False
     ):
-        st.text(ss["aut_num"]["result"]["body"])
+        st.markdown(ss["parsed_attributes"])
+
+    ## Getting source data
+    with st.spinner("Getting source data..."):
+        if "aut_num" not in ss:
+            ss["aut_num"] = backend.get(f"asn/aut_num/{query}").json()
+
+    ## Showing source data
+    with st.expander("Source data"):
+        with st.container(
+            height=min(ss["aut_num"]["result"]["body"].count("\n") * 30, 300),
+            border=True,
+        ):
+            st.text(ss["aut_num"]["result"]["body"])
 
     st.divider()
 
