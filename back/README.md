@@ -31,6 +31,18 @@ Keys are AS numbers as strings. Returns the following object.
 }
 ```
 
+## attributes
+
+Keys are AS numbers as strings. Returns the following object.
+
+```json
+{
+    'as-name': Str,
+    'descr': Str,
+    ...
+}
+```
+
 ## imports and exports (RULE_OBJ)
 
 Keys are AS numbers as strings. Returns list of the following object.

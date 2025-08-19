@@ -1,9 +1,13 @@
-from ...routers import prefix
+from storage import ObjStr
 from fastapi import FastAPI
+from ...routers import prefix
 from fastapi.testclient import TestClient
 
 # Initializes app
 app = FastAPI()
+
+# Initializes connection to storage
+app.state.storage = ObjStr("./data/")
 
 # Includes all routers
 app.include_router(prefix.router)

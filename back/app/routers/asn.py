@@ -22,6 +22,13 @@ def get_aut_num(request: Request, asn: str):
     return {"result": result}
 
 
+@router.get("/attributes/{asn}")
+def get_as_attributes(request: Request, asn: str):
+    result = request.app.state.storage.get("attributes", asn)
+
+    return {"result": result}
+
+
 @router.get("/summary/{asn}")
 def get_relationships_summary(request: Request, asn: str):
     simple_customer = request.app.state.storage.get(

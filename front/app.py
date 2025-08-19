@@ -1,5 +1,5 @@
-import requests
 import streamlit as st
+from utils import backend
 from utils.state import clear_cache
 from utils.regex import process_query
 from streamlit import session_state as ss
@@ -62,8 +62,8 @@ else:
         query_type, processed_query = process_query(query)
         match query_type:
             case "asn":
-                r = requests.get(
-                    f"http://fastapi:8000/asn/{processed_query}"
+                r = backend.get(
+                    f"asn/{processed_query}"
                 )  # Checks if asn is in database
                 if r.json()["result"]:
                     st.title(f"Results for AS{processed_query}")
@@ -71,8 +71,8 @@ else:
                 else:
                     st.title(f"No results for AS{query}")
             case "asset":
-                r = requests.get(
-                    f"http://fastapi:8000/as_set/{processed_query}"
+                r = backend.get(
+                    f"as_set/{processed_query}"
                 )  # Checks if as_set is in database
                 if r.json()["result"]:
                     st.title(f"Results for {processed_query}")
@@ -80,8 +80,8 @@ else:
                 else:
                     st.title(f"No results for {query}")
             case "prefix":
-                r = requests.get(
-                    f"http://fastapi:8000/prefix/{processed_query}"
+                r = backend.get(
+                    f"prefix/{processed_query}"
                 )  # Checks if prefix is in database
                 if r.json()["result"]:
                     st.title(f"Results for {processed_query}")

@@ -1,6 +1,6 @@
-import requests
 import pandas as pd
 import streamlit as st
+from utils import backend
 from streamlit import session_state as ss
 from utils.parsing import parse_relationships, parse_membership, parse_announcement
 from utils.elements import navigation_controls
@@ -14,9 +14,7 @@ SEARCH_HELP = (
 def show_results_asn(query: str):
     # Basic info
     if "aut_num" not in ss:
-        ss["aut_num"] = requests.get(
-            f"http://fastapi:8000/asn/aut_num/{query}"
-        ).json()
+        ss["aut_num"] = backend.get(f"asn/aut_num/{query}").json()
 
     st.header("Basic Info", divider="gray")
     st.write("General information contained within the AS 'aut_num' RPSL object.")
@@ -37,14 +35,12 @@ def show_results_asn(query: str):
     ## Getting the data
     with st.spinner("Getting results..."):
         if "summary" not in ss:
-            ss["summary"] = requests.get(
-                f"http://fastapi:8000/asn/summary/{query}"
-            ).json()["result"]
+            ss["summary"] = backend.get(f"asn/summary/{query}").json()["result"]
 
     ## Showing the data
     st.subheader(
         "Simple Relationships",
-        help="This relationships are of the form: the customer exports all the routes defined by itself (its AS number) to the provider, who exports all of its routes to the customer.",
+        help="These relationships are of the form: the customer exports all the routes defined by itself (its AS number) to the provider, who exports all of its routes to the customer.",
     )
     st.write("This AS is possibly a customer/provider of the following ASes:")
     df = pd.DataFrame.from_dict(
@@ -90,8 +86,8 @@ def show_results_asn(query: str):
     ## Getting data
     with st.spinner("Getting results..."):
         if ss["tor_changed"]:
-            ss["relationships_page"] = requests.get(
-                f"http://fastapi:8000/asn/tor/{query}?skip={ss["tor_skip"]}&limit={ss["tor_limit"]}"
+            ss["relationships_page"] = backend.get(
+                f"asn/tor/{query}?skip={ss["tor_skip"]}&limit={ss["tor_limit"]}"
                 + (f"&search={tor_search}" if tor_search else "")
             ).json()
             ss["tor_changed"] = False
@@ -112,19 +108,13 @@ def show_results_asn(query: str):
     ## Getting source data
     with st.spinner("Getting source data..."):
         if "relationships" not in ss:
-            ss["relationships"] = requests.get(
-                f"http://fastapi:8000/asn/tor/{query}"
-            ).json()
+            ss["relationships"] = backend.get(f"asn/tor/{query}").json()
 
         if "imports" not in ss:
-            ss["imports"] = requests.get(
-                f"http://fastapi:8000/asn/imports/{query}"
-            ).json()
+            ss["imports"] = backend.get(f"asn/imports/{query}").json()
 
         if "exports" not in ss:
-            ss["exports"] = requests.get(
-                f"http://fastapi:8000/asn/exports/{query}"
-            ).json()
+            ss["exports"] = backend.get(f"asn/exports/{query}").json()
 
     ## Showing source data
     with st.expander("Source data"):
@@ -173,8 +163,8 @@ def show_results_asn(query: str):
     ## Getting data
     with st.spinner("Getting results..."):
         if ss["memb_changed"]:
-            ss["membership_page"] = requests.get(
-                f"http://fastapi:8000/asn/membership/{query}?skip={ss["memb_skip"]}&limit={ss["memb_limit"]}"
+            ss["membership_page"] = backend.get(
+                f"asn/membership/{query}?skip={ss["memb_skip"]}&limit={ss["memb_limit"]}"
                 + (f"&search={memb_search}" if memb_search else "")
             ).json()
             ss["memb_changed"] = False
@@ -195,9 +185,7 @@ def show_results_asn(query: str):
     ## Getting source data
     with st.spinner("Getting source data..."):
         if "membership" not in ss:
-            ss["membership"] = requests.get(
-                f"http://fastapi:8000/asn/membership/{query}"
-            ).json()
+            ss["membership"] = backend.get(f"asn/membership/{query}").json()
 
     ## Showing source data
     with st.expander("Source data"):
@@ -240,8 +228,8 @@ def show_results_asn(query: str):
     ## Getting data
     with st.spinner("Getting results..."):
         if ss["route_changed"]:
-            ss["announcement_page"] = requests.get(
-                f"http://fastapi:8000/asn/announcement/{query}?skip={ss["route_skip"]}&limit={ss["route_limit"]}"
+            ss["announcement_page"] = backend.get(
+                f"asn/announcement/{query}?skip={ss["route_skip"]}&limit={ss["route_limit"]}"
                 + (f"&search={route_search}" if route_search else "")
             ).json()
             ss["route_changed"] = False
@@ -262,9 +250,7 @@ def show_results_asn(query: str):
     ## Getting source data
     with st.spinner("Getting source data..."):
         if "announcement" not in ss:
-            ss["announcement"] = requests.get(
-                f"http://fastapi:8000/asn/announcement/{query}"
-            ).json()
+            ss["announcement"] = backend.get(f"asn/announcement/{query}").json()
 
     ## Showing source data
     with st.expander("Source data"):
