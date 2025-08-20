@@ -153,6 +153,16 @@ Keys are route set names as strings. Returns the following object.
 }
 ```
 
+### ROUTESET_OBJ
+
+```json
+{
+    'type': ['address', 'AS'],
+    ['name': Str, 'op': Str],
+    ['address_prefix': Str, 'range_operator': Str]
+}
+```
+
 ## peering_sets
 
 Keys are peering set names as strings. Returns the following object.
