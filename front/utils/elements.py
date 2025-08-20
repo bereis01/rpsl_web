@@ -94,3 +94,44 @@ def footer():
     """,
         unsafe_allow_html=True,
     )
+
+
+@st.fragment
+def lazy_expander(
+    title: str,
+    key: str,
+    on_expand,
+    expanded: bool = False,
+    callback_kwargs: dict = None,
+):
+    """
+    A 'lazy' expander that only loads/renders content on expand.
+
+    Args:
+        title (str): Title to show beside the arrow.
+        key (str): Unique key for storing expanded state in st.session_state.
+        on_expand (callable): A function that takes a container (and optional kwargs)
+                              to fill with content *only* after expanding.
+        expanded (bool): Initial state (collapsed=False by default).
+        callback_kwargs (dict): Extra kwargs for on_expand() if needed.
+    """
+    if callback_kwargs is None:
+        callback_kwargs = {}
+
+    # Initialize session state in the first run
+    if key not in st.session_state:
+        st.session_state[key] = expanded
+
+    outer_container = st.container(border=True)
+
+    with outer_container:
+        if st.button(label=(f"{title}")):
+            # If currently collapsed -> expand and call on_expand
+            if not st.session_state[key]:
+                st.session_state[key] = True
+                on_expand(outer_container, **callback_kwargs)
+
+            # If currently expanded -> collapse (force a rerun)
+            else:
+                st.session_state[key] = False
+                st.rerun()

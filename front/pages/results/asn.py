@@ -26,13 +26,13 @@ def show_results_asn(query: str):
     other_info, remarks = st.columns(2)
     with other_info:
         with st.container(
-            height=min(ss["parsed_attributes"][0].count("\n") * 30, 300),
+            height=min(ss["parsed_attributes"][0].count("\n") * 30 + 1, 300),
             border=False,
         ):
             st.markdown(ss["parsed_attributes"][0])
     with remarks:
         with st.container(
-            height=min(ss["parsed_attributes"][1].count("\n") * 30, 300),
+            height=min(ss["parsed_attributes"][1].count("\n") * 30 + 1, 300),
             border=True,
         ):
             st.text(ss["parsed_attributes"][1])
@@ -45,7 +45,7 @@ def show_results_asn(query: str):
     ## Showing source data
     with st.expander("Source data"):
         with st.container(
-            height=min(ss["aut_num"]["result"]["body"].count("\n") * 30, 300),
+            height=min(ss["aut_num"]["result"]["body"].count("\n") * 30 + 1, 300),
             border=True,
         ):
             st.text(ss["aut_num"]["result"]["body"])
@@ -126,7 +126,7 @@ def show_results_asn(query: str):
 
     ## Showing results
     with st.container(
-        height=min(int(len(parsed_relationships) * 0.25), 400), border=False
+        height=min(int(len(parsed_relationships) * 0.25) + 1, 400), border=False
     ):
         st.write(
             parsed_relationships
@@ -203,7 +203,7 @@ def show_results_asn(query: str):
 
     ## Showing results
     with st.container(
-        height=min(int(len(parsed_membership) * 0.75), 400), border=False
+        height=min(int(len(parsed_membership) * 0.75) + 1, 400), border=False
     ):
         st.write(
             parsed_membership
@@ -268,7 +268,7 @@ def show_results_asn(query: str):
 
     ## Showing results
     with st.container(
-        height=min(int(len(parsed_announcement) * 1.25), 400), border=False
+        height=min(int(len(parsed_announcement) * 1.25) + 1, 400), border=False
     ):
         st.write(
             parsed_announcement
