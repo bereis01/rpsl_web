@@ -32,7 +32,7 @@ def show_results_asn(query: str):
             st.markdown(ss["parsed_attributes"][0])
     with remarks:
         with st.container(
-            height=min(ss["parsed_attributes"][1].count("\n") * 30 + 1, 300),
+            height=min(ss["parsed_attributes"][1].count("\n") * 40 + 1, 300),
             border=True,
         ):
             st.text(ss["parsed_attributes"][1])
@@ -63,6 +63,14 @@ def show_results_asn(query: str):
     with st.spinner("Getting results..."):
         if "summary" not in ss:
             ss["summary"] = backend.get(f"asn/summary/{query}").json()["result"]
+            ss["summary"] = pd.DataFrame.from_dict(
+                {
+                    "Customer": [ss["summary"]["simple_customer"]],
+                    "Provider": [ss["summary"]["simple_provider"]],
+                },
+                orient="index",
+                columns=["AS Number"],
+            )
 
     ## Showing the data
     st.subheader(
@@ -70,15 +78,7 @@ def show_results_asn(query: str):
         help="These relationships are of the form: the customer exports all the routes defined by itself (its AS number) to the provider, who exports all of its routes to the customer.",
     )
     st.write("This AS is possibly a customer/provider of the following ASes:")
-    df = pd.DataFrame.from_dict(
-        {
-            "Customer": [ss["summary"]["simple_customer"]],
-            "Provider": [ss["summary"]["simple_provider"]],
-        },
-        orient="index",
-        columns=["AS Number"],
-    )
-    st.dataframe(df)
+    st.dataframe(ss["summary"])
 
     # Detailed relationships
     ## Formatting
@@ -121,16 +121,18 @@ def show_results_asn(query: str):
                 + (f"&search={tor_search}" if tor_search else "")
             ).json()
             ss["tor_changed"] = False
-        parsed_relationships = parse_relationships(ss["relationships_page"]["result"])
-        ss["tor_count"] = ss["relationships_page"]["count"]
+            ss["parsed_relationships"] = parse_relationships(
+                ss["relationships_page"]["result"]
+            )
+            ss["tor_count"] = ss["relationships_page"]["count"]
 
     ## Showing results
     with st.container(
-        height=min(int(len(parsed_relationships) * 0.25) + 1, 400), border=False
+        height=min(int(len(ss["parsed_relationships"]) * 0.25) + 1, 400), border=False
     ):
         st.write(
-            parsed_relationships
-            if parsed_relationships
+            ss["parsed_relationships"]
+            if ss["parsed_relationships"]
             else "*No relationships could be infered or the search yielded no results*"
         )
     navigation_controls("tor")
@@ -139,26 +141,32 @@ def show_results_asn(query: str):
     with st.spinner("Getting source data..."):
         if "relationships" not in ss:
             ss["relationships"] = backend.get(f"asn/tor/{query}").json()
+            ss["relationships"] = pd.DataFrame.from_records(
+                ss["relationships"]["result"]
+            ).astype(str)
 
         if "imports" not in ss:
             ss["imports"] = backend.get(f"asn/imports/{query}").json()
+            ss["imports"] = pd.DataFrame.from_records(ss["imports"]["result"]).astype(
+                str
+            )
 
         if "exports" not in ss:
             ss["exports"] = backend.get(f"asn/exports/{query}").json()
+            ss["exports"] = pd.DataFrame.from_records(ss["exports"]["result"]).astype(
+                str
+            )
 
     ## Showing source data
     with st.expander("Source data"):
         st.subheader("Relationships")
-        df = pd.DataFrame.from_records(ss["relationships"]["result"]).astype(str)
-        st.dataframe(df)
+        st.dataframe(ss["relationships"])
 
         st.subheader("Import Rules")
-        df = pd.DataFrame.from_records(ss["imports"]["result"]).astype(str)
-        st.dataframe(df)
+        st.dataframe(ss["imports"])
 
         st.subheader("Export Rules")
-        df = pd.DataFrame.from_records(ss["exports"]["result"]).astype(str)
-        st.dataframe(df)
+        st.dataframe(ss["exports"])
 
     st.divider()
 

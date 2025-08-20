@@ -23,7 +23,7 @@ def test_parse_attributes():
         parsed_text[0]
         == "**Name:** Level3\n\n**Description:** Level 3 Communications\n\n**Registered in:** LEVEL3\n\n**Technical contact:** LV3-LEVEL3\n\n**Administrative contact:** LV3-LEVEL3\n\n**Maintained by:** LEVEL3-MNT\n\n**Last changed by:** ipadmin@centurylink.com 20200611\n\n"
     )
-    assert parsed_text[1] == "No remarks to be shown"
+    assert parsed_text[1] == "No remarks to be shown\n"
 
 
 relationship = [

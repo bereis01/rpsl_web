@@ -64,7 +64,7 @@ def parse_attributes(attributes):
             "**Changes should be notified to:** " + attributes["notify"] + "\n\n"
         )
 
-    remarks_str = "No remarks to be shown"
+    remarks_str = "No remarks to be shown\n"
     if "remarks" in attributes.keys():
         remarks_str = attributes["remarks"]
 
