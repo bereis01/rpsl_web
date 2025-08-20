@@ -8,7 +8,7 @@ from pages.results.as_set import show_results_as_set
 from pages.results.prefix import show_results_prefix
 
 st.set_page_config(
-    page_title="rpslweb.",
+    page_title="rpslweb",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -40,7 +40,7 @@ if not query:
         st.markdown(
             """
             <div style="text-align: center">
-            <strong>rpslweb.</strong> makes available useful information regarding data contained within the IRR.
+            <strong>rpslweb</strong> makes available useful information regarding data contained within the IRR.
 
             You can query for AS numbers, AS set names, route sets and other keywords and receive digested analysis and information, as well as the source data used to generate it.
             
