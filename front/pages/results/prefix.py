@@ -1,14 +1,12 @@
-import requests
 import streamlit as st
+from utils import backend
 from streamlit import session_state as ss
 
 
 def show_results_prefix(query: str):
     # Announced by
     if "announced_by" not in ss:
-        ss["announced_by"] = requests.get(
-            f"http://fastapi:8000/prefix/announced_by/{query}"
-        ).json()
+        ss["announced_by"] = backend.get(f"prefix/announced_by/{query}").json()
 
     st.header("Announced By", divider="gray")
 

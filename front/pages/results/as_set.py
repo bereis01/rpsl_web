@@ -1,14 +1,12 @@
-import requests
 import streamlit as st
+from utils import backend
 from streamlit import session_state as ss
 
 
 def show_results_as_set(query: str):
     # Basic info
     if "as_set" not in ss:
-        ss["as_set"] = requests.get(
-            f"http://fastapi:8000/as_set/as_set/{query}"
-        ).json()
+        ss["as_set"] = backend.get(f"as_set/as_set/{query}").json()
 
     st.header("Basic Info", divider="gray")
     st.write("General information contained within the AS Set 'as_set' RPSL object.")
