@@ -243,8 +243,8 @@ def show_results_asn(query: str):
 
     ## Header
     with route_header:
-        st.header("Announced Routes", divider="gray")
-    st.write("Information about the routes and prefixes announced by the given AS.")
+        st.header("Originated Prefixes", divider="gray")
+    st.write("Information about the address prefixes originated by the given AS.")
 
     ## Search bar
     with route_search:
