@@ -23,10 +23,19 @@ def show_results_asn(query: str):
         ss["parsed_attributes"] = parse_attributes(ss["attributes"]["result"])
 
     st.header("Basic Info", divider="gray")
-    with st.container(
-        height=min(ss["parsed_attributes"].count("\n") * 30, 300), border=False
-    ):
-        st.markdown(ss["parsed_attributes"])
+    other_info, remarks = st.columns(2)
+    with other_info:
+        with st.container(
+            height=min(ss["parsed_attributes"][0].count("\n") * 30, 300),
+            border=False,
+        ):
+            st.markdown(ss["parsed_attributes"][0])
+    with remarks:
+        with st.container(
+            height=min(ss["parsed_attributes"][1].count("\n") * 30, 300),
+            border=True,
+        ):
+            st.text(ss["parsed_attributes"][1])
 
     ## Getting source data
     with st.spinner("Getting source data..."):
@@ -87,7 +96,10 @@ def show_results_asn(query: str):
 
     ## Header
     with tor_header:
-        st.subheader("Detailed Relationships")
+        st.subheader(
+            "Detailed Relationships",
+            help="- **Asymmetric/Symmetric:** A symmetric relationship could be infered from both ends, while an assymetric relationship could only be infered from the information pertaining to one of the ASes;",
+        )
     st.write(
         "This AS possibly establishes the following relationships with other ASes:"
     )

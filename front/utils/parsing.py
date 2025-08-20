@@ -30,24 +30,45 @@ def parse_attributes(attributes):
     if "descr" in attributes.keys():
         attributes_str += "**Description:** " + attributes["descr"] + "\n\n"
 
+    if "source" in attributes.keys():
+        attributes_str += "**Registered in:** " + attributes["source"] + "\n\n"
+
     if "tech-c" in attributes.keys():
-        attributes_str += "**Technical Contact:** " + attributes["tech-c"] + "\n\n"
+        attributes_str += "**Technical contact:** " + attributes["tech-c"] + "\n\n"
 
     if "admin-c" in attributes.keys():
         attributes_str += (
-            "**Administrative Contact:** " + attributes["admin-c"] + "\n\n"
+            "**Administrative contact:** " + attributes["admin-c"] + "\n\n"
         )
 
     if "mnt-by" in attributes.keys():
-        attributes_str += "**Maintained By:** " + attributes["mnt-by"] + "\n\n"
+        attributes_str += "**Maintained by:** " + attributes["mnt-by"] + "\n\n"
 
     if "changed" in attributes.keys():
-        attributes_str += "**Last Changed By:** " + attributes["changed"] + "\n\n"
+        attributes_str += "**Last changed by:** " + attributes["changed"] + "\n\n"
 
+    if "upd-to" in attributes.keys():
+        attributes_str += (
+            "**Unauthorized modification attempts are notified to:** "
+            + attributes["upd-to"]
+            + "\n\n"
+        )
+
+    if "mnt-nfy" in attributes.keys():
+        attributes_str += (
+            "**Modifications are notified to:** " + attributes["mnt-nfy"] + "\n\n"
+        )
+
+    if "notify" in attributes.keys():
+        attributes_str += (
+            "**Changes should be notified to:** " + attributes["notify"] + "\n\n"
+        )
+
+    remarks_str = "No remarks to be shown"
     if "remarks" in attributes.keys():
-        attributes_str += "**Remarks:**\n\n" + attributes["remarks"] + "\n\n"
+        remarks_str = attributes["remarks"]
 
-    return attributes_str
+    return attributes_str, remarks_str
 
 
 # Parses a list of relationship objects
