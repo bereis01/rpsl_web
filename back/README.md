@@ -163,6 +163,18 @@ Keys are route set names as strings. Returns the following object.
 }
 ```
 
+## route_sets_inverted_as
+
+Keys are AS names as strings. Returns list of strings referring to the route sets that contain the AS name.
+
+## route_sets_inverted_addr
+
+Keys are address prefixes as strings. Returns list of strings referring to the route sets that contain the address prefix.
+
+## route_sets_inverted_rs
+
+Keys are route set names as strings. Returns list of strings referring to the route sets that contain the route set.
+
 ## peering_sets
 
 Keys are peering set names as strings. Returns the following object.
