@@ -80,6 +80,22 @@ def test_get_asn_summary():
     assert response.json()["result"] == None
 
 
+def test_get_asn_exch_routes():
+    # Existent entry
+    response = client.get("/asn/exch_routes/174")
+
+    assert response.status_code == 200
+    assert list(response.json().keys()) == ["result"]
+    assert response.json()["result"] != None
+
+    # Non-existent entry
+    response = client.get("/asn/exch_routes/-1")
+
+    assert response.status_code == 200
+    assert list(response.json().keys()) == ["result"]
+    assert response.json()["result"] == None
+
+
 def test_get_asn_tor():
     # Existent entry
     response = client.get("/asn/tor/174")

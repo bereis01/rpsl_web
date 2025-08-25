@@ -50,6 +50,17 @@ def get_relationships_summary(request: Request, asn: str):
     }
 
 
+@router.get("/exch_routes/{asn}")
+def get_exchanged_routes(request: Request, asn: str):
+    exchanged_routes = request.app.state.storage.get("exchanged_routes", asn)
+
+    # If nothing is found
+    if exchanged_routes == None:
+        return {"result": None}
+
+    return {"result": exchanged_routes}
+
+
 @router.get("/tor/{asn}")
 def get_relationships(
     request: Request, asn: str, skip: int = None, limit: int = None, search: str = None

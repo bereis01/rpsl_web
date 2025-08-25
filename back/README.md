@@ -107,6 +107,10 @@ Keys are AS numbers as strings. Returns list of the following object.
 }
 ```
 
+## exchanged_objects
+
+Keys are AS numbers as strings. Returns list of strings refering to the routes imported/exported by the given AS.
+
 ## relationships
 
 Keys are AS numbers as strings. Returns a list of the following object.

@@ -69,16 +69,30 @@ def show_results_asn(query: str):
                     "Provider": [ss["summary"]["simple_provider"]],
                 },
                 orient="index",
-                columns=["AS Number"],
+                columns=["AS Numbers"],
+            )
+        if "exchanged_routes" not in ss:
+            ss["exchanged_routes"] = backend.get(f"asn/exch_routes/{query}").json()[
+                "result"
+            ]
+            ss["exchanged_routes"] = pd.DataFrame.from_dict(
+                {
+                    "Imported": [ss["exchanged_routes"]["imports"]],
+                    "Exported": [ss["exchanged_routes"]["exports"]],
+                },
+                orient="index",
+                columns=["Objects Exchanged"],
             )
 
     ## Showing the data
     st.subheader(
         "Simple Relationships",
-        help="These relationships are of the form: the customer exports all the routes defined by itself (its AS number) to the provider, who exports all of its routes to the customer.",
+        help="These relationships are infered based on the following pattern: the customer exports all the routes defined by itself (its AS number) to the provider, who exports all of its routes to the customer.",
     )
     st.write("This AS is possibly a customer/provider of the following ASes:")
     st.dataframe(ss["summary"])
+    st.write("These are the objects imported/exported by the given AS:")
+    st.dataframe(ss["exchanged_routes"])
 
     # Detailed relationships
     ## Formatting
@@ -98,7 +112,7 @@ def show_results_asn(query: str):
     with tor_header:
         st.subheader(
             "Detailed Relationships",
-            help="- **Asymmetric/Symmetric:** A symmetric relationship could be infered from both ends, while an assymetric relationship could only be infered from the information pertaining to one of the ASes;",
+            help="These relationships include the ones above and new ones infered from more complex patterns.\n\n**Glossary**\n- **Asymmetric/Symmetric:** A symmetric relationship could be infered from both ends, while an assymetric relationship could only be infered from the information pertaining to one of the ASes;",
         )
     st.write(
         "This AS possibly establishes the following relationships with other ASes:"
