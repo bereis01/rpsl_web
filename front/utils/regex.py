@@ -3,7 +3,14 @@ import re
 
 def process_query(query: str):
     query_type = "invalid"
-    processed_query = query
+    processed_query = query.strip()
+
+    # Catches route set names
+    match = re.fullmatch("([rR][sS]\\-[a-zA-Z0-9\\.\\-:;_]*[a-zA-Z0-9])", query)
+    if match:
+        query_type = "routeset"
+        processed_query = match.groups()[0]
+        return query_type, processed_query
 
     # Catches as numbers
     match = re.fullmatch("\\s*([aA][sS][nN]?)?[\\s\\.\\-:;_]*([0-9]+)\\s*", query)
@@ -12,14 +19,14 @@ def process_query(query: str):
         processed_query = match.groups()[1]
         return query_type, processed_query
 
-    # Catches as names
+    # Catches as set names
     match = re.fullmatch("([a-zA-Z][a-zA-Z0-9\\.\\-:;_]*[a-zA-Z0-9])", query)
     if match:
         query_type = "asset"
         processed_query = match.groups()[0]
         return query_type, processed_query
 
-    # Catches routes/prefixes
+    # Catches address prefixes
     match = re.fullmatch(
         "([0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?)(/[0-9][0-9]?)?",
         query,

@@ -7,6 +7,11 @@ def process_route_sets(route_sets, output_path="./"):
     # Instantiates storage connection
     storage = ObjStr(output_path)
 
+    # Extracts metadata
+    route_sets_names = list(route_sets.keys())
+    storage.set_key("metadata", "route_sets", route_sets_names)
+    del route_sets_names
+
     # Processes each member of each route set
     for key in route_sets.keys():
         route_sets[key]["members"] = process_members(route_sets[key]["members"])

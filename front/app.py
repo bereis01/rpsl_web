@@ -6,6 +6,7 @@ from streamlit import session_state as ss
 from pages.results.asn import show_results_asn
 from pages.results.as_set import show_results_as_set
 from pages.results.prefix import show_results_prefix
+from pages.results.route_set import show_results_route_set
 
 st.set_page_config(
     page_title="rpslweb",
@@ -86,6 +87,15 @@ else:
                 if r.json()["result"]:
                     st.title(f"Results for {processed_query}")
                     show_results_prefix(processed_query)
+                else:
+                    st.title(f"No results for {query}")
+            case "routeset":
+                r = backend.get(
+                    f"route_set/{processed_query}"
+                )  # Checks if route_set is in database
+                if r.json()["result"]:
+                    st.title(f"Results for {processed_query}")
+                    show_results_route_set(processed_query)
                 else:
                     st.title(f"No results for {query}")
             case "invalid":
