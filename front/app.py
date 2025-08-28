@@ -27,8 +27,8 @@ if "query" not in ss:
 
 with search_space:
     query = st.text_input(
-        label="Enter an AS number, AS set name or route/prefix.",
-        placeholder="ASN, AS Set, Route/Prefix",
+        label="Enter a keyword and press enter to search.",
+        placeholder="ASN, AS Set, Route Set, Address Prefix, ...",
     )
 
 # Body
