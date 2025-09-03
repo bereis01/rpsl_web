@@ -1,3 +1,13 @@
+# Data files
+data/objects
+data/tmp
+
+# Draft files
+db/workbench.ipynb
+back/workbench.ipynb
+front/workbench.ipynb
+workbench.ipynb
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
