@@ -1,4 +1,5 @@
-from storage import ObjStr
+from ... import context
+from shared.storage import ObjStr
 
 
 def process_peering_sets(peering_sets, output_path="./"):

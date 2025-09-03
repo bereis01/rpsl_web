@@ -1,4 +1,5 @@
-from storage import ObjStr
+from ... import context
+from shared.storage import ObjStr
 from .members import process_members
 from .inverted import process_inverted_as, process_inverted_addr, process_inverted_rs
 

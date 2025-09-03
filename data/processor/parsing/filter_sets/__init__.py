@@ -1,4 +1,5 @@
-from storage import ObjStr
+from ... import context
+from shared.storage import ObjStr
 
 
 def process_filter_sets(filter_sets, output_path="./"):

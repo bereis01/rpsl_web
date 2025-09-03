@@ -1,4 +1,5 @@
-from storage import ObjStr
+from ... import context 
+from shared.storage import ObjStr
 from .announcement import process_announcement
 from .inverted import process_as_routes_inverted
 

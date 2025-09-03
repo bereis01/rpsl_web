@@ -1,4 +1,5 @@
-from storage import ObjStr
+from ... import context
+from shared.storage import ObjStr
 from .inverted import process_as_sets_inverted
 from .membership import process_as_set_membership
 

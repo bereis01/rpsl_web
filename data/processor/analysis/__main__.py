@@ -1,8 +1,9 @@
-from storage import ObjStr
+from .. import context
+from shared.storage import ObjStr
 from .relationships import process_relationships
 
-input_path = "./data/"
-output_path = "./data/"
+input_path = "./objects/"
+output_path = "./objects/"
 storage = ObjStr(input_path)
 
 print("***STARTING***\n")

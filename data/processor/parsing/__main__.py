@@ -6,14 +6,14 @@ from .peering_sets import process_peering_sets
 from .filter_sets import process_filter_sets
 from .as_routes import process_as_routes
 
-output_path = "./data/"
+output_path = "./objects/"
 
 # Reads the full data
 # Converts all numeric data types to string
 print("***STARTING***\n")
 print("Reading input data...", end="", flush=True)
 
-f = open("./rpslyzer_output/full.json")
+f = open("./tmp/full.json")
 data = json.load(
     f,
     parse_float=lambda x: str(x),

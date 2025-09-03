@@ -1,6 +1,7 @@
-from storage import ObjStr
+from ... import context
 from .body import process_body
 from .rules import process_rules
+from shared.storage import ObjStr
 from .exchanged_routes import process_exchanged_routes
 
 
@@ -39,3 +40,4 @@ def process_aut_nums(aut_nums, output_path="./"):
     storage.set("exports", exports_obj)
     storage.set("attributes", attributes)
     storage.set("exchanged_routes", exchanged_routes)
+    storage.set("aut_nums", aut_nums)
