@@ -1,6 +1,6 @@
 import requests
 
-ROOT = "http://127.0.0.1:8000/"
+ROOT = "http://localhost:8000/"
 
 
 def get(route: str):
