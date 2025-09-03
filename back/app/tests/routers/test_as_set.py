@@ -1,13 +1,14 @@
-from storage import ObjStr
+from ... import context
 from fastapi import FastAPI
 from ...routers import as_set
+from shared.storage import ObjStr
 from fastapi.testclient import TestClient
 
 # Initializes app
 app = FastAPI()
 
 # Initializes connection to storage
-app.state.storage = ObjStr("./data/")
+app.state.storage = ObjStr("../data/objects")
 
 # Includes all routers
 app.include_router(as_set.router)
