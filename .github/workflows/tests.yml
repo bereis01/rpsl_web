@@ -35,10 +35,10 @@ jobs:
           pip install -r back/requirements.txt
           pip install -r front/requirements.txt
 
-      - name: Run tests on back
+      - name: Run tests on data processor
         run: |
-          cd back
-          pytest processor/tests
+          cd data
+          pytest
           cd ..
 
       - name: Run tests on front
