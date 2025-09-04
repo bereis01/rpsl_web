@@ -1,6 +1,6 @@
 import requests
 
-ROOT = "http://localhost:8000/"
+ROOT = "http://fastapi:8000/"
 
 
 def get(route: str):

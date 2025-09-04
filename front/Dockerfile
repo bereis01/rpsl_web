@@ -7,18 +7,13 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # the application crashes without emitting any logs due to buffering.
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /front
+# Copy all necessary files into the container.
+WORKDIR /rpslweb
+COPY front/ ./front
 
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
-# Leverage a bind mount to requirements.txt to avoid having to copy them into
-# into this layer.
-RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=requirements.txt,target=requirements.txt \
-    python -m pip install -r requirements.txt
-
-# Copy the source code into the container.
-COPY . .
+# Move to app folder and install requirements.
+WORKDIR /rpslweb/front
+RUN pip install -r requirements.txt
 
 # Expose the port that the application listens on.
 EXPOSE 8501
