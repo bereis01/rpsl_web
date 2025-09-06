@@ -1,7 +1,8 @@
+import os
 import requests
 
-ROOT = "http://fastapi:8000/"
+ENDPOINT_ROOT = f"http://{os.getenv("ENDPOINT_ROOT")}:8000/"
 
 
 def get(route: str):
-    return requests.get(ROOT + route)
+    return requests.get(ENDPOINT_ROOT + route)

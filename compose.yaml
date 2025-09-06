@@ -8,6 +8,8 @@ services:
     container_name: fastapi
     ports:
       - "8000:8000"
+    environment:
+      OBJSTR_PATH: "../data/objects"
 
   front:
     build:
@@ -17,3 +19,5 @@ services:
     container_name: streamlit
     ports:
       - "8501:8501"
+    environment:
+      ENDPOINT_ROOT: "fastapi"
