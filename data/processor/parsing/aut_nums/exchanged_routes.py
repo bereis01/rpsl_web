@@ -3,7 +3,7 @@ def process_exchanged_routes(rules):
     exchanged_routes = []
 
     for rule in rules:
-        # Only extracts importex/exported objects
+        # Only extracts imported/exported objects
         # from the followingb types of objects
         if rule["filter"]["type"] == "AddrPrefixSet":
             for addr in rule["filter"]["value"]:
@@ -16,6 +16,7 @@ def process_exchanged_routes(rules):
             "RouteSet",
             "FilterSet",
         ]:
-            exchanged_routes.append(rule["filter"]["value"])
+            if rule["filter"]["value"] not in exchanged_routes:
+                exchanged_routes.append(rule["filter"]["value"])
 
-    return list(set(exchanged_routes))
+    return exchanged_routes
