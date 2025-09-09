@@ -6,7 +6,7 @@ from streamlit import session_state as ss
 def show_results_route_set(query: str):
     # Basic info
     if "route_set" not in ss:
-        ss["route_set"] = backend.get(f"route_set/route_set/{query}").json()
+        ss["route_set"] = backend.get(f"rs/members/{query}").json()
 
     st.header("Basic Info", divider="gray")
     st.write("General information contained within the route set RPSL object.")

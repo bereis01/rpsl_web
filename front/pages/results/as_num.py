@@ -16,7 +16,7 @@ SEARCH_HELP = (
 )
 
 
-def show_results_asn(query: str):
+def show_basic_info(query: str):
     # Basic info
     if "attributes" not in ss:
         ss["attributes"] = backend.get(f"asn/attributes/{query}").json()
@@ -37,21 +37,23 @@ def show_results_asn(query: str):
         ):
             st.text(ss["parsed_attributes"][1])
 
-    ## Getting source data
+    """ # Getting source data
     with st.spinner("Getting source data..."):
         if "aut_num" not in ss:
             ss["aut_num"] = backend.get(f"asn/aut_num/{query}").json()
 
-    ## Showing source data
+    # Showing source data
     with st.expander("Source data"):
         with st.container(
             height=min(ss["aut_num"]["result"]["body"].count("\n") * 30 + 1, 300),
             border=True,
         ):
-            st.text(ss["aut_num"]["result"]["body"])
+            st.text(ss["aut_num"]["result"]["body"]) """
 
     st.divider()
 
+
+def show_relationship_info(query: str):
     # Relationships inference
     st.header("Relationship Inference", divider="gray")
     st.write(
@@ -72,9 +74,9 @@ def show_results_asn(query: str):
                 columns=["AS Numbers"],
             )
         if "exchanged_routes" not in ss:
-            ss["exchanged_routes"] = backend.get(f"asn/exch_routes/{query}").json()[
-                "result"
-            ]
+            ss["exchanged_routes"] = backend.get(
+                f"asn/exchanged_objects/{query}"
+            ).json()["result"]
             ss["exchanged_routes"] = pd.DataFrame.from_dict(
                 {
                     "Imported": [ss["exchanged_routes"]["imports"]],
@@ -184,8 +186,9 @@ def show_results_asn(query: str):
 
     st.divider()
 
-    # Set membership
-    ## Formatting
+
+def show_set_information(query: str):
+    # Formatting
     memb_header, memb_search = st.columns([0.7, 0.3], vertical_alignment="center")
 
     # Key instantiation
@@ -198,12 +201,12 @@ def show_results_asn(query: str):
     if "memb_limit" not in ss:
         ss["memb_limit"] = 10
 
-    ## Header
+    # Header
     with memb_header:
         st.header("AS Set Membership", divider="gray")
     st.write("Information about the AS set membership of the given AS.")
 
-    ## Search bar
+    # Search bar
     with memb_search:
         memb_search = st.text_input("Search", help=SEARCH_HELP, key="memb_text_input")
         if memb_search != ss["memb_search"]:
@@ -212,18 +215,18 @@ def show_results_asn(query: str):
             ss["memb_skip"] = 0
             ss["memb_limit"] = 10
 
-    ## Getting data
+    # Getting data
     with st.spinner("Getting results..."):
         if ss["memb_changed"]:
             ss["membership_page"] = backend.get(
-                f"asn/membership/{query}?skip={ss["memb_skip"]}&limit={ss["memb_limit"]}"
+                f"asset/membership/{query}?skip={ss["memb_skip"]}&limit={ss["memb_limit"]}"
                 + (f"&search={memb_search}" if memb_search else "")
             ).json()
             ss["memb_changed"] = False
         parsed_membership = parse_membership(ss["membership_page"]["result"])
         ss["memb_count"] = ss["membership_page"]["count"]
 
-    ## Showing results
+    # Showing results
     with st.container(
         height=min(int(len(parsed_membership) * 0.75) + 1, 400), border=False
     ):
@@ -234,12 +237,12 @@ def show_results_asn(query: str):
         )
     navigation_controls("memb")
 
-    ## Getting source data
+    # Getting source data
     with st.spinner("Getting source data..."):
         if "membership" not in ss:
-            ss["membership"] = backend.get(f"asn/membership/{query}").json()
+            ss["membership"] = backend.get(f"asset/membership/{query}").json()
 
-    ## Showing source data
+    # Showing source data
     with st.expander("Source data"):
         st.subheader("AS Sets")
         df = pd.DataFrame.from_dict(ss["membership"]["result"], orient="index").astype(
@@ -249,8 +252,9 @@ def show_results_asn(query: str):
 
     st.divider()
 
-    # Announced routes
-    ## Formatting
+
+def show_addr_information(query: str):
+    # Formatting
     route_header, route_search = st.columns([0.7, 0.3], vertical_alignment="center")
 
     # Key instantiation
@@ -263,12 +267,12 @@ def show_results_asn(query: str):
     if "route_limit" not in ss:
         ss["route_limit"] = 10
 
-    ## Header
+    # Header
     with route_header:
         st.header("Originated Prefixes", divider="gray")
     st.write("Information about the address prefixes originated by the given AS.")
 
-    ## Search bar
+    # Search bar
     with route_search:
         route_search = st.text_input("Search", help=SEARCH_HELP, key="route_text_input")
         if route_search != ss["route_search"]:
@@ -277,18 +281,18 @@ def show_results_asn(query: str):
             ss["route_skip"] = 0
             ss["route_limit"] = 10
 
-    ## Getting data
+    # Getting data
     with st.spinner("Getting results..."):
         if ss["route_changed"]:
             ss["announcement_page"] = backend.get(
-                f"asn/announcement/{query}?skip={ss["route_skip"]}&limit={ss["route_limit"]}"
+                f"addr/announcement/{query}?skip={ss["route_skip"]}&limit={ss["route_limit"]}"
                 + (f"&search={route_search}" if route_search else "")
             ).json()
             ss["route_changed"] = False
         parsed_announcement = parse_announcement(ss["announcement_page"]["result"])
         ss["route_count"] = ss["announcement_page"]["count"]
 
-    ## Showing results
+    # Showing results
     with st.container(
         height=min(int(len(parsed_announcement) * 1.25) + 1, 400), border=False
     ):
@@ -299,12 +303,12 @@ def show_results_asn(query: str):
         )
     navigation_controls("route")
 
-    ## Getting source data
+    # Getting source data
     with st.spinner("Getting source data..."):
         if "announcement" not in ss:
-            ss["announcement"] = backend.get(f"asn/announcement/{query}").json()
+            ss["announcement"] = backend.get(f"addr/announcement/{query}").json()
 
-    ## Showing source data
+    # Showing source data
     with st.expander("Source data"):
         st.subheader("AS Routes")
         df = pd.DataFrame.from_dict(
@@ -313,3 +317,10 @@ def show_results_asn(query: str):
         st.dataframe(df)
 
     st.divider()
+
+
+def show_results_asn(query: str):
+    show_basic_info(query)
+    show_relationship_info(query)
+    show_set_information(query)
+    show_addr_information(query)

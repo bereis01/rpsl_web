@@ -6,7 +6,7 @@ from streamlit import session_state as ss
 def show_results_prefix(query: str):
     # Announced by
     if "announced_by" not in ss:
-        ss["announced_by"] = backend.get(f"prefix/announced_by/{query}").json()
+        ss["announced_by"] = backend.get(f"addr/announced_by/{query}").json()
 
     st.header("Announced By", divider="gray")
 

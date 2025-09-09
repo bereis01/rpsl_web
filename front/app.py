@@ -3,10 +3,10 @@ from utils import backend
 from utils.state import clear_cache
 from utils.regex import process_query
 from streamlit import session_state as ss
-from pages.results.asn import show_results_asn
 from pages.results.as_set import show_results_as_set
-from pages.results.prefix import show_results_prefix
+from front.pages.results.as_num import show_results_asn
 from pages.results.route_set import show_results_route_set
+from front.pages.results.addr_prefix import show_results_prefix
 
 st.set_page_config(
     page_title="rpslweb",
