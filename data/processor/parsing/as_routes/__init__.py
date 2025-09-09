@@ -14,9 +14,9 @@ def process_as_routes(as_routes, storage):
     # Persists results
     storage.set_key("metadata", "addr_prefixes", prefixes)
     del prefixes
-    storage.set("addr-announced", as_routes)
+    storage.set("addr-announces", as_routes)
     del as_routes
-    storage.set("addr-announced_inverted", as_routes_inverted)
+    storage.set("addr-announced_by", as_routes_inverted)
     del as_routes_inverted
     storage.set("addr-announcement", announcement)
     del announcement

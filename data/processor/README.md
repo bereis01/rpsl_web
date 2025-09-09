@@ -14,10 +14,15 @@ Extracted from the keys of 'aut_nums'.
 List of unique AS set names in the database.
 Extracted from the keys of 'as_sets'.
 
-### prefixes
+### addr_prefixes
 
 List of unique prefixes in the database.
 Extracted from the keys of 'as_routes'.
+
+### route_sets
+
+List of unique route set names in the database.
+Extracted from the keys of 'route_sets'.
 
 ## asn
 
@@ -114,7 +119,7 @@ Keys are AS numbers as strings. Returns a list of the following object.
     'export': RULE_OBJ,
 }
 ```
-## as
+## asset
 
 ### members
 
@@ -200,7 +205,7 @@ Keys are filter set names as strings. Returns the following object.
 
 ## addr
 
-### announced
+### announces
 
 Keys are AS numbers as strings. Returns the following object.
 
@@ -210,7 +215,7 @@ Keys are AS numbers as strings. Returns the following object.
 }
 ```
 
-### announced_inverted
+### announced_by
 
 Keys are routes/prefixes as strings. Returns the following object.
 

@@ -17,7 +17,7 @@ app.include_router(asn.router)
 client = TestClient(app)
 
 
-def test_get_asn():
+def test_check_asn_exists():
     # Existent entry
     response = client.get("/asn/174")
 
@@ -31,22 +31,6 @@ def test_get_asn():
     assert response.status_code == 200
     assert list(response.json().keys()) == ["result"]
     assert response.json()["result"] == False
-
-
-def test_get_asn_aut_num():
-    # Existent entry
-    response = client.get("/asn/aut_num/174")
-
-    assert response.status_code == 200
-    assert list(response.json().keys()) == ["result"]
-    assert response.json()["result"] != None
-
-    # Non-existent entry
-    response = client.get("/asn/aut_num/-1")
-
-    assert response.status_code == 200
-    assert list(response.json().keys()) == ["result"]
-    assert response.json()["result"] == None
 
 
 def test_get_asn_attributes():
@@ -65,48 +49,16 @@ def test_get_asn_attributes():
     assert response.json()["result"] == None
 
 
-def test_get_asn_summary():
+def test_get_asn_exchanged_objects():
     # Existent entry
-    response = client.get("/asn/summary/174")
+    response = client.get("/asn/exchanged_objects/174")
 
     assert response.status_code == 200
     assert list(response.json().keys()) == ["result"]
     assert response.json()["result"] != None
 
     # Non-existent entry
-    response = client.get("/asn/summary/-1")
-
-    assert response.status_code == 200
-    assert list(response.json().keys()) == ["result"]
-    assert response.json()["result"] == None
-
-
-def test_get_asn_exch_routes():
-    # Existent entry
-    response = client.get("/asn/exch_routes/174")
-
-    assert response.status_code == 200
-    assert list(response.json().keys()) == ["result"]
-    assert response.json()["result"] != None
-
-    # Non-existent entry
-    response = client.get("/asn/exch_routes/-1")
-
-    assert response.status_code == 200
-    assert list(response.json().keys()) == ["result"]
-    assert response.json()["result"] == None
-
-
-def test_get_asn_tor():
-    # Existent entry
-    response = client.get("/asn/tor/174")
-
-    assert response.status_code == 200
-    assert list(response.json().keys()) == ["count", "skip", "limit", "result"]
-    assert response.json()["result"] != None
-
-    # Non-existent entry
-    response = client.get("/asn/tor/-1")
+    response = client.get("/asn/exchanged_objects/-1")
 
     assert response.status_code == 200
     assert list(response.json().keys()) == ["result"]
@@ -145,32 +97,32 @@ def test_get_asn_exports():
     assert response.json()["result"] == None
 
 
-def test_get_asn_membership():
+def test_get_asn_summary():
     # Existent entry
-    response = client.get("/asn/membership/174")
+    response = client.get("/asn/summary/174")
 
     assert response.status_code == 200
-    assert list(response.json().keys()) == ["count", "skip", "limit", "result"]
+    assert list(response.json().keys()) == ["result"]
     assert response.json()["result"] != None
 
     # Non-existent entry
-    response = client.get("/asn/membership/-1")
+    response = client.get("/asn/summary/-1")
 
     assert response.status_code == 200
     assert list(response.json().keys()) == ["result"]
     assert response.json()["result"] == None
 
 
-def test_get_asn_announcement():
+def test_get_asn_tor():
     # Existent entry
-    response = client.get("/asn/announcement/174")
+    response = client.get("/asn/tor/174")
 
     assert response.status_code == 200
     assert list(response.json().keys()) == ["count", "skip", "limit", "result"]
     assert response.json()["result"] != None
 
     # Non-existent entry
-    response = client.get("/asn/announcement/-1")
+    response = client.get("/asn/tor/-1")
 
     assert response.status_code == 200
     assert list(response.json().keys()) == ["result"]

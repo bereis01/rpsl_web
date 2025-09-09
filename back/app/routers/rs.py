@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Request
 
 # Initializes router
-router = APIRouter(prefix="/route_set")
+router = APIRouter(prefix="/rs")
 
 
 @router.get("/{route_set}")
-def route_set_exist(request: Request, route_set: str):
+def check_rs_exists(request: Request, route_set: str):
     result = request.app.state.storage.get_key("metadata", "route_sets")
 
     if route_set in result:
@@ -14,8 +14,8 @@ def route_set_exist(request: Request, route_set: str):
         return {"result": False}
 
 
-@router.get("/route_set/{route_set}")
-def get_route_set(request: Request, route_set: str):
-    result = request.app.state.storage.get("route_sets", route_set)
+@router.get("/members/{route_set}")
+def get_members(request: Request, route_set: str):
+    result = request.app.state.storage.get("rs-members", route_set)
 
     return {"result": result}
