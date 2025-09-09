@@ -1,4 +1,4 @@
-from ....parsing.aut_nums.exchanged_routes import process_exchanged_routes
+from ....parsing.aut_nums.exchanged_objects import process_exchanged_objects
 
 rules_example = [
     {
@@ -43,8 +43,8 @@ rules_example = [
 ]
 
 
-def test_process_exchanged_routes():
-    result = process_exchanged_routes(rules_example)
+def test_process_exchanged_objects():
+    result = process_exchanged_objects(rules_example)
 
     assert len(result) == 2
     assert result[0] == "Any"

@@ -1,13 +1,8 @@
-from ... import context 
-from shared.storage import ObjStr
 from .announcement import process_announcement
 from .inverted import process_as_routes_inverted
 
 
-def process_as_routes(as_routes, output_path="./"):
-    # Instantiates storage connection
-    storage = ObjStr(output_path)
-
+def process_as_routes(as_routes, storage):
     # Encapsulates the value into a dedicated object
     as_routes = {k: {"routes": v} for k, v in as_routes.items()}
 
@@ -19,9 +14,9 @@ def process_as_routes(as_routes, output_path="./"):
     # Persists results
     storage.set_key("metadata", "prefixes", prefixes)
     del prefixes
-    storage.set("as_routes", as_routes)
+    storage.set("addr-announced", as_routes)
     del as_routes
-    storage.set("as_routes_inverted", as_routes_inverted)
+    storage.set("addr-announced_inverted", as_routes_inverted)
     del as_routes_inverted
-    storage.set("announcement", announcement)
+    storage.set("addr-announcement", announcement)
     del announcement
