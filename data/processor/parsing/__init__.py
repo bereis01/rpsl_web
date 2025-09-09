@@ -8,7 +8,7 @@ from .as_routes import process_as_routes
 
 def process(key: str, data, storage):
     match key:
-        case "aut_num":
+        case "aut_nums":
             process_aut_nums(data, storage)
         case "as_sets":
             process_as_sets(data, storage)

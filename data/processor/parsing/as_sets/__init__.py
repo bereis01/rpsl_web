@@ -10,6 +10,6 @@ def process_as_sets(as_sets, storage):
 
     # Writes the results to each bucket
     storage.set_key("metadata", "as_sets", as_sets_names)
-    storage.set("as-members", as_sets)
-    storage.set("as-members_inverted", as_sets_inverted)
-    storage.set("as-membership", membership)
+    storage.set("asset-members", as_sets)
+    storage.set("asset-members_inverted", as_sets_inverted)
+    storage.set("asset-membership", membership)
