@@ -1,7 +1,7 @@
-from ....parsing.route_sets.inverted import (
-    process_inverted_as,
-    process_inverted_addr,
-    process_inverted_rs,
+from ....parsing.route_sets.members_inverted import (
+    process_members_inverted_as,
+    process_members_inverted_addr,
+    process_members_inverted_rs,
 )
 
 route_sets_example = {
@@ -58,24 +58,24 @@ route_sets_example = {
 }
 
 
-def test_process_inverted_as():
-    result = process_inverted_as(route_sets_example)
+def test_process_members_inverted_as():
+    result = process_members_inverted_as(route_sets_example)
 
     assert len(list(result.keys())) == 2
     assert list(result.keys())[0] == "AS123"
     assert result[list(result.keys())[1]] == ["rs-peer-4-24-152-26"]
 
 
-def test_process_inverted_addr():
-    result = process_inverted_addr(route_sets_example)
+def test_process_members_inverted_addr():
+    result = process_members_inverted_addr(route_sets_example)
 
     assert len(list(result.keys())) == 4
     assert list(result.keys())[0] == "192.193.176.0/24"
     assert result[list(result.keys())[3]] == ["rs-peer-4-24-152-30"]
 
 
-def test_process_inverted_rs():
-    result = process_inverted_rs(route_sets_example)
+def test_process_members_inverted_rs():
+    result = process_members_inverted_rs(route_sets_example)
 
     assert len(list(result.keys())) == 2
     assert list(result.keys())[0] == "rs-pingdash-v6-48"

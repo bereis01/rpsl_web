@@ -1,6 +1,6 @@
 # Generates a dictionary in which each key is an AS name
 # and its value is the list of route_sets that include it
-def process_inverted_as(route_sets):
+def process_members_inverted_as(route_sets):
     processed_inverted_as = {}
 
     for key in route_sets.keys():
@@ -18,7 +18,7 @@ def process_inverted_as(route_sets):
 
 # Generates a dictionary in which each key is an address prefix
 # and its value is the list of route_sets that include it
-def process_inverted_addr(route_sets):
+def process_members_inverted_addr(route_sets):
     processed_inverted_addr = {}
 
     for key in route_sets.keys():
@@ -36,7 +36,7 @@ def process_inverted_addr(route_sets):
 
 # Generates a dictionary in which each key is a route_set name
 # and its value is the list of route_sets that include it
-def process_inverted_rs(route_sets):
+def process_members_inverted_rs(route_sets):
     processed_inverted_rs = {}
 
     for key in route_sets.keys():

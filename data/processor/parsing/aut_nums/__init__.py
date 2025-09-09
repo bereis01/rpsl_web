@@ -1,5 +1,5 @@
-from .body import process_body
 from .rules import process_rules
+from .attributes import process_attributes
 from .exchanged_objects import process_exchanged_objects
 
 
@@ -26,7 +26,7 @@ def process_aut_nums(aut_nums, storage):
         exchanged_objects[asn]["exports"] = process_exchanged_objects(exports_obj[asn])
 
         # Processes body attribute
-        attributes[asn] = process_body(aut_nums[asn]["body"])
+        attributes[asn] = process_attributes(aut_nums[asn]["body"])
 
     # Writes the results to each bucket
     storage.set_key("metadata", "as_nums", asns)

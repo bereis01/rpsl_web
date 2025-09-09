@@ -1,4 +1,4 @@
-def process_body(body: str):
+def process_attributes(body: str):
     # Splits into individual lines
     # Each one corresponds to a certain attribute
     attributes = body.split("\n")

@@ -73,7 +73,7 @@ exports_example = {
 }
 
 
-def test_process_imports():
+def test_process_rules():
     result_imports = process_rules(imports_example)
 
     assert len(result_imports) == 4

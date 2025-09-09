@@ -1,4 +1,4 @@
-from ....parsing.as_sets.inverted import process_as_sets_inverted
+from ....parsing.as_sets.members_inverted import process_members_inverted
 
 
 as_sets_simple = {
@@ -11,7 +11,7 @@ as_sets_simple = {
 }
 
 
-def test_process_as_sets_inverted():
-    result_simple = process_as_sets_inverted(as_sets_simple)
+def test_process_members_inverted():
+    result_simple = process_members_inverted(as_sets_simple)
 
     assert result_simple == {"204617": ["m#as-xipe1#SBMT"]}
