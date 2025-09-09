@@ -1,7 +1,8 @@
 import json
 import argparse
-from . import context, parsing
+from . import context
 from shared.storage import ObjStr
+from . import parsing, analysis
 
 # Instantiates connection to storage
 output_path = "./objects/"
@@ -50,11 +51,24 @@ def parse():
         print("DONE")
 
     print("\n***FINISHING***")
+    del data
 
 
 # Function for generating more data on top of RPSLyzer
 def analyse():
-    pass
+    print("***STARTING***\n")
+
+    # Processes the 'aut_nums' key
+    print("Processing relationships...", end="", flush=True)
+    as_nums = storage.get_key("metadata", "as_nums")
+    imports = storage.get("asn-imports")
+    exports = storage.get("asn-exports")
+    analysis.process_relationships(storage, as_nums, imports, exports)
+
+    print("DONE")
+
+    print("\n***FINISHING***")
+    del imports, exports, as_nums
 
 
 # Executes actions based on arguments
