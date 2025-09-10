@@ -1,3 +1,4 @@
+import os
 import json
 import argparse
 from . import context
@@ -5,8 +6,7 @@ from shared.storage import ObjStr
 from . import parsing, analysis
 
 # Instantiates connection to storage
-output_path = "./objects/"
-storage = ObjStr(output_path)
+storage = ObjStr(os.getenv("DATA_OUTPUT_PATH"))
 
 # Parses command line arguments
 parser = argparse.ArgumentParser(

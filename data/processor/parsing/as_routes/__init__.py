@@ -9,7 +9,7 @@ def process_as_routes(as_routes, storage):
     # Processes inverted version
     addr_prefixes = list(as_routes_inverted.keys())
     announced_by = process_announced_by(as_routes)
-    announcement = process_announcement(as_routes, as_routes_inverted)
+    announcement = process_announcement(as_routes, announced_by)
 
     # Persists results
     storage.set_key("metadata", "addr_prefixes", addr_prefixes)
