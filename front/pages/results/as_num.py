@@ -199,7 +199,7 @@ def show_set_information(query: str):
     if "memb_skip" not in ss:
         ss["memb_skip"] = 0
     if "memb_limit" not in ss:
-        ss["memb_limit"] = 10
+        ss["memb_limit"] = 5
 
     # Header
     with memb_header:
@@ -213,7 +213,6 @@ def show_set_information(query: str):
             ss["memb_search"] = memb_search
             ss["memb_changed"] = True
             ss["memb_skip"] = 0
-            ss["memb_limit"] = 10
 
     # Getting data
     with st.spinner("Getting results..."):
@@ -227,9 +226,7 @@ def show_set_information(query: str):
         ss["memb_count"] = ss["membership_page"]["count"]
 
     # Showing results
-    with st.container(
-        height=min(int(len(parsed_membership) * 0.75) + 1, 400), border=False
-    ):
+    with st.container(border=False):
         st.write(
             parsed_membership
             if parsed_membership
@@ -268,7 +265,7 @@ def show_addr_information(query: str):
     if "route_skip" not in ss:
         ss["route_skip"] = 0
     if "route_limit" not in ss:
-        ss["route_limit"] = 10
+        ss["route_limit"] = 5
 
     # Header
     with route_header:
@@ -282,7 +279,6 @@ def show_addr_information(query: str):
             ss["route_search"] = route_search
             ss["route_changed"] = True
             ss["route_skip"] = 0
-            ss["route_limit"] = 10
 
     # Getting data
     with st.spinner("Getting results..."):
@@ -296,9 +292,7 @@ def show_addr_information(query: str):
         ss["route_count"] = ss["announcement_page"]["count"]
 
     # Showing results
-    with st.container(
-        height=min(int(len(parsed_announcement) * 1.25) + 1, 400), border=False
-    ):
+    with st.container(border=False):
         st.write(
             parsed_announcement
             if parsed_announcement

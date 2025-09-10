@@ -187,15 +187,19 @@ def parse_membership(membership, search: str = None):
 
         if members:
             membership_str += f"- **Members:** AS{members[0]}"
-            for member in members[1:]:
+            for member in members[1:5]:
                 membership_str += f", AS{member}"
+            if len(members) > 5:
+                membership_str += ", ..."
 
         membership_str += "\n"
 
         if set_members:
             membership_str += f"- **Set members:** {set_members[0]}"
-            for set_member in set_members[1:]:
+            for set_member in set_members[1:5]:
                 membership_str += f", {set_member}"
+            if len(set_members) > 5:
+                membership_str += ", ..."
 
         membership_str += "\n\n"
 
@@ -219,8 +223,10 @@ def parse_announcement(announcement, search: str = None):
 
         if announced_by:
             announcement_str += f"- **Announced by:** AS{announced_by[0]}"
-            for asn in announced_by[1:]:
+            for asn in announced_by[1:5]:
                 announcement_str += f", AS{asn}"
+            if len(announced_by) > 5:
+                announcement_str += ", ..."
 
         announcement_str += "\n\n"
 
