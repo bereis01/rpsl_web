@@ -1,5 +1,8 @@
 # Parses a dictionary of attributes
 def parse_attributes(attributes):
+    if attributes == None:
+        return "*No attributes to be shown*\n", "*No remarks to be shown*\n"
+
     attributes_str = ""
 
     attributes_str += "**Name:** " + attributes["as-name"] + "\n\n"
@@ -41,7 +44,7 @@ def parse_attributes(attributes):
             "**Changes should be notified to:** " + attributes["notify"] + "\n\n"
         )
 
-    remarks_str = "No remarks to be shown\n"
+    remarks_str = "*No remarks to be shown*\n"
     if "remarks" in attributes.keys():
         remarks_str = attributes["remarks"]
 
@@ -50,6 +53,9 @@ def parse_attributes(attributes):
 
 # Parses a list of relationship objects
 def parse_relationships(relationships):
+    if relationships == None:
+        return "*No relationship information to be shown*\n"
+
     relationship_str = ""
 
     for relationship in relationships:
@@ -169,6 +175,9 @@ def parse_relationships(relationships):
 
 
 def parse_membership(membership, search: str = None):
+    if membership == None:
+        return "*No set membership information to be shown*\n"
+
     full_membership_str = ""
     for as_set, value in membership.items():
         members = value["members"]
@@ -199,6 +208,9 @@ def parse_membership(membership, search: str = None):
 
 
 def parse_announcement(announcement, search: str = None):
+    if announcement == None:
+        return "*No originated prefixes information to be shown*\n"
+
     full_announcement_str = ""
     for route, value in announcement.items():
         announced_by = value["announced_by"]

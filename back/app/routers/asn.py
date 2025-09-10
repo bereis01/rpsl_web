@@ -38,7 +38,7 @@ def get_imports(request: Request, asn: str, skip: int = None, limit: int = None)
 
     # If nothing is found
     if result == None:
-        return {"result": result}
+        return {"count": 0, "skip": 0, "limit": 0, "result": result}
 
     if not skip:
         skip = 0
@@ -59,7 +59,7 @@ def get_exports(request: Request, asn: str, skip: int = None, limit: int = None)
 
     # If nothing is found
     if result == None:
-        return {"result": result}
+        return {"count": 0, "skip": 0, "limit": 0, "result": result}
 
     if not skip:
         skip = 0
@@ -103,7 +103,7 @@ def get_relationships(
 
     # If nothing is found
     if result == None:
-        return {"result": result}
+        return {"count": 0, "skip": 0, "limit": 0, "result": result}
 
     # Applies search
     if search:

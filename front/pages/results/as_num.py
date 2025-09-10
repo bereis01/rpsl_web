@@ -245,10 +245,13 @@ def show_set_information(query: str):
     # Showing source data
     with st.expander("Source data"):
         st.subheader("AS Sets")
-        df = pd.DataFrame.from_dict(ss["membership"]["result"], orient="index").astype(
-            str
-        )
-        st.dataframe(df)
+        if ss["membership"]["result"] != None:
+            df = pd.DataFrame.from_dict(
+                ss["membership"]["result"], orient="index"
+            ).astype(str)
+            st.dataframe(df)
+        else:
+            st.write("*There is not an entry for this object in the database*\n")
 
     st.divider()
 
@@ -311,10 +314,13 @@ def show_addr_information(query: str):
     # Showing source data
     with st.expander("Source data"):
         st.subheader("AS Routes")
-        df = pd.DataFrame.from_dict(
-            ss["announcement"]["result"], orient="index"
-        ).astype(str)
-        st.dataframe(df)
+        if ss["announcement"]["result"] != None:
+            df = pd.DataFrame.from_dict(
+                ss["announcement"]["result"], orient="index"
+            ).astype(str)
+            st.dataframe(df)
+        else:
+            st.write("*There is not an entry for this object in the database*\n")
 
     st.divider()
 
