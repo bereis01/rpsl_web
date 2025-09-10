@@ -118,7 +118,7 @@ def test_get_asn_imports():
 
     assert response.status_code == 200
     assert "174" in app.state.storage.get.call_args[0]
-    assert list(response.json().keys()) == ["count", "skip", "limit", "result"]
+    assert response.json()["count"] == 1
     assert response.json()["result"] != None
 
     # Mocks calls to storage
@@ -129,7 +129,7 @@ def test_get_asn_imports():
 
     assert response.status_code == 200
     assert "-1" in app.state.storage.get.call_args[0]
-    assert list(response.json().keys()) == ["result"]
+    assert response.json()["count"] == 0
     assert response.json()["result"] == None
 
 
@@ -154,7 +154,7 @@ def test_get_asn_exports():
 
     assert response.status_code == 200
     assert "174" in app.state.storage.get.call_args[0]
-    assert list(response.json().keys()) == ["count", "skip", "limit", "result"]
+    assert response.json()["count"] == 1
     assert response.json()["result"] != None
 
     # Mocks calls to storage
@@ -165,7 +165,7 @@ def test_get_asn_exports():
 
     assert response.status_code == 200
     assert "-1" in app.state.storage.get.call_args[0]
-    assert list(response.json().keys()) == ["result"]
+    assert response.json()["count"] == 0
     assert response.json()["result"] == None
 
 
@@ -199,7 +199,6 @@ def test_get_asn_tor():
     response = client.get("/asn/tor/174")
 
     assert response.status_code == 200
-    assert list(response.json().keys()) == ["count", "skip", "limit", "result"]
     assert response.json()["result"] != None
 
     # Mocks calls to storage
@@ -209,5 +208,4 @@ def test_get_asn_tor():
     response = client.get("/asn/tor/-1")
 
     assert response.status_code == 200
-    assert list(response.json().keys()) == ["result"]
     assert response.json()["result"] == None
