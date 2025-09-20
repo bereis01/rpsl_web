@@ -7,6 +7,8 @@ db/workbench.ipynb
 back/workbench.ipynb
 front/workbench.ipynb
 workbench.ipynb
+workbench_rpslyzer.ipynb
+workbench_rpslweb.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
