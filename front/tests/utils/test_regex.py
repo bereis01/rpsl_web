@@ -52,17 +52,17 @@ prefix_3 = "192.168.0.1/12"
 def test_process_query_prefix():
     result_1 = process_query(prefix_1)
 
-    assert result_1[0] == "prefix"
+    assert result_1[0] == "addr"
     assert result_1[1] == "255.255.255.255"
 
     result_2 = process_query(prefix_2)
 
-    assert result_2[0] == "prefix"
+    assert result_2[0] == "addr"
     assert result_2[1] == "0.0.0.0"
 
     result_3 = process_query(prefix_3)
 
-    assert result_3[0] == "prefix"
+    assert result_3[0] == "addr"
     assert result_3[1] == "192.168.0.1\\12"
 
 
@@ -74,17 +74,17 @@ route_set_3 = "rS-dmksa;_1"
 def test_process_query_route_set():
     result_1 = process_query(route_set_1)
 
-    assert result_1[0] == "routeset"
+    assert result_1[0] == "rs"
     assert result_1[1] == "rs-aaaaa9"
 
     result_2 = process_query(route_set_2)
 
-    assert result_2[0] == "routeset"
+    assert result_2[0] == "rs"
     assert result_2[1] == "RS-123A"
 
     result_3 = process_query(route_set_3)
 
-    assert result_3[0] == "routeset"
+    assert result_3[0] == "rs"
     assert result_3[1] == "rS-dmksa;_1"
 
 

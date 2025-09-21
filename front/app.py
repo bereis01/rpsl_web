@@ -3,10 +3,10 @@ from utils import backend
 from utils.state import clear_cache
 from utils.regex import process_query
 from streamlit import session_state as ss
-from pages.results.as_num import show_results_asn
-from pages.results.as_set import show_results_as_set
-from pages.results.addr_prefix import show_results_prefix
-from pages.results.route_set import show_results_route_set
+from pages.results.asn import show_results_asn
+from pages.results.addr import show_results_prefix
+from pages.results.asset import show_results_as_set
+from pages.results.rs import show_results_route_set
 
 st.set_page_config(
     page_title="rpslweb",
@@ -73,25 +73,25 @@ else:
                     st.title(f"No results for AS{query}")
             case "asset":
                 r = backend.get(
-                    f"as_set/{processed_query}"
+                    f"asset/{processed_query}"
                 )  # Checks if as_set is in database
                 if r.json()["result"]:
                     st.title(f"Results for {processed_query}")
                     show_results_as_set(processed_query)
                 else:
                     st.title(f"No results for {query}")
-            case "prefix":
+            case "addr":
                 r = backend.get(
-                    f"prefix/{processed_query}"
+                    f"addr/{processed_query}"
                 )  # Checks if prefix is in database
                 if r.json()["result"]:
                     st.title(f"Results for {processed_query}")
                     show_results_prefix(processed_query)
                 else:
                     st.title(f"No results for {query}")
-            case "routeset":
+            case "rs":
                 r = backend.get(
-                    f"route_set/{processed_query}"
+                    f"rs/{processed_query}"
                 )  # Checks if route_set is in database
                 if r.json()["result"]:
                     st.title(f"Results for {processed_query}")

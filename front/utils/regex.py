@@ -36,7 +36,7 @@ def process_query(query: str):
     # Evaluates the query's type according to regular expressions
     query_matched = match_route_set_name(query)
     if query_matched:
-        return "routeset", query_matched.string
+        return "rs", query_matched.string
 
     query_matched = match_as_number(query)
     if query_matched:
@@ -50,6 +50,6 @@ def process_query(query: str):
     # into the backend endpoint address
     query_matched = match_address_prefix(query)
     if query_matched:
-        return "prefix", query_matched.string.replace("/", "\\")
+        return "addr", query_matched.string.replace("/", "\\")
 
     return "invalid", None
