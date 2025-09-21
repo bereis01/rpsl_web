@@ -1,5 +1,5 @@
 from .rules import process_rules
-from .attributes import process_attributes
+from ..shared.attributes import process_attributes
 from .exchanged_objects import process_exchanged_objects
 
 

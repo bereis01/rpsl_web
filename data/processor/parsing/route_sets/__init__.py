@@ -4,6 +4,7 @@ from .members_inverted import (
     process_members_inverted_addr,
     process_members_inverted_rs,
 )
+from ..shared.attributes import process_attributes
 
 
 def process_route_sets(route_sets, storage):
@@ -12,9 +13,13 @@ def process_route_sets(route_sets, storage):
     storage.set_key("metadata", "route_sets", route_sets_names)
     del route_sets_names
 
-    # Processes each member of each route set
-    for key in route_sets.keys():
-        route_sets[key]["members"] = process_members(route_sets[key]["members"])
+    # Aggregates the raw data
+    attributes = {}
+    for route_set in route_sets.keys():
+        route_sets[route_set]["members"] = process_members(
+            route_sets[route_set]["members"]
+        )
+        attributes[route_set] = process_attributes(route_sets[route_set]["body"])
 
     # Inverts the route_sets object in terms of AS names and address prefixes
     inverted_as = process_members_inverted_as(route_sets)
@@ -31,3 +36,4 @@ def process_route_sets(route_sets, storage):
 
     # Writes the dictionary to a bucket
     storage.set("rs-members", route_sets)
+    storage.set("rs-attributes", attributes)
