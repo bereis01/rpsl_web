@@ -5,7 +5,8 @@ def parse_attributes(attributes):
 
     attributes_str = ""
 
-    attributes_str += "**Name:** " + attributes["as-name"] + "\n\n"
+    if "as-name" in attributes.keys():
+        attributes_str += "**Name:** " + attributes["as-name"] + "\n\n"
 
     if "descr" in attributes.keys():
         attributes_str += "**Description:** " + attributes["descr"] + "\n\n"
