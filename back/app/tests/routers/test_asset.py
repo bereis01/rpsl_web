@@ -37,6 +37,40 @@ def test_check_asset_exists():
     assert response.json()["result"] == False
 
 
+def test_get_asset_attributes():
+    # Mocks calls to storage
+    app.state.storage.get = Mock(
+        return_value={
+            "descr": "Lorem Ipsum",
+            "org": "Lorem Ipsum",
+            "admin-c": "Lorem Ipsum",
+            "tech-c": "Lorem Ipsum",
+            "mnt-by": "Lorem Ipsum",
+            "changed": "Lorem Ipsum",
+            "source": "Lorem Ipsum",
+        }
+    )
+
+    # Existent entry
+    response = client.get("/asset/attributes/AS-CUSTOMERS")
+
+    assert response.status_code == 200
+    assert "AS-CUSTOMERS" in app.state.storage.get.call_args[0]
+    assert list(response.json().keys()) == ["result"]
+    assert response.json()["result"] != None
+
+    # Mocks calls to storage
+    app.state.storage.get = Mock(return_value=None)
+
+    # Non-existent entry
+    response = client.get("/asset/attributes/RS-ROUTES")
+
+    assert response.status_code == 200
+    assert "RS-ROUTES" in app.state.storage.get.call_args[0]
+    assert list(response.json().keys()) == ["result"]
+    assert response.json()["result"] == None
+
+
 def test_get_asset_members():
     # Mocks calls to storage
     app.state.storage.get = Mock(

@@ -15,6 +15,13 @@ def check_asset_exist(request: Request, as_set: str):
         return {"result": False}
 
 
+@router.get("/attributes/{as_set}")
+def get_attributes(request: Request, as_set: str):
+    result = request.app.state.storage.get("asset-attributes", as_set)
+
+    return {"result": result}
+
+
 @router.get("/members/{as_set}")
 def get_members(request: Request, as_set: str):
     result = request.app.state.storage.get("asset-members", as_set)

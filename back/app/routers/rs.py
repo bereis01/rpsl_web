@@ -14,6 +14,13 @@ def check_rs_exists(request: Request, route_set: str):
         return {"result": False}
 
 
+@router.get("/attributes/{route_set}")
+def get_attributes(request: Request, route_set: str):
+    result = request.app.state.storage.get("rs-attributes", route_set)
+
+    return {"result": result}
+
+
 @router.get("/members/{route_set}")
 def get_members(request: Request, route_set: str):
     result = request.app.state.storage.get("rs-members", route_set)

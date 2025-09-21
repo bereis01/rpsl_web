@@ -37,6 +37,39 @@ def test_check_rs_exists():
     assert response.json()["result"] == False
 
 
+def test_get_rs_attributes():
+    # Mocks calls to storage
+    app.state.storage.get = Mock(
+        return_value={
+            "descr": "Lorem Ipsum",
+            "admin-c": "Lorem Ipsum",
+            "tech-c": "Lorem Ipsum",
+            "mnt-by": "Lorem Ipsum",
+            "changed": "Lorem Ipsum",
+            "source": "Lorem Ipsum",
+        }
+    )
+
+    # Existent entry
+    response = client.get("/rs/attributes/rs-peers")
+
+    assert response.status_code == 200
+    assert "rs-peers" in app.state.storage.get.call_args[0]
+    assert list(response.json().keys()) == ["result"]
+    assert response.json()["result"] != None
+
+    # Mocks calls to storage
+    app.state.storage.get = Mock(return_value=None)
+
+    # Non-existent entry
+    response = client.get("/rs/attributes/AS-CUSTOMERS")
+
+    assert response.status_code == 200
+    assert "AS-CUSTOMERS" in app.state.storage.get.call_args[0]
+    assert list(response.json().keys()) == ["result"]
+    assert response.json()["result"] == None
+
+
 def test_get_rs_members():
     # Mocks calls to storage
     app.state.storage.get = Mock(
