@@ -1,6 +1,7 @@
 # Data files
 data/objects
 data/tmp
+tmp/
 
 # Draft files
 db/workbench.ipynb
