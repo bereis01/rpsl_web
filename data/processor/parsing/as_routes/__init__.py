@@ -3,9 +3,6 @@ from .announced_by import process_announced_by
 
 
 def process_as_routes(as_routes, storage):
-    # Encapsulates the value into a dedicated object
-    as_routes = {k: {"routes": v} for k, v in as_routes.items()}
-
     # Processes inverted version
     announced_by = process_announced_by(as_routes)
     addr_prefixes = list(announced_by.keys())

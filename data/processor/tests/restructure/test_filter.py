@@ -1,4 +1,4 @@
-from ....parsing.aut_nums.rules.filter import process_filter
+from ...restructuring.rules.filter import process_filter
 
 
 filter_simple = {"AsNum": [123, "NoOp"]}

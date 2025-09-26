@@ -121,6 +121,17 @@ Keys are AS numbers as strings. Returns a list of the following object.
 ```
 ## asset
 
+### attributes
+
+Keys are AS set names as strings. Returns the following object.
+
+```json
+{
+    'descr': Str,
+    ...
+}
+```
+
 ### members
 
 Keys are AS set names as strings. Returns the following object.
@@ -143,6 +154,17 @@ Keys are AS numbers as strings. Returns list of strings refering to AS sets in w
 Keys are AS numbers as strings. Inside each, there are keys corresponding to AS set names of which the corresponding AS number is a member of. Inside each, there is the corresponding as_set object.
 
 ## rs
+
+### attributes
+
+Keys are route set names as strings. Returns the following object.
+
+```json
+{
+    'descr': Str,
+    ...
+}
+```
 
 ### members
 

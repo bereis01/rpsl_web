@@ -1,4 +1,3 @@
-from .rules import process_rules
 from ..shared.attributes import process_attributes
 from .exchanged_objects import process_exchanged_objects
 
@@ -16,13 +15,11 @@ def process_aut_nums(aut_nums, storage):
         exchanged_objects[asn] = {"imports": [], "exports": []}
 
         # Processes import attribute
-        imports = aut_nums[asn].pop("imports", None)
-        imports_obj[asn] = process_rules(imports)
+        imports_obj[asn] = aut_nums[asn].pop("imports", None)
         exchanged_objects[asn]["imports"] = process_exchanged_objects(imports_obj[asn])
 
         # Processes export attribute
-        exports = aut_nums[asn].pop("exports", None)
-        exports_obj[asn] = process_rules(exports)
+        exports_obj[asn] = aut_nums[asn].pop("exports", None)
         exchanged_objects[asn]["exports"] = process_exchanged_objects(exports_obj[asn])
 
         # Processes body attribute

@@ -1,5 +1,5 @@
-from ....parsing.aut_nums.rules.peering.router import process_router
-from ....parsing.aut_nums.rules.peering.remote_as import process_remote_as
+from ...restructuring.rules.peering.router import process_router
+from ...restructuring.rules.peering.remote_as import process_remote_as
 
 remote_as_simple = {"Single": {"Num": 123}}
 
