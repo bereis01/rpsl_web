@@ -37,19 +37,6 @@ def show_basic_info(query: str):
         ):
             st.text(ss["parsed_attributes"][1])
 
-    """ # Getting source data
-    with st.spinner("Getting source data..."):
-        if "aut_num" not in ss:
-            ss["aut_num"] = backend.get(f"asn/aut_num/{query}").json()
-
-    # Showing source data
-    with st.expander("Source data"):
-        with st.container(
-            height=min(ss["aut_num"]["result"]["body"].count("\n") * 30 + 1, 300),
-            border=True,
-        ):
-            st.text(ss["aut_num"]["result"]["body"]) """
-
     st.divider()
 
 
