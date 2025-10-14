@@ -1,3 +1,4 @@
+import itertools
 from fastapi import APIRouter, Request
 
 # Initializes router
@@ -74,32 +75,11 @@ def get_exports(request: Request, asn: str, skip: int = None, limit: int = None)
     }
 
 
-@router.get("/summary/{asn}")
-def get_relationships_summary(request: Request, asn: str):
-    simple_customer = request.app.state.storage.get(
-        "relationships_simple_customer", asn
-    )
-    simple_provider = request.app.state.storage.get(
-        "relationships_simple_provider", asn
-    )
-
-    # If nothing is found
-    if (simple_customer == None) and (simple_provider == None):
-        return {"result": None}
-
-    return {
-        "result": {
-            "simple_customer": simple_customer,
-            "simple_provider": simple_provider,
-        }
-    }
-
-
-@router.get("/tor/{asn}")
+@router.get("/relationships/{asn}")
 def get_relationships(
     request: Request, asn: str, skip: int = None, limit: int = None, search: str = None
 ):
-    result = request.app.state.storage.get("relationships", asn)
+    result = request.app.state.storage.get("analysis-relationships", asn)
 
     # If nothing is found
     if result == None:
@@ -109,9 +89,9 @@ def get_relationships(
     if search:
         unfiltered_result = result
         result = []
-        for relationship in unfiltered_result:
-            if search in str(relationship):
-                result.append(relationship)
+        for key in unfiltered_result.keys():
+            if search in (key + str(unfiltered_result[key])):
+                result[key] = unfiltered_result[key]
 
     # Applies paging
     if not skip:
@@ -123,5 +103,5 @@ def get_relationships(
         "count": len(result),
         "skip": skip,
         "limit": limit,
-        "result": result[skip : skip + limit],
+        "result": dict(itertools.islice(result.items(), skip, skip + limit)),
     }

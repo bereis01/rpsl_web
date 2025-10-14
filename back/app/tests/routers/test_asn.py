@@ -169,34 +169,12 @@ def test_get_asn_exports():
     assert response.json()["result"] == None
 
 
-def test_get_asn_summary():
-    # Mocks calls to storage
-    app.state.storage.get = Mock(return_value=True)
-
-    # Existent entry
-    response = client.get("/asn/summary/174")
-
-    assert response.status_code == 200
-    assert list(response.json().keys()) == ["result"]
-    assert response.json()["result"] != None
-
-    # Mocks calls to storage
-    app.state.storage.get = Mock(return_value=None)
-
-    # Non-existent entry
-    response = client.get("/asn/summary/-1")
-
-    assert response.status_code == 200
-    assert list(response.json().keys()) == ["result"]
-    assert response.json()["result"] == None
-
-
-def test_get_asn_tor():
+def test_get_asn_relationships():
     # Mocks calls to storage
     app.state.storage.get = Mock(return_value=[])
 
     # Existent entry
-    response = client.get("/asn/tor/174")
+    response = client.get("/asn/relationships/174")
 
     assert response.status_code == 200
     assert response.json()["result"] != None
@@ -205,7 +183,7 @@ def test_get_asn_tor():
     app.state.storage.get = Mock(return_value=None)
 
     # Non-existent entry
-    response = client.get("/asn/tor/-1")
+    response = client.get("/asn/relationships/-1")
 
     assert response.status_code == 200
     assert response.json()["result"] == None
