@@ -41,53 +41,10 @@ def show_basic_info(query: str):
 
 
 def show_relationship_info(query: str):
-    # Relationships inference
-    st.header("Relationship Inference", divider="gray")
-    st.write(
-        "Infered relationships with other ASes based on the import and export rules of the given AS."
-    )
-
-    # Simple Relationships
-    ## Getting the data
-    with st.spinner("Getting results..."):
-        if "summary" not in ss:
-            ss["summary"] = backend.get(f"asn/summary/{query}").json()["result"]
-            ss["summary"] = pd.DataFrame.from_dict(
-                {
-                    "Customer": [ss["summary"]["simple_customer"]],
-                    "Provider": [ss["summary"]["simple_provider"]],
-                },
-                orient="index",
-                columns=["AS Numbers"],
-            )
-        if "exchanged_routes" not in ss:
-            ss["exchanged_routes"] = backend.get(
-                f"asn/exchanged_objects/{query}"
-            ).json()["result"]
-            ss["exchanged_routes"] = pd.DataFrame.from_dict(
-                {
-                    "Imported": [ss["exchanged_routes"]["imports"]],
-                    "Exported": [ss["exchanged_routes"]["exports"]],
-                },
-                orient="index",
-                columns=["Objects Exchanged"],
-            )
-
-    ## Showing the data
-    st.subheader(
-        "Simple Relationships",
-        help="These relationships are infered based on the following pattern: the customer exports all the routes defined by itself (its AS number) to the provider, who exports all of its routes to the customer.",
-    )
-    st.write("This AS is possibly a customer/provider of the following ASes:")
-    st.dataframe(ss["summary"])
-    st.write("These are the objects imported/exported by the given AS:")
-    st.dataframe(ss["exchanged_routes"])
-
-    # Detailed relationships
-    ## Formatting
+    # Formatting
     tor_header, tor_search = st.columns([0.7, 0.3], vertical_alignment="center")
 
-    ## Key instantiation
+    # Key instantiation
     if "tor_search" not in ss:
         ss["tor_search"] = None
     if "tor_changed" not in ss:
@@ -97,17 +54,12 @@ def show_relationship_info(query: str):
     if "tor_limit" not in ss:
         ss["tor_limit"] = 10
 
-    ## Header
+    # Header
     with tor_header:
-        st.subheader(
-            "Detailed Relationships",
-            help="These relationships include the ones above and new ones infered from more complex patterns.\n\n**Glossary**\n- **Asymmetric/Symmetric:** A symmetric relationship could be infered from both ends, while an assymetric relationship could only be infered from the information pertaining to one of the ASes;",
-        )
-    st.write(
-        "This AS possibly establishes the following relationships with other ASes:"
-    )
+        st.header("Relationship Inference", divider="gray")
+    st.write("Infered relationships with other ASes based on various heuristics.")
 
-    ## Search bar
+    # Search bar
     with tor_search:
         tor_search = st.text_input("Search", help=SEARCH_HELP, key="tor_text_input")
         if tor_search != ss["tor_search"]:
@@ -116,38 +68,22 @@ def show_relationship_info(query: str):
             ss["tor_skip"] = 0
             ss["tor_limit"] = 10
 
-    ## Getting data
+    # Getting data
     with st.spinner("Getting results..."):
         if ss["tor_changed"]:
             ss["relationships_page"] = backend.get(
-                f"asn/tor/{query}?skip={ss["tor_skip"]}&limit={ss["tor_limit"]}"
+                f"asn/relationships/{query}?skip={ss["tor_skip"]}&limit={ss["tor_limit"]}"
                 + (f"&search={tor_search}" if tor_search else "")
             ).json()
             ss["tor_changed"] = False
-            ss["parsed_relationships"] = parse_relationships(
-                ss["relationships_page"]["result"]
-            )
             ss["tor_count"] = ss["relationships_page"]["count"]
 
-    ## Showing results
-    with st.container(
-        height=min(int(len(ss["parsed_relationships"]) * 0.25) + 1, 400), border=False
-    ):
-        st.write(
-            ss["parsed_relationships"]
-            if ss["parsed_relationships"]
-            else "*No relationships could be infered or the search yielded no results*"
-        )
+    # Showing results
+    st.table(parse_relationships(ss["relationships_page"]["result"]))
     navigation_controls("tor")
 
-    ## Getting source data
+    # Getting source data
     with st.spinner("Getting source data..."):
-        if "relationships" not in ss:
-            ss["relationships"] = backend.get(f"asn/tor/{query}").json()
-            ss["relationships"] = pd.DataFrame.from_records(
-                ss["relationships"]["result"]
-            ).astype(str)
-
         if "imports" not in ss:
             ss["imports"] = backend.get(f"asn/imports/{query}").json()
             ss["imports"] = pd.DataFrame.from_records(ss["imports"]["result"]).astype(
@@ -160,11 +96,8 @@ def show_relationship_info(query: str):
                 str
             )
 
-    ## Showing source data
+    # Showing source data
     with st.expander("Source data"):
-        st.subheader("Relationships")
-        st.dataframe(ss["relationships"])
-
         st.subheader("Import Rules")
         st.dataframe(ss["imports"])
 

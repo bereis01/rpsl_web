@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 # Parses a dictionary of attributes
 def parse_attributes(attributes):
     if attributes == None:
@@ -54,125 +57,34 @@ def parse_attributes(attributes):
 
 # Parses a list of relationship objects
 def parse_relationships(relationships):
-    if relationships == None:
-        return "*No relationship information to be shown*\n"
+    parsed_relationships = {}
 
-    relationship_str = ""
+    for key in relationships.keys():
+        link = relationships[key].copy()
 
-    for relationship in relationships:
-        sym = relationship["sym"]
-        tor = relationship["tor"]
-        peer = relationship["peer"]
-        export_rule = relationship["export"]
-        import_rule = relationship["import"]
+        link["bidirectional"] = (
+            ":green-background[True]"
+            if link["bidirectional"] == True
+            else ":red-background[False]"
+        )
 
-        # Parses badges (symmetry, ...)
-        if sym:
-            relationship_str += ":green-badge[Symmetric] "
+        link["agreement"] = (
+            ":green-background[True]"
+            if link["agreement"] == True
+            else ":red-background[False]"
+        )
+
+        link["reliability"] = float(link["reliability"])
+        if link["reliability"] >= 0.66:
+            link["reliability"] = "🟢 " + str(link["reliability"])[:4]
+        elif link["reliability"] < 0.33:
+            link["reliability"] = "🔴 " + str(link["reliability"])[:4]
         else:
-            relationship_str += ":red-badge[Asymmetric] "
+            link["reliability"] = "🟡 " + str(link["reliability"])[:4]
 
-        relationship_str += "\n\n"
+        parsed_relationships[key] = link
 
-        # Parses relationship type
-        relationship_str += "Possible "
-        match tor:
-            case "Provider":
-                relationship_str += ":red-background[**provider**] "
-            case "Customer":
-                relationship_str += ":red-background[**customer**] "
-            case "Peer":
-                relationship_str += ":red-background[**peer**] "
-        relationship_str += "relationship with "
-
-        # Parses peer description
-        if peer["field"] == "Single" and peer["type"] == "Num":  # AS Number
-            relationship_str += f":green-background[**AS{peer["value"]}**] "
-
-        # Parses exchanged routes
-        relationship_str += "over which it shares "
-        if (
-            export_rule["filter"]["type"] == "Any"
-            and export_rule["filter"]["value"] == "Any"
-        ):
-            relationship_str += f":blue-background[**any route**] "
-        elif export_rule["filter"]["type"] == "AsNum":
-            relationship_str += f":blue-background[**the routes originated by AS{export_rule["filter"]["value"]}**] "
-        elif export_rule["filter"]["type"] == "AsSet":
-            relationship_str += f":blue-background[**the routes originated by any AS in AS set {export_rule["filter"]["value"]}**] "
-        elif export_rule["filter"]["type"] == "RouteSet":
-            relationship_str += f":blue-background[**the routes in the route set {export_rule["filter"]["value"]}**] "
-
-        relationship_str += "and receives "
-        if (
-            import_rule["filter"]["type"] == "Any"
-            and import_rule["filter"]["value"] == "Any"
-        ):
-            relationship_str += f":blue-background[**any route**] "
-        elif import_rule["filter"]["type"] == "AsNum":
-            relationship_str += f":blue-background[**the routes originated by AS{import_rule["filter"]["value"]}**] "
-        elif import_rule["filter"]["type"] == "AsSet":
-            relationship_str += f":blue-background[**the routes originated by any AS in AS set {import_rule["filter"]["value"]}**] "
-        elif import_rule["filter"]["type"] == "RouteSet":
-            relationship_str += f":blue-background[**the routes in the route set {import_rule["filter"]["value"]}**] "
-
-        relationship_str += "\n"
-
-        # Parses import routers if exists
-        import_peer = import_rule["peering"]
-        if "remote_router" in import_peer.keys():
-            relationship_str += "- Imports routes from remote router of "
-            if import_peer["remote_router"]["type"] == "Ip":
-                relationship_str += (
-                    f":gray-background[**IP {import_peer["remote_router"]["value"]}**] "
-                )
-            elif import_peer["remote_router"]["type"] == "InetRtrOrRtrSet":
-                relationship_str += (
-                    f":gray-background[**{import_peer["remote_router"]["value"]}**] "
-                )
-
-        if "local_router" in import_peer.keys():
-            relationship_str += "- Imports routes at local router of "
-            if import_peer["local_router"]["type"] == "Ip":
-                relationship_str += (
-                    f":gray-background[**IP {import_peer["local_router"]["value"]}**] "
-                )
-            elif import_peer["local_router"]["type"] == "InetRtrOrRtrSet":
-                relationship_str += (
-                    f":gray-background[**{import_peer["local_router"]["value"]}**] "
-                )
-
-        relationship_str += "\n"
-
-        # Parses export routers if exists
-        export_peer = export_rule["peering"]
-        if "remote_router" in export_peer.keys():
-            relationship_str += "- Exports routes at remote router of "
-            if export_peer["remote_router"]["type"] == "Ip":
-                relationship_str += (
-                    f":gray-background[**IP {export_peer["remote_router"]["value"]}**] "
-                )
-            elif export_peer["remote_router"]["type"] == "InetRtrOrRtrSet":
-                relationship_str += (
-                    f":gray-background[**{export_peer["remote_router"]["value"]}**] "
-                )
-
-        if "local_router" in export_peer.keys():
-            relationship_str += "- Exports routes from local router of "
-            if export_peer["local_router"]["type"] == "Ip":
-                relationship_str += (
-                    f":gray-background[**IP {export_peer["local_router"]["value"]}**] "
-                )
-            elif export_peer["local_router"]["type"] == "InetRtrOrRtrSet":
-                relationship_str += (
-                    f":gray-background[**{export_peer["local_router"]["value"]}**] "
-                )
-
-        relationship_str += "\n\n"
-        relationship_str += "---"
-        relationship_str += "\n\n"
-
-    return relationship_str
+    return pd.DataFrame.from_dict(parsed_relationships, orient="index")
 
 
 def parse_membership(membership, search: str = None):
