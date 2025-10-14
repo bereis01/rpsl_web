@@ -83,15 +83,10 @@ def analyze():
 
     # Processes the 'aut_nums' key
     print("Processing relationships...", end="", flush=True)
-    as_nums = storage.get_key("metadata", "as_nums")
-    imports = storage.get("asn-imports")
-    exports = storage.get("asn-exports")
-    analysis.process_relationships(storage, as_nums, imports, exports)
+    analysis.process_relationships(storage)
 
     print("DONE")
-
     print("\n***FINISHING***\n")
-    del imports, exports, as_nums
 
 
 # Executes actions based on arguments
