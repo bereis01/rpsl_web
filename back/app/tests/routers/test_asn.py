@@ -171,7 +171,7 @@ def test_get_asn_exports():
 
 def test_get_asn_relationships():
     # Mocks calls to storage
-    app.state.storage.get = Mock(return_value=[])
+    app.state.storage.get = Mock(return_value={})
 
     # Existent entry
     response = client.get("/asn/relationships/174")
