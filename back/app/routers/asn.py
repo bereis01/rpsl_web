@@ -88,7 +88,7 @@ def get_relationships(
     # Applies search
     if search:
         unfiltered_result = result
-        result = []
+        result = {}
         for key in unfiltered_result.keys():
             if search in (key + str(unfiltered_result[key])):
                 result[key] = unfiltered_result[key]
