@@ -25,16 +25,10 @@ def show_basic_info(query: str):
     st.header("Basic Info", divider="gray")
     other_info, remarks = st.columns(2)
     with other_info:
-        with st.container(
-            height=min(ss["parsed_attributes"][0].count("\n") * 30 + 1, 300),
-            border=False,
-        ):
+        with st.container(height=300, border=False):
             st.markdown(ss["parsed_attributes"][0])
     with remarks:
-        with st.container(
-            height=min(ss["parsed_attributes"][1].count("\n") * 40 + 1, 300),
-            border=True,
-        ):
+        with st.container(height=300, border=True):
             st.text(ss["parsed_attributes"][1])
 
     st.divider()
