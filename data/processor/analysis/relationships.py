@@ -395,7 +395,7 @@ def unite_heuristics(ie_heuristic_final: dict, set_heuristic_final: dict):
                     == set_heuristic_final[host][peer]["tor"]
                 ):
                     result[host][peer] = ie_heuristic_final[host][peer]
-                    result[host][peer]["r"] = 1.0
+                    result[host][peer]["reliability"] = 1.0
 
                 # Case 2: Highest r
                 elif (
