@@ -84,7 +84,16 @@ def parse_relationships(relationships):
 
         parsed_relationships[key] = link
 
-    return pd.DataFrame.from_dict(parsed_relationships, orient="index")
+    df = pd.DataFrame.from_dict(parsed_relationships, orient="index")
+    df = df.rename(
+        columns={
+            "tor": "Relationship",
+            "bidirectional": "Bidirectionality",
+            "agreement": "Agreement",
+            "reliability": "Reliability",
+        }
+    )
+    return df
 
 
 def parse_membership(membership, search: str = None):

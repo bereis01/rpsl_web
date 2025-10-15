@@ -79,7 +79,9 @@ def show_relationship_info(query: str):
             ss["tor_count"] = ss["relationships_page"]["count"]
 
     # Showing results
-    st.table(parse_relationships(ss["relationships_page"]["result"]))
+    st.table(
+        parse_relationships(ss["relationships_page"]["result"]), border="horizontal"
+    )
     navigation_controls("tor")
 
     # Getting source data
