@@ -3,7 +3,7 @@ from ..cleaning import match
 from shared.storage import ObjStr
 
 # Parameters
-T_b = 0
+T_b = 1
 
 
 def process_relationships(store: ObjStr):
