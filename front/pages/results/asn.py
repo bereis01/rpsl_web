@@ -86,7 +86,7 @@ def show_relationship_info(query: str):
             ).json()["result"]
 
     # Showing exchanged objects
-    with st.expander("Exchanged Objects"):
+    with st.expander("Exchanged objects"):
         st.subheader("Imported Objects")
         st.bar_chart(ss["exchanged_objects"]["imports"], horizontal=True, sort=False)
         st.subheader("Exported Objects")
