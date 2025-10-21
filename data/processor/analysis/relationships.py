@@ -32,14 +32,15 @@ def process_relationships(store: ObjStr):
     del aut_nums
 
     # Filtering unreliable data
+    exchanged_objects = store.get("asn-exchanged_objects")
     ie_metadata, ie_heuristic_detailed = filter_unreliable_data(
-        ie_heuristic, ie_heuristic
+        ie_heuristic, ie_heuristic, exchanged_objects
     )
     store.set_key("analysis", "ie_metadata", ie_metadata)
     store.set_key("analysis", "ie_heuristic_detailed", ie_heuristic_detailed)
 
     set_metadata, set_heuristic_detailed = filter_unreliable_data(
-        set_heuristic, ie_heuristic
+        set_heuristic, ie_heuristic, exchanged_objects
     )
     store.set_key("analysis", "set_metadata", set_metadata)
     store.set_key("analysis", "set_heuristic_detailed", set_heuristic_detailed)
@@ -182,16 +183,20 @@ def apply_ie_heuristic(aut_nums):
         for peer in aut_nums[asn]:
             # Customer
             if peer["import"] == ["Any"] and "Any" not in peer["export"]:
-                ie_heuristic[asn].append((asn, peer["peer"], "Customer"))
+                ie_heuristic[asn].append(
+                    (asn, peer["peer"], "Customer", peer["export"])
+                )
                 continue
 
             # Provider
             if "Any" not in peer["import"] and peer["export"] == ["Any"]:
-                ie_heuristic[asn].append((asn, peer["peer"], "Provider"))
+                ie_heuristic[asn].append(
+                    (asn, peer["peer"], "Provider", peer["import"])
+                )
 
             # Peer
             if "Any" not in peer["import"] and "Any" not in peer["export"]:
-                ie_heuristic[asn].append((asn, peer["peer"], "Peer"))
+                ie_heuristic[asn].append((asn, peer["peer"], "Peer", None))
 
             # Special case
             if peer["import"] == ["Any"] and peer["export"] == ["Any"]:
@@ -248,22 +253,22 @@ def apply_set_heuristic(as_sets):
             if as_set_name not in set_heuristic.keys():
                 set_heuristic[as_set_name] = []
             for peer in as_sets[as_set_name]:
-                set_heuristic[as_set_name].append((asn, peer, "Provider"))
+                set_heuristic[as_set_name].append((asn, peer, "Provider", None))
         elif any(keyword in asset for keyword in c2p_keywords):
             if as_set_name not in set_heuristic.keys():
                 set_heuristic[as_set_name] = []
             for peer in as_sets[as_set_name]:
-                set_heuristic[as_set_name].append((asn, peer, "Customer"))
+                set_heuristic[as_set_name].append((asn, peer, "Customer", None))
         elif any(keyword in asset for keyword in p2p_keywords):
             if as_set_name not in set_heuristic.keys():
                 set_heuristic[as_set_name] = []
             for peer in as_sets[as_set_name]:
-                set_heuristic[as_set_name].append((asn, peer, "Peer"))
+                set_heuristic[as_set_name].append((asn, peer, "Peer", None))
 
     return set_heuristic
 
 
-def filter_unreliable_data(heuristic: dict, baseline: dict):
+def filter_unreliable_data(heuristic: dict, baseline: dict, exchanged_objects: dict):
     # Checks link bidirectionality and agreement
     metadata = {}
     heuristic_detailed = {}
@@ -272,8 +277,8 @@ def filter_unreliable_data(heuristic: dict, baseline: dict):
         heuristic_detailed[key] = []
 
         for link in heuristic[key]:
-            host, peer, tor = link
-            bidirectional, agreement = False, False
+            host, peer, tor, x_obj = link
+            bidirectional, agreement, representative = False, False, False
 
             # Counts the link
             metadata[key]["L"] += 1
@@ -298,8 +303,21 @@ def filter_unreliable_data(heuristic: dict, baseline: dict):
                     metadata[key]["A"] += 1
                     agreement = True
 
+            # Checks if the exchanged object is representative
+            if (x_obj != None) and (host in exchanged_objects):
+                if (tor == "Provider") and (
+                    next(iter(exchanged_objects[host]["imports"])) in x_obj
+                ):
+                    representative = True
+                elif (tor == "Customer") and (
+                    next(iter(exchanged_objects[host]["exports"])) in x_obj
+                ):
+                    representative = True
+
             # Updates results
-            heuristic_detailed[key].append((host, peer, tor, bidirectional, agreement))
+            heuristic_detailed[key].append(
+                (host, peer, tor, bidirectional, agreement, representative)
+            )
 
     # Calculates reliability score
     for key in metadata.keys():
@@ -354,12 +372,14 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
                     "bidirectional": link[3],
                     "agreement": link[4],
                     "reliability": metadata[key]["r"],
+                    "representative": link[5],
                 }
                 heuristic_final[peer][host] = {
                     "tor": opposite_tor,
                     "bidirectional": link[3],
                     "agreement": link[4],
                     "reliability": metadata[key]["r"],
+                    "representative": link[5],
                 }
 
             # The other end was already added, needs to reevaluate
@@ -369,12 +389,14 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
                     "bidirectional": link[3],
                     "agreement": link[4],
                     "reliability": metadata[key]["r"],
+                    "representative": link[5],
                 }
                 heuristic_final[peer][host] = {
                     "tor": opposite_tor,
                     "bidirectional": link[3],
                     "agreement": link[4],
                     "reliability": metadata[key]["r"],
+                    "representative": link[5],
                 }
 
     return heuristic_final

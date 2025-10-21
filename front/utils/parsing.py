@@ -59,7 +59,13 @@ def parse_attributes(attributes):
 def parse_relationships(relationships):
     if relationships == None:
         return pd.DataFrame(
-            columns=["Relationship", "Bidirectionality", "Agreement", "Reliability"]
+            columns=[
+                "Relationship",
+                "Bidirectionality",
+                "Agreement",
+                "Reliability",
+                "Representative",
+            ]
         )
 
     parsed_relationships = {}
@@ -87,6 +93,12 @@ def parse_relationships(relationships):
         else:
             link["reliability"] = "🟡 " + str(link["reliability"])[:4]
 
+        link["representative"] = (
+            ":green-background[True]"
+            if link["representative"] == True
+            else ":red-background[False]"
+        )
+
         parsed_relationships[key] = link
 
     df = pd.DataFrame.from_dict(parsed_relationships, orient="index")
@@ -96,6 +108,7 @@ def parse_relationships(relationships):
             "bidirectional": "Bidirectionality",
             "agreement": "Agreement",
             "reliability": "Reliability",
+            "representative": "Representative",
         }
     )
     return df
