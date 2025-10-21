@@ -40,12 +40,25 @@ rules_example = [
         "actions": "None",
         "filter": {"type": "AsSet", "value": "AS266009:AS-CUSTOMERS", "op": "NoOp"},
     },
+    {
+        "version": "ipv4",
+        "cast": "unicast",
+        "peering": {
+            "remote_as": {
+                "field": "Single",
+                "type": "Set",
+                "value": "AS266009:AS-CUSTOMERS",
+            }
+        },
+        "actions": "None",
+        "filter": {"type": "AsSet", "value": "AS266009:AS-CUSTOMERS", "op": "NoOp"},
+    },
 ]
 
 
 def test_process_exchanged_objects():
     result = process_exchanged_objects(rules_example)
 
-    assert len(result) == 2
-    assert result[0] == "Any"
-    assert result[1] == "AS266009:AS-CUSTOMERS"
+    assert len(result.keys()) == 2
+    assert list(result.keys())[0] == "AS266009:AS-CUSTOMERS"
+    assert list(result.keys())[1] == "Any"
