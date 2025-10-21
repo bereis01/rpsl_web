@@ -9,17 +9,17 @@ T_r = 0.6
 
 def process_relationships(store: ObjStr):
     # Expands as sets
-    """as_sets = store.get("asset-members")
+    as_sets = store.get("asset-members")
     as_sets = expand_as_sets(as_sets)
-    store.set_key("analysis", "as_sets", as_sets)"""
-    as_sets = store.get_key("analysis", "as_sets")
+    store.set_key("analysis", "as_sets", as_sets)
+    # as_sets = store.get_key("analysis", "as_sets")
 
     # Pre-processes import and export rules
-    """ imports = store.get("asn-imports")
+    imports = store.get("asn-imports")
     exports = store.get("asn-exports")
     aut_nums = pre_process_rules(imports, exports, as_sets)
-    store.set_key("analysis", "aut_nums", aut_nums) """
-    aut_nums = store.get_key("analysis", "aut_nums")
+    store.set_key("analysis", "aut_nums", aut_nums)
+    # aut_nums = store.get_key("analysis", "aut_nums")
 
     # Applies heuristics
     ie_heuristic = apply_ie_heuristic(aut_nums)
