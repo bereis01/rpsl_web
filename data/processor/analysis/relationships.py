@@ -4,6 +4,7 @@ from shared.storage import ObjStr
 
 # Parameters
 T_b = 1
+T_r = 0.6
 
 
 def process_relationships(store: ObjStr):
@@ -321,18 +322,24 @@ def filter_unreliable_data(heuristic: dict, baseline: dict, exchanged_objects: d
 
     # Calculates reliability score
     for key in metadata.keys():
-        """if metadata[key]["B"] > T_b:
+        if metadata[key]["B"] > T_b:
             metadata[key]["r"] = metadata[key]["A"] / metadata[key]["B"]
         else:
-            metadata[key]["r"] = 0"""
+            metadata[key]["r"] = 0
 
-        # Alternative calculation
+        """ # Alternative calculation
         if metadata[key]["B"] > 0:
             metadata[key]["r"] = (metadata[key]["B"] / metadata[key]["L"]) * (
                 metadata[key]["A"] / metadata[key]["B"]
             )
         else:
-            metadata[key]["r"] = 0
+            metadata[key]["r"] = 0 """
+
+    # Filters the data
+    for key in list(metadata.keys()):
+        if metadata[key]["r"] < T_r:
+            metadata.pop(key)
+            heuristic_detailed.pop(key)
 
     return metadata, heuristic_detailed
 
