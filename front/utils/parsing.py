@@ -57,6 +57,11 @@ def parse_attributes(attributes):
 
 # Parses a list of relationship objects
 def parse_relationships(relationships):
+    if relationships == None:
+        return pd.DataFrame(
+            columns=["Relationship", "Bidirectionality", "Agreement", "Reliability"]
+        )
+
     parsed_relationships = {}
 
     for key in relationships.keys():
