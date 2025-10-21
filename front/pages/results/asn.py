@@ -78,6 +78,20 @@ def show_relationship_info(query: str):
     )
     navigation_controls("tor")
 
+    # Gettings exchanged objects
+    with st.spinner("Getting results..."):
+        if "exchanged_objects" not in ss:
+            ss["exchanged_objects"] = backend.get(
+                f"asn/exchanged_objects/{query}"
+            ).json()["result"]
+
+    # Showing exchanged objects
+    with st.expander("Exchanged Objects"):
+        st.subheader("Imported Objects")
+        st.bar_chart(ss["exchanged_objects"]["imports"], horizontal=True, sort=False)
+        st.subheader("Exported Objects")
+        st.bar_chart(ss["exchanged_objects"]["exports"], horizontal=True, sort=False)
+
     # Getting source data
     with st.spinner("Getting source data..."):
         if "imports" not in ss:

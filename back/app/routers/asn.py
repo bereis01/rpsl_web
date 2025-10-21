@@ -30,6 +30,15 @@ def get_exchanged_objects(request: Request, asn: str):
     if exchanged_objects == None:
         return {"result": None}
 
+    # Clips the result to 10 items
+    for key in exchanged_objects.keys():
+        others_count = 0
+        while len(exchanged_objects[key]) > 9:
+            sub_key = list(exchanged_objects[key].keys())[-1]
+            others_count += exchanged_objects[key].pop(sub_key)
+        if others_count > 0:
+            exchanged_objects[key]["Others"] = others_count
+
     return {"result": exchanged_objects}
 
 
