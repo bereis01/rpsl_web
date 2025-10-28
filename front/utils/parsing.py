@@ -99,6 +99,12 @@ def parse_relationships(relationships):
             else ":red-background[False]"
         )
 
+        link["source"] = (
+            ":blue-background[Internal]"
+            if link["representative"] == "internal"
+            else ":yellow-background[External]"
+        )
+
         parsed_relationships[key] = link
 
     df = pd.DataFrame.from_dict(parsed_relationships, orient="index")
@@ -109,6 +115,7 @@ def parse_relationships(relationships):
             "agreement": "Agreement",
             "reliability": "Reliability",
             "representative": "Representative",
+            "source": "Source",
         }
     )
     return df
