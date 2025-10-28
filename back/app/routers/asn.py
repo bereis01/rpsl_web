@@ -99,7 +99,17 @@ def get_relationships(
         unfiltered_result = result
         result = {}
         for key in unfiltered_result.keys():
-            if search in (key + str(unfiltered_result[key])):
+            keywords = search.split(",")
+            print(keywords)
+            contains_all = True
+            for keyword in keywords:
+                if not (
+                    keyword.strip().lower()
+                    in (key + str(unfiltered_result[key])).lower()
+                ):
+                    contains_all = False
+                    break
+            if contains_all:
                 result[key] = unfiltered_result[key]
 
     # Applies paging
