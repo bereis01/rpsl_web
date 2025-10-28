@@ -9,17 +9,17 @@ T_r = 0.6
 
 def process_relationships(store: ObjStr):
     # Expands as sets
-    as_sets = store.get("asset-members")
+    """as_sets = store.get("asset-members")
     as_sets = expand_as_sets(as_sets)
-    store.set_key("analysis", "as_sets", as_sets)
-    # as_sets = store.get_key("analysis", "as_sets")
+    store.set_key("analysis", "as_sets", as_sets)"""
+    as_sets = store.get_key("analysis", "as_sets")
 
     # Pre-processes import and export rules
-    imports = store.get("asn-imports")
+    """ imports = store.get("asn-imports")
     exports = store.get("asn-exports")
     aut_nums = pre_process_rules(imports, exports, as_sets)
-    store.set_key("analysis", "aut_nums", aut_nums)
-    # aut_nums = store.get_key("analysis", "aut_nums")
+    store.set_key("analysis", "aut_nums", aut_nums) """
+    aut_nums = store.get_key("analysis", "aut_nums")
 
     # Applies heuristics
     ie_heuristic = apply_ie_heuristic(aut_nums)
@@ -178,6 +178,14 @@ def process_rules_list(rules, as_sets):
 def apply_ie_heuristic(aut_nums):
     ie_heuristic = {}
 
+    # Pre-calculates the amount of any rules in each asn
+    any_statements = {}
+    for asn in aut_nums.keys():
+        any_statements[asn] = 0
+        for link in aut_nums[asn]:
+            if "Any" in link["export"]:
+                any_statements[asn] += 1
+
     for asn in aut_nums.keys():
         ie_heuristic[asn] = []
 
@@ -202,24 +210,23 @@ def apply_ie_heuristic(aut_nums):
             # Special case
             if peer["import"] == ["Any"] and peer["export"] == ["Any"]:
 
-                """# Counts any statements in host's exports
-                host_count = 0
-                for link in aut_nums[asn]:
-                    if "Any" in link["export"]:
-                        host_count += 1
+                # Counts any statements in host's exports
+                host_count = any_statements[asn]
 
                 # Counts any statements in peer's exports
                 peer_count = 0
                 if peer["peer"] in aut_nums.keys():
-                    for link in aut_nums[peer["peer"]]:
-                        if "Any" in link["export"]:
-                            peer_count += 1
+                    peer_count = any_statements[peer["peer"]]
 
                 # The one with the most is the provider
                 if host_count >= peer_count:
-                    ie_heuristic[asn].append((asn, peer["peer"], "Provider"))
+                    ie_heuristic[asn].append(
+                        (asn, peer["peer"], "Provider", peer["import"])
+                    )
                 else:
-                    ie_heuristic[asn].append((asn, peer["peer"], "Customer"))"""
+                    ie_heuristic[asn].append(
+                        (asn, peer["peer"], "Customer", peer["export"])
+                    )
 
                 pass
 
