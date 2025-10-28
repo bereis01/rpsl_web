@@ -334,19 +334,11 @@ def filter_unreliable_data(heuristic: dict, baseline: dict, exchanged_objects: d
         else:
             metadata[key]["r"] = 0
 
-        """ # Alternative calculation
-        if metadata[key]["B"] > 0:
-            metadata[key]["r"] = (metadata[key]["B"] / metadata[key]["L"]) * (
-                metadata[key]["A"] / metadata[key]["B"]
-            )
-        else:
-            metadata[key]["r"] = 0 """
-
-    # Filters the data
+    """ # Filters the data
     for key in list(metadata.keys()):
         if metadata[key]["r"] < T_r:
             metadata.pop(key)
-            heuristic_detailed.pop(key)
+            heuristic_detailed.pop(key) """
 
     return metadata, heuristic_detailed
 
@@ -387,6 +379,7 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
                     "agreement": link[4],
                     "reliability": metadata[key]["r"],
                     "representative": link[5],
+                    "source": "internal",
                 }
                 heuristic_final[peer][host] = {
                     "tor": opposite_tor,
@@ -394,6 +387,7 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
                     "agreement": link[4],
                     "reliability": metadata[key]["r"],
                     "representative": link[5],
+                    "source": "external",
                 }
 
             # The other end was already added, needs to reevaluate
@@ -404,6 +398,7 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
                     "agreement": link[4],
                     "reliability": metadata[key]["r"],
                     "representative": link[5],
+                    "source": "internal",
                 }
                 heuristic_final[peer][host] = {
                     "tor": opposite_tor,
@@ -411,6 +406,7 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
                     "agreement": link[4],
                     "reliability": metadata[key]["r"],
                     "representative": link[5],
+                    "source": "external",
                 }
 
     return heuristic_final
