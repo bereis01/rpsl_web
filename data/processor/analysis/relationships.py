@@ -3,7 +3,7 @@ from ..cleaning import match
 from shared.storage import ObjStr
 
 # Parameters
-T_b = 1
+T_b = 5
 T_r = 0.6
 
 
