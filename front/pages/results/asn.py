@@ -88,9 +88,9 @@ def show_relationship_info(query: str):
     # Showing exchanged objects
     with st.expander("Exchanged objects"):
         st.subheader("Imported Objects")
-        st.bar_chart(ss["exchanged_objects"]["imports"], horizontal=True, sort=False)
+        st.dataframe(ss["exchanged_objects"]["imports"])
         st.subheader("Exported Objects")
-        st.bar_chart(ss["exchanged_objects"]["exports"], horizontal=True, sort=False)
+        st.dataframe(ss["exchanged_objects"]["exports"])
 
     # Getting source data
     with st.spinner("Getting source data..."):
