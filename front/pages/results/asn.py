@@ -1,14 +1,9 @@
 import pandas as pd
+from utils import view
 import streamlit as st
 from utils import backend
 from streamlit import session_state as ss
 from utils.elements import navigation_controls
-from utils.parsing import (
-    parse_attributes,
-    parse_relationships,
-    parse_membership,
-    parse_announcement,
-)
 
 SEARCH_HELP = (
     "The search is made based on the objects in the source data. "
@@ -20,17 +15,9 @@ def show_basic_info(query: str):
     # Basic info
     if "attributes" not in ss:
         ss["attributes"] = backend.get(f"asn/attributes/{query}").json()
-        ss["parsed_attributes"] = parse_attributes(ss["attributes"]["result"])
 
     st.header("Basic Info", divider="gray")
-    other_info, remarks = st.columns(2)
-    with other_info:
-        with st.container(height=300, border=False):
-            st.markdown(ss["parsed_attributes"][0])
-    with remarks:
-        with st.container(height=300, border=True):
-            st.text(ss["parsed_attributes"][1])
-
+    view.present_attributes(ss["attributes"]["result"])
     st.divider()
 
 
@@ -73,10 +60,7 @@ def show_relationship_info(query: str):
             ss["tor_count"] = ss["relationships_page"]["count"]
 
     # Showing results
-    st.table(
-        parse_relationships(ss["relationships_page"]["result"]), border="horizontal"
-    )
-    navigation_controls("tor")
+    view.present_asn_relationships(ss["relationships_page"]["result"])
 
     # Gettings exchanged objects
     with st.spinner("Getting results..."):
@@ -152,17 +136,10 @@ def show_set_information(query: str):
                 + (f"&search={memb_search}" if memb_search else "")
             ).json()
             ss["memb_changed"] = False
-        parsed_membership = parse_membership(ss["membership_page"]["result"])
         ss["memb_count"] = ss["membership_page"]["count"]
 
     # Showing results
-    with st.container(border=False):
-        st.write(
-            parsed_membership
-            if parsed_membership
-            else "*This AS is not member of any AS sets or the search yielded no results*"
-        )
-    navigation_controls("memb")
+    view.present_asn_set_membership(ss["membership_page"]["result"])
 
     # Getting source data
     with st.spinner("Getting source data..."):
@@ -199,8 +176,8 @@ def show_addr_information(query: str):
 
     # Header
     with route_header:
-        st.header("Originated Prefixes", divider="gray")
-    st.write("Information about the address prefixes originated by the given AS.")
+        st.header("Route Objects", divider="gray")
+    st.write("Information about the address prefixes registered for the given AS.")
 
     # Search bar
     with route_search:
@@ -218,17 +195,10 @@ def show_addr_information(query: str):
                 + (f"&search={route_search}" if route_search else "")
             ).json()
             ss["route_changed"] = False
-        parsed_announcement = parse_announcement(ss["announcement_page"]["result"])
         ss["route_count"] = ss["announcement_page"]["count"]
 
     # Showing results
-    with st.container(border=False):
-        st.write(
-            parsed_announcement
-            if parsed_announcement
-            else "*This AS does not announce any routes/prefixes or the search yielded no results*"
-        )
-    navigation_controls("route")
+    view.present_addr_announcement(ss["announcement_page"]["result"])
 
     # Getting source data
     with st.spinner("Getting source data..."):
