@@ -101,7 +101,7 @@ def parse_relationships(relationships):
 
         link["source"] = (
             ":blue-background[Internal]"
-            if link["representative"] == "internal"
+            if link["source"] == "internal"
             else ":yellow-background[External]"
         )
 
