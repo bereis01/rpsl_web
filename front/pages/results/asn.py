@@ -79,9 +79,9 @@ def show_relationship_info(query: str):
     # Showing exchanged objects
     with st.expander("Exchanged objects"):
         st.subheader("Imported Objects")
-        st.dataframe(ss["exchanged_objects"]["imports"])
+        st.table(ss["exchanged_objects"]["imports"], border="horizontal")
         st.subheader("Exported Objects")
-        st.dataframe(ss["exchanged_objects"]["exports"])
+        st.table(ss["exchanged_objects"]["exports"], border="horizontal")
 
     # Getting source data
     with st.spinner("Getting source data..."):
