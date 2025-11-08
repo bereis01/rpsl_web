@@ -180,6 +180,7 @@ def present_asn_set_membership(membership):
     grid_options["defaultColDef"]["sortable"] = False
     grid_options["defaultColDef"]["suppressMovable"] = True
     grid_options["defaultColDef"]["suppressHeaderFilterButton"] = True
+    grid_options["tooltipShowDelay"] = 0
 
     grid_options["columnDefs"] = [
         {
@@ -241,6 +242,7 @@ def present_addr_announcement(announcement):
     grid_options["defaultColDef"]["sortable"] = False
     grid_options["defaultColDef"]["suppressMovable"] = True
     grid_options["defaultColDef"]["suppressHeaderFilterButton"] = True
+    grid_options["tooltipShowDelay"] = 0
 
     grid_options["columnDefs"] = [
         {
@@ -252,7 +254,11 @@ def present_addr_announcement(announcement):
                 "text-decoration": "underline",
             },
         },
-        {"field": "overlap", "headerName": "Overlap"},
+        {
+            "field": "overlap",
+            "headerName": "Overlap",
+            "headerTooltip": "If the object is registered with more than one AS.",
+        },
         {"field": "announced_by", "headerName": "Registered By"},
     ]
 
