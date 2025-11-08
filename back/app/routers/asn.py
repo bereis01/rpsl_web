@@ -100,7 +100,6 @@ def get_relationships(
         result = {}
         for key in unfiltered_result.keys():
             keywords = search.split(",")
-            print(keywords)
             contains_all = True
             for keyword in keywords:
                 if not (
