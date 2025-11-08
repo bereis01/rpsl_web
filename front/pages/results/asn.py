@@ -23,6 +23,123 @@ def show_basic_info(query: str):
     st.divider()
 
 
+def show_policies_info(query: str):
+    st.header("Routing Policies", divider="gray")
+    st.write("Information about the routing policies defined by the given AS.")
+
+    # Formatting
+    imports_header, imports_search = st.columns([0.7, 0.3], vertical_alignment="center")
+
+    # Key instantiation
+    if "imports_search" not in ss:
+        ss["imports_search"] = None
+    if "imports_changed" not in ss:
+        ss["imports_changed"] = True
+    if "imports_skip" not in ss:
+        ss["imports_skip"] = 0
+    if "imports_limit" not in ss:
+        ss["imports_limit"] = 10
+
+    # Header
+    with imports_header:
+        st.subheader("Import Rules")
+
+    # Search bar
+    with imports_search:
+        imports_search = st.text_input(
+            "Search",
+            help=SEARCH_HELP,
+            key="imports_text_input",
+            placeholder="ipv4, unicast, ...",
+        )
+        if imports_search != ss["imports_search"]:
+            ss["imports_search"] = imports_search
+            ss["imports_changed"] = True
+            ss["imports_skip"] = 0
+            ss["imports_limit"] = 10
+
+    # Getting data
+    with st.spinner("Getting results..."):
+        if ss["imports_changed"]:
+            ss["imports_page"] = backend.get(
+                f"asn/imports/{query}?skip={ss["imports_skip"]}&limit={ss["imports_limit"]}"
+                + (f"&search={imports_search}" if imports_search else "")
+            ).json()
+            ss["imports_changed"] = False
+            ss["imports_count"] = ss["imports_page"]["count"]
+
+    # Showing results
+    view.present_asn_rules(ss["imports_page"]["result"], "imports")
+
+    # Formatting
+    exports_header, exports_search = st.columns([0.7, 0.3], vertical_alignment="center")
+
+    # Key instantiation
+    if "exports_search" not in ss:
+        ss["exports_search"] = None
+    if "exports_changed" not in ss:
+        ss["exports_changed"] = True
+    if "exports_skip" not in ss:
+        ss["exports_skip"] = 0
+    if "exports_limit" not in ss:
+        ss["exports_limit"] = 10
+
+    # Header
+    with exports_header:
+        st.subheader("Export Rules")
+
+    # Search bar
+    with exports_search:
+        exports_search = st.text_input(
+            "Search",
+            help=SEARCH_HELP,
+            key="exports_text_input",
+            placeholder="ipv4, unicast, ...",
+        )
+        if exports_search != ss["exports_search"]:
+            ss["exports_search"] = exports_search
+            ss["exports_changed"] = True
+            ss["exports_skip"] = 0
+            ss["exports_limit"] = 10
+
+    # Getting data
+    with st.spinner("Getting results..."):
+        if ss["exports_changed"]:
+            ss["exports_page"] = backend.get(
+                f"asn/exports/{query}?skip={ss["exports_skip"]}&limit={ss["exports_limit"]}"
+                + (f"&search={exports_search}" if exports_search else "")
+            ).json()
+            ss["exports_changed"] = False
+            ss["exports_count"] = ss["exports_page"]["count"]
+
+    # Showing results
+    view.present_asn_rules(ss["exports_page"]["result"], "exports")
+
+    # Getting source data
+    with st.spinner("Getting source data..."):
+        if "imports" not in ss:
+            ss["imports"] = backend.get(f"asn/imports/{query}").json()
+            ss["imports"] = pd.DataFrame.from_records(ss["imports"]["result"]).astype(
+                str
+            )
+
+        if "exports" not in ss:
+            ss["exports"] = backend.get(f"asn/exports/{query}").json()
+            ss["exports"] = pd.DataFrame.from_records(ss["exports"]["result"]).astype(
+                str
+            )
+
+    # Showing source data
+    with st.expander("Source data"):
+        st.subheader("Import Rules")
+        st.dataframe(ss["imports"])
+
+        st.subheader("Export Rules")
+        st.dataframe(ss["exports"])
+
+    st.divider()
+
+
 def show_relationship_info(query: str):
     # Formatting
     tor_header, tor_search = st.columns([0.7, 0.3], vertical_alignment="center")
@@ -85,25 +202,16 @@ def show_relationship_info(query: str):
 
     # Getting source data
     with st.spinner("Getting source data..."):
-        if "imports" not in ss:
-            ss["imports"] = backend.get(f"asn/imports/{query}").json()
-            ss["imports"] = pd.DataFrame.from_records(ss["imports"]["result"]).astype(
-                str
-            )
-
-        if "exports" not in ss:
-            ss["exports"] = backend.get(f"asn/exports/{query}").json()
-            ss["exports"] = pd.DataFrame.from_records(ss["exports"]["result"]).astype(
-                str
-            )
+        if "relationships" not in ss:
+            ss["relationships"] = backend.get(f"asn/relationships/{query}").json()
+            ss["relationships"] = pd.DataFrame.from_dict(
+                ss["relationships"]["result"], orient="index"
+            ).astype(str)
 
     # Showing source data
     with st.expander("Source data"):
-        st.subheader("Import Rules")
-        st.dataframe(ss["imports"])
-
-        st.subheader("Export Rules")
-        st.dataframe(ss["exports"])
+        st.subheader("Relationships")
+        st.dataframe(ss["relationships"])
 
     st.divider()
 
@@ -238,6 +346,7 @@ def show_addr_information(query: str):
 
 def show_results_asn(query: str):
     show_basic_info(query)
+    show_policies_info(query)
     show_relationship_info(query)
     show_set_information(query)
     show_addr_information(query)

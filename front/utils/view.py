@@ -56,6 +56,71 @@ def present_attributes(attributes):
             st.text(remarks_str)
 
 
+def present_asn_rules(rules, type: str):
+    # Treats the case in which there are no results
+    if (rules == None) or (len(rules) == 0):
+        st.markdown("*No rules were found for the given query*")
+
+    # Parses the object
+    parsed_rules = []
+    for rule in rules:
+        parsed_rules.append(rule.copy())
+        if "value" in parsed_rules[-1]["peering"]["remote_as"].keys():
+            parsed_rules[-1]["peering"] = parsed_rules[-1]["peering"]["remote_as"][
+                "value"
+            ]
+        else:
+            parsed_rules[-1]["peering"] = "Other"
+        if "value" in parsed_rules[-1]["filter"].keys():
+            parsed_rules[-1]["filter"] = parsed_rules[-1]["filter"]["value"]
+        else:
+            parsed_rules[-1]["filter"] = "Other"
+
+        if parsed_rules[-1]["version"] == "ipv4":
+            parsed_rules[-1]["version"] = "🟣 ipv4"
+        elif parsed_rules[-1]["version"] == "ipv6":
+            parsed_rules[-1]["version"] = "🟠 ipv6"
+
+        if parsed_rules[-1]["cast"] == "unicast":
+            parsed_rules[-1]["cast"] = "🔵 unicast"
+        elif parsed_rules[-1]["cast"] == "multicast":
+            parsed_rules[-1]["cast"] = "🟡 multicast"
+        elif parsed_rules[-1]["cast"] == "any":
+            parsed_rules[-1]["cast"] = "⚪ any"
+
+    df = pd.DataFrame(parsed_rules)
+
+    # Presents the results
+    builder = GridOptionsBuilder.from_dataframe(df)
+    grid_options = builder.build()
+
+    grid_options["autoSizeStrategy"]["type"] = "fitGridWidth"
+    grid_options["defaultColDef"]["resizable"] = False
+    grid_options["defaultColDef"]["sortable"] = False
+    grid_options["defaultColDef"]["suppressMovable"] = True
+    grid_options["defaultColDef"]["suppressHeaderFilterButton"] = True
+    grid_options["tooltipShowDelay"] = 0
+
+    grid_options["columnDefs"] = [
+        {"field": "version", "headerName": "Version"},
+        {"field": "cast", "headerName": "Cast"},
+        {"field": "peering", "headerName": "Peer"},
+        {"field": "actions", "headerName": "Actions"},
+        {"field": "filter", "headerName": "Filter"},
+    ]
+
+    asn_rules_grid_return = AgGrid(
+        df,
+        key=f"{ss["query"]}_{type}_grid",
+        gridOptions=grid_options,
+        update_on=["cellDoubleClicked"],
+        theme="streamlit",
+        height=325,
+    )
+
+    navigation_controls(f"{type}")
+
+
 def present_asn_relationships(relationships):
     # Treats the case in which there are no results
     if (relationships == None) or (len(relationships) == 0):
@@ -103,7 +168,6 @@ def present_asn_relationships(relationships):
             "headerName": "ASN",
             "cellStyle": {
                 "color": "#0000EE",
-                # "fontWeight": "bold",
                 "text-decoration": "underline",
             },
         },
@@ -188,7 +252,6 @@ def present_asn_set_membership(membership):
             "headerName": "Name",
             "cellStyle": {
                 "color": "#0000EE",
-                # "fontWeight": "bold",
                 "text-decoration": "underline",
             },
         },
@@ -250,7 +313,6 @@ def present_addr_announcement(announcement):
             "headerName": "Address/Prefix",
             "cellStyle": {
                 "color": "#0000EE",
-                # "fontWeight": "bold",
                 "text-decoration": "underline",
             },
         },
