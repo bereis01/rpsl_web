@@ -85,17 +85,6 @@ def present_asn_relationships(relationships):
         parsed_relationships[key] = link
     df = pd.DataFrame.from_dict(parsed_relationships, orient="index")
     df = df.reset_index()
-    df = df.rename(
-        columns={
-            "index": "ASN",
-            "tor": "Relationship",
-            "bidirectional": "Bidirectionality",
-            "agreement": "Agreement",
-            "reliability": "Reliability",
-            "representative": "Representative",
-            "source": "Source",
-        }
-    )
 
     # Presents the results
     builder = GridOptionsBuilder.from_dataframe(df)
@@ -106,39 +95,60 @@ def present_asn_relationships(relationships):
     grid_options["defaultColDef"]["sortable"] = False
     grid_options["defaultColDef"]["suppressMovable"] = True
     grid_options["defaultColDef"]["suppressHeaderFilterButton"] = True
+    grid_options["tooltipShowDelay"] = 0
 
     grid_options["columnDefs"] = [
         {
-            "field": "ASN",
+            "field": "index",
+            "headerName": "ASN",
             "cellStyle": {
                 "color": "#0000EE",
                 # "fontWeight": "bold",
                 "text-decoration": "underline",
             },
         },
-        {"field": "Relationship"},
-        {"field": "Bidirectionality"},
-        {"field": "Agreement"},
-        {"field": "Reliability"},
-        {"field": "Representative"},
-        {"field": "Source"},
+        {"field": "tor", "headerName": "Relationship"},
+        {
+            "field": "bidirectional",
+            "headerName": "Bidirectionality",
+            "headerTooltip": "If the relationship can be infered from both ends.",
+        },
+        {
+            "field": "agreement",
+            "headerName": "Agreement",
+            "headerTooltip": "If the relationships infered from both ends agree (e.g. provider infered from one end and customer infered from the other).",
+        },
+        {
+            "field": "reliability",
+            "headerName": "Reliability",
+            "headerTooltip": "Score based on amount the of relationships that agree from the AS from which they were infered.",
+        },
+        {
+            "field": "representative",
+            "headerName": "Representative",
+            "headerTooltip": "If the object exchanged (exported by the client and imported by the provider) is the one that the client most exports. Always false for peers.",
+        },
+        {
+            "field": "source",
+            "headerName": "Source",
+            "headerTooltip": "If the relationship was infered from this AS or from the other end.",
+        },
     ]
 
-    grid_return = AgGrid(
+    asn_relationships_grid_return = AgGrid(
         df,
         key=f"{ss["query"]}_relationships_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
         theme="streamlit",
         height=325,
-        allow_unsafe_jscode=True,
     )
 
     # Controls redirecting the search
-    if (grid_return.event_data != None) and (
-        grid_return.event_data["column"]["colId"] == "ASN"
+    if (asn_relationships_grid_return.event_data != None) and (
+        asn_relationships_grid_return.event_data["column"]["colId"] == "index"
     ):
-        ss["query"] = grid_return.event_data["value"]
+        ss["query"] = asn_relationships_grid_return.event_data["value"]
         st.rerun()
 
     navigation_controls("tor")
@@ -160,14 +170,6 @@ def present_asn_set_membership(membership):
 
     df = pd.DataFrame.from_dict(membership, orient="index")
     df = df.reset_index()
-    df = df.rename(
-        columns={
-            "index": "Name",
-            "members": "AS Members Count",
-            "set_members": "Set Members Count",
-            "is_any": "Is Any?",
-        }
-    )
 
     # Presents
     builder = GridOptionsBuilder.from_dataframe(df)
@@ -181,33 +183,33 @@ def present_asn_set_membership(membership):
 
     grid_options["columnDefs"] = [
         {
-            "field": "Name",
+            "field": "index",
+            "headerName": "Name",
             "cellStyle": {
                 "color": "#0000EE",
                 # "fontWeight": "bold",
                 "text-decoration": "underline",
             },
         },
-        {"field": "AS Members Count"},
-        {"field": "Set Members Count"},
-        {"field": "Is Any?"},
+        {"field": "members", "headerName": "AS Members Count"},
+        {"field": "set_members", "headerName": "Set Members Count"},
+        {"field": "is_any", "headerName": "Is Any?"},
     ]
 
-    grid_return = AgGrid(
+    set_membership_grid_return = AgGrid(
         df,
         key=f"{ss["query"]}_set_membership_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
         theme="streamlit",
         height=325,
-        allow_unsafe_jscode=True,
     )
 
     # Controls redirecting the search
-    if (grid_return.event_data != None) and (
-        grid_return.event_data["column"]["colId"] == "Name"
+    if (set_membership_grid_return.event_data != None) and (
+        set_membership_grid_return.event_data["column"]["colId"] == "index"
     ):
-        ss["query"] = grid_return.event_data["value"]
+        ss["query"] = set_membership_grid_return.event_data["value"]
         st.rerun()
 
     navigation_controls("memb")
@@ -229,13 +231,6 @@ def present_addr_announcement(announcement):
 
     df = pd.DataFrame.from_dict(announcement, orient="index")
     df = df.reset_index()
-    df = df.rename(
-        columns={
-            "index": "Address/Prefix",
-            "overlap": "Overlap",
-            "announced_by": "Registered By",
-        }
-    )
 
     # Presents
     builder = GridOptionsBuilder.from_dataframe(df)
@@ -249,32 +244,32 @@ def present_addr_announcement(announcement):
 
     grid_options["columnDefs"] = [
         {
-            "field": "Address/Prefix",
+            "field": "index",
+            "headerName": "Address/Prefix",
             "cellStyle": {
                 "color": "#0000EE",
                 # "fontWeight": "bold",
                 "text-decoration": "underline",
             },
         },
-        {"field": "Overlap"},
-        {"field": "Registered By"},
+        {"field": "overlap", "headerName": "Overlap"},
+        {"field": "announced_by", "headerName": "Registered By"},
     ]
 
-    grid_return = AgGrid(
+    addr_announcement_grid_return = AgGrid(
         df,
         key=f"{ss["query"]}_addr_announcement_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
         theme="streamlit",
         height=325,
-        allow_unsafe_jscode=True,
     )
 
     # Controls redirecting the search
-    if (grid_return.event_data != None) and (
-        grid_return.event_data["column"]["colId"] == "Address/Prefix"
+    if (addr_announcement_grid_return.event_data != None) and (
+        addr_announcement_grid_return.event_data["column"]["colId"] == "index"
     ):
-        ss["query"] = grid_return.event_data["value"]
+        ss["query"] = addr_announcement_grid_return.event_data["value"]
         st.rerun()
 
     navigation_controls("route")

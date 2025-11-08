@@ -6,8 +6,10 @@ from streamlit import session_state as ss
 from utils.elements import navigation_controls
 
 SEARCH_HELP = (
+    "Search the data for keywords, each separated by a comma (e.g. False, External). "
     "The search is made based on the objects in the source data. "
-    "For example, if searching for an AS of number 123, type only the number '123', and not 'AS123'."
+    "For example, if searching for an AS of number 123, type only the number '123', and not 'AS123'. "
+    "The search is case insensitive. "
 )
 
 
@@ -42,7 +44,12 @@ def show_relationship_info(query: str):
 
     # Search bar
     with tor_search:
-        tor_search = st.text_input("Search", help=SEARCH_HELP, key="tor_text_input")
+        tor_search = st.text_input(
+            "Search",
+            help=SEARCH_HELP,
+            key="tor_text_input",
+            placeholder="4552, Internal, ...",
+        )
         if tor_search != ss["tor_search"]:
             ss["tor_search"] = tor_search
             ss["tor_changed"] = True
@@ -122,7 +129,12 @@ def show_set_information(query: str):
 
     # Search bar
     with memb_search:
-        memb_search = st.text_input("Search", help=SEARCH_HELP, key="memb_text_input")
+        memb_search = st.text_input(
+            "Search",
+            help=SEARCH_HELP,
+            key="memb_text_input",
+            placeholder="as-example-test, False, ...",
+        )
         if memb_search != ss["memb_search"]:
             ss["memb_search"] = memb_search
             ss["memb_changed"] = True
@@ -181,7 +193,12 @@ def show_addr_information(query: str):
 
     # Search bar
     with route_search:
-        route_search = st.text_input("Search", help=SEARCH_HELP, key="route_text_input")
+        route_search = st.text_input(
+            "Search",
+            help=SEARCH_HELP,
+            key="route_text_input",
+            placeholder="0.0.0.0/0, Detected, ...",
+        )
         if route_search != ss["route_search"]:
             ss["route_search"] = route_search
             ss["route_changed"] = True
