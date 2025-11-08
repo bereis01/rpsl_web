@@ -73,7 +73,7 @@ else:
                     st.title(f"Results for AS{processed_query}")
                     show_results_asn(processed_query)
                 else:
-                    st.title(f"No results for AS{query}")
+                    st.title(f"No results for AS{ss["query"]}")
             case "asset":
                 r = backend.get(
                     f"asset/{processed_query}"
@@ -82,7 +82,7 @@ else:
                     st.title(f"Results for {processed_query}")
                     show_results_as_set(processed_query)
                 else:
-                    st.title(f"No results for {query}")
+                    st.title(f"No results for {ss["query"]}")
             case "addr":
                 r = backend.get(
                     f"addr/{processed_query}"
@@ -91,7 +91,7 @@ else:
                     st.title(f"Results for {processed_query}")
                     show_results_prefix(processed_query)
                 else:
-                    st.title(f"No results for {query}")
+                    st.title(f"No results for {ss["query"]}")
             case "rs":
                 r = backend.get(
                     f"rs/{processed_query}"
@@ -100,6 +100,6 @@ else:
                     st.title(f"Results for {processed_query}")
                     show_results_route_set(processed_query)
                 else:
-                    st.title(f"No results for {query}")
+                    st.title(f"No results for {ss["query"]}")
             case "invalid":
-                st.title(f"No results for {query}")
+                st.title(f"No results for {ss["query"]}")

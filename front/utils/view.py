@@ -58,7 +58,7 @@ def present_attributes(attributes):
 
 def present_asn_relationships(relationships):
     # Treats the case in which there are no results
-    if relationships == None:
+    if (relationships == None) or (len(relationships) == 0):
         st.markdown("*No relationships were found for the given query*")
 
     # Parses the dictionary
@@ -103,7 +103,26 @@ def present_asn_relationships(relationships):
 
     grid_options["autoSizeStrategy"]["type"] = "fitGridWidth"
     grid_options["defaultColDef"]["resizable"] = False
+    grid_options["defaultColDef"]["sortable"] = False
     grid_options["defaultColDef"]["suppressMovable"] = True
+    grid_options["defaultColDef"]["suppressHeaderFilterButton"] = True
+
+    grid_options["columnDefs"] = [
+        {
+            "field": "ASN",
+            "cellStyle": {
+                "color": "#0000EE",
+                # "fontWeight": "bold",
+                "text-decoration": "underline",
+            },
+        },
+        {"field": "Relationship"},
+        {"field": "Bidirectionality"},
+        {"field": "Agreement"},
+        {"field": "Reliability"},
+        {"field": "Representative"},
+        {"field": "Source"},
+    ]
 
     grid_return = AgGrid(
         df,
@@ -127,57 +146,135 @@ def present_asn_relationships(relationships):
 
 def present_asn_set_membership(membership):
     # Treats the case in which there are no results
-    if membership == None:
+    if (membership == None) or (len(membership) == 0):
         st.markdown("*No set membership information was found for the given query*")
 
     # Parses the object
-    full_membership_str = ""
-    for as_set, value in membership.items():
-        members = value["members"]
-        set_members = value["set_members"]
-        membership_str = f":orange-background[**{as_set}**]\n"
-        if members:
-            membership_str += f"- **Members:** AS{members[0]}"
-            for member in members[1:5]:
-                membership_str += f", AS{member}"
-            if len(members) > 5:
-                membership_str += ", ..."
-        membership_str += "\n"
-        if set_members:
-            membership_str += f"- **Set members:** {set_members[0]}"
-            for set_member in set_members[1:5]:
-                membership_str += f", {set_member}"
-            if len(set_members) > 5:
-                membership_str += ", ..."
-        membership_str += "\n\n"
-        full_membership_str += membership_str
+    for key in membership.keys():
+        membership[key]["members"] = str(len(membership[key]["members"]))
+        membership[key]["set_members"] = str(len(membership[key]["set_members"]))
+        membership[key].pop("body", None)
+        membership[key]["is_any"] = (
+            "🟢 True" if membership[key]["is_any"] == True else "🔴 False"
+        )
+
+    df = pd.DataFrame.from_dict(membership, orient="index")
+    df = df.reset_index()
+    df = df.rename(
+        columns={
+            "index": "Name",
+            "members": "AS Members Count",
+            "set_members": "Set Members Count",
+            "is_any": "Is Any?",
+        }
+    )
 
     # Presents
-    with st.container(border=False):
-        st.write(full_membership_str)
+    builder = GridOptionsBuilder.from_dataframe(df)
+    grid_options = builder.build()
+
+    grid_options["autoSizeStrategy"]["type"] = "fitGridWidth"
+    grid_options["defaultColDef"]["resizable"] = False
+    grid_options["defaultColDef"]["sortable"] = False
+    grid_options["defaultColDef"]["suppressMovable"] = True
+    grid_options["defaultColDef"]["suppressHeaderFilterButton"] = True
+
+    grid_options["columnDefs"] = [
+        {
+            "field": "Name",
+            "cellStyle": {
+                "color": "#0000EE",
+                # "fontWeight": "bold",
+                "text-decoration": "underline",
+            },
+        },
+        {"field": "AS Members Count"},
+        {"field": "Set Members Count"},
+        {"field": "Is Any?"},
+    ]
+
+    grid_return = AgGrid(
+        df,
+        key=f"{ss["query"]}_set_membership_grid",
+        gridOptions=grid_options,
+        update_on=["cellDoubleClicked"],
+        theme="streamlit",
+        height=325,
+        allow_unsafe_jscode=True,
+    )
+
+    # Controls redirecting the search
+    if (grid_return.event_data != None) and (
+        grid_return.event_data["column"]["colId"] == "Name"
+    ):
+        ss["query"] = grid_return.event_data["value"]
+        st.rerun()
+
     navigation_controls("memb")
 
 
 def present_addr_announcement(announcement):
     # Treats the case in which there are no results
-    if announcement == None:
+    if (announcement == None) or (len(announcement) == 0):
         st.markdown("*No announcement information was found for the given query*")
 
-    # Parsing
-    full_announcement_str = ""
-    for route, value in announcement.items():
-        announced_by = value["announced_by"]
-        announcement_str = f":violet-background[**{route}**]\n"
-        if announced_by:
-            announcement_str += f"- **Announced by:** AS{announced_by[0]}"
-            for asn in announced_by[1:5]:
-                announcement_str += f", AS{asn}"
-            if len(announced_by) > 5:
-                announcement_str += ", ..."
-        announcement_str += "\n\n"
-        full_announcement_str += announcement_str
+    # Parses the object
+    for key in announcement.keys():
+        announcement[key]["overlap"] = (
+            "🔴 Detected"
+            if len(announcement[key]["announced_by"]) > 1
+            else "🟢 Not detected"
+        )
+        announcement[key]["announced_by"] = ", ".join(announcement[key]["announced_by"])
 
-    # Presenting
-    with st.container(border=False):
-        st.write(full_announcement_str)
+    df = pd.DataFrame.from_dict(announcement, orient="index")
+    df = df.reset_index()
+    df = df.rename(
+        columns={
+            "index": "Address/Prefix",
+            "overlap": "Overlap",
+            "announced_by": "Registered By",
+        }
+    )
+
+    # Presents
+    builder = GridOptionsBuilder.from_dataframe(df)
+    grid_options = builder.build()
+
+    grid_options["autoSizeStrategy"]["type"] = "fitGridWidth"
+    grid_options["defaultColDef"]["resizable"] = False
+    grid_options["defaultColDef"]["sortable"] = False
+    grid_options["defaultColDef"]["suppressMovable"] = True
+    grid_options["defaultColDef"]["suppressHeaderFilterButton"] = True
+
+    grid_options["columnDefs"] = [
+        {
+            "field": "Address/Prefix",
+            "cellStyle": {
+                "color": "#0000EE",
+                # "fontWeight": "bold",
+                "text-decoration": "underline",
+            },
+        },
+        {"field": "Overlap"},
+        {"field": "Registered By"},
+    ]
+
+    grid_return = AgGrid(
+        df,
+        key=f"{ss["query"]}_addr_announcement_grid",
+        gridOptions=grid_options,
+        update_on=["cellDoubleClicked"],
+        theme="streamlit",
+        height=325,
+        allow_unsafe_jscode=True,
+    )
+
+    # Controls redirecting the search
+    if (grid_return.event_data != None) and (
+        grid_return.event_data["column"]["colId"] == "Address/Prefix"
+    ):
+        ss["query"] = grid_return.event_data["value"]
+        st.rerun()
+
     navigation_controls("route")

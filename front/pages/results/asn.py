@@ -113,7 +113,7 @@ def show_set_information(query: str):
     if "memb_skip" not in ss:
         ss["memb_skip"] = 0
     if "memb_limit" not in ss:
-        ss["memb_limit"] = 5
+        ss["memb_limit"] = 10
 
     # Header
     with memb_header:
@@ -172,7 +172,7 @@ def show_addr_information(query: str):
     if "route_skip" not in ss:
         ss["route_skip"] = 0
     if "route_limit" not in ss:
-        ss["route_limit"] = 5
+        ss["route_limit"] = 10
 
     # Header
     with route_header:
