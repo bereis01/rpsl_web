@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 from streamlit import session_state as ss
 from utils.elements import navigation_controls
+from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 
 
 def present_attributes(attributes):
@@ -65,15 +66,9 @@ def present_asn_relationships(relationships):
     for key in relationships.keys():
         link = relationships[key].copy()
         link["bidirectional"] = (
-            ":green-background[True]"
-            if link["bidirectional"] == True
-            else ":red-background[False]"
+            "🟢 True" if link["bidirectional"] == True else "🔴 False"
         )
-        link["agreement"] = (
-            ":green-background[True]"
-            if link["agreement"] == True
-            else ":red-background[False]"
-        )
+        link["agreement"] = "🟢 True" if link["agreement"] == True else "🔴 False"
         link["reliability"] = float(link["reliability"])
         if link["reliability"] >= 0.66:
             link["reliability"] = "🟢 " + str(link["reliability"])[:4]
@@ -82,19 +77,17 @@ def present_asn_relationships(relationships):
         else:
             link["reliability"] = "🟡 " + str(link["reliability"])[:4]
         link["representative"] = (
-            ":green-background[True]"
-            if link["representative"] == True
-            else ":red-background[False]"
+            "🟢 True" if link["representative"] == True else "🔴 False"
         )
         link["source"] = (
-            ":blue-background[Internal]"
-            if link["source"] == "internal"
-            else ":yellow-background[External]"
+            "🔵 Internal" if link["source"] == "internal" else "🟠 External"
         )
         parsed_relationships[key] = link
     df = pd.DataFrame.from_dict(parsed_relationships, orient="index")
+    df = df.reset_index()
     df = df.rename(
         columns={
+            "index": "ASN",
             "tor": "Relationship",
             "bidirectional": "Bidirectionality",
             "agreement": "Agreement",
@@ -105,7 +98,30 @@ def present_asn_relationships(relationships):
     )
 
     # Presents the results
-    st.table(df, border="horizontal")
+    builder = GridOptionsBuilder.from_dataframe(df)
+    grid_options = builder.build()
+
+    grid_options["autoSizeStrategy"]["type"] = "fitGridWidth"
+    grid_options["defaultColDef"]["resizable"] = False
+    grid_options["defaultColDef"]["suppressMovable"] = True
+
+    grid_return = AgGrid(
+        df,
+        key=f"{ss["query"]}_relationships_grid",
+        gridOptions=grid_options,
+        update_on=["cellDoubleClicked"],
+        theme="streamlit",
+        height=325,
+        allow_unsafe_jscode=True,
+    )
+
+    # Controls redirecting the search
+    if (grid_return.event_data != None) and (
+        grid_return.event_data["column"]["colId"] == "ASN"
+    ):
+        ss["query"] = grid_return.event_data["value"]
+        st.rerun()
+
     navigation_controls("tor")
 
 

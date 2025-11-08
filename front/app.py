@@ -1,8 +1,8 @@
 import streamlit as st
 from utils import backend
-from utils.state import clear_cache
 from utils.regex import process_query
 from streamlit import session_state as ss
+from utils.state import clear_cache, submit
 from pages.results.asn import show_results_asn
 from pages.results.addr import show_results_prefix
 from pages.results.asset import show_results_as_set
@@ -23,12 +23,15 @@ logo_space.image("assets/logo.png")
 
 # Search box
 if "query" not in ss:
+    ss["last_query"] = None
     ss["query"] = None
 
 with search_space:
     query = st.text_input(
         label="Enter a keyword and press enter to search.",
         placeholder="ASN, AS Set, Route Set, Address Prefix, ...",
+        key="search_bar",
+        on_change=submit,
     )
 
 # Body
@@ -36,7 +39,7 @@ _, results_space, _ = st.columns([0.2, 0.6, 0.2], vertical_alignment="center")
 _, results_space_condensed, _ = st.columns([0.3, 0.4, 0.3], vertical_alignment="center")
 
 # Shows temporary text before any query is made
-if not query:
+if not ss["query"]:
     with results_space_condensed:
         st.markdown(
             """
@@ -54,13 +57,13 @@ if not query:
 # Shows results after query was made
 else:
     # Clears cache if query has changed
-    if query != ss["query"]:
-        ss["query"] = query
-        clear_cache(["query"])
+    if ss["query"] != ss["last_query"]:
+        ss["last_query"] = ss["query"]
+        clear_cache(["last_query", "query", "search_bar"])
 
     # Matches the results function to the query type
     with results_space:
-        query_type, processed_query = process_query(query)
+        query_type, processed_query = process_query(ss["query"])
         match query_type:
             case "asn":
                 r = backend.get(
