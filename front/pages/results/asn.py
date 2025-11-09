@@ -115,28 +115,6 @@ def show_policies_info(query: str):
     # Showing results
     view.present_asn_rules(ss["exports_page"]["result"], "exports")
 
-    # Getting source data
-    with st.spinner("Getting source data..."):
-        if "imports" not in ss:
-            ss["imports"] = backend.get(f"asn/imports/{query}").json()
-            ss["imports"] = pd.DataFrame.from_records(ss["imports"]["result"]).astype(
-                str
-            )
-
-        if "exports" not in ss:
-            ss["exports"] = backend.get(f"asn/exports/{query}").json()
-            ss["exports"] = pd.DataFrame.from_records(ss["exports"]["result"]).astype(
-                str
-            )
-
-    # Showing source data
-    with st.expander("Source data"):
-        st.subheader("Import Rules")
-        st.dataframe(ss["imports"])
-
-        st.subheader("Export Rules")
-        st.dataframe(ss["exports"])
-
     st.divider()
 
 
@@ -200,19 +178,6 @@ def show_relationship_info(query: str):
         st.subheader("Exported Objects")
         st.table(ss["exchanged_objects"]["exports"], border="horizontal")
 
-    # Getting source data
-    with st.spinner("Getting source data..."):
-        if "relationships" not in ss:
-            ss["relationships"] = backend.get(f"asn/relationships/{query}").json()
-            ss["relationships"] = pd.DataFrame.from_dict(
-                ss["relationships"]["result"], orient="index"
-            ).astype(str)
-
-    # Showing source data
-    with st.expander("Source data"):
-        st.subheader("Relationships")
-        st.dataframe(ss["relationships"])
-
     st.divider()
 
 
@@ -261,22 +226,6 @@ def show_set_information(query: str):
     # Showing results
     view.present_asn_set_membership(ss["membership_page"]["result"])
 
-    # Getting source data
-    with st.spinner("Getting source data..."):
-        if "membership" not in ss:
-            ss["membership"] = backend.get(f"asset/membership/{query}").json()
-
-    # Showing source data
-    with st.expander("Source data"):
-        st.subheader("AS Sets")
-        if ss["membership"]["result"] != None:
-            df = pd.DataFrame.from_dict(
-                ss["membership"]["result"], orient="index"
-            ).astype(str)
-            st.dataframe(df)
-        else:
-            st.write("*There is not an entry for this object in the database*\n")
-
     st.divider()
 
 
@@ -324,22 +273,6 @@ def show_addr_information(query: str):
 
     # Showing results
     view.present_addr_announcement(ss["announcement_page"]["result"])
-
-    # Getting source data
-    with st.spinner("Getting source data..."):
-        if "announcement" not in ss:
-            ss["announcement"] = backend.get(f"addr/announcement/{query}").json()
-
-    # Showing source data
-    with st.expander("Source data"):
-        st.subheader("AS Routes")
-        if ss["announcement"]["result"] != None:
-            df = pd.DataFrame.from_dict(
-                ss["announcement"]["result"], orient="index"
-            ).astype(str)
-            st.dataframe(df)
-        else:
-            st.write("*There is not an entry for this object in the database*\n")
 
     st.divider()
 
