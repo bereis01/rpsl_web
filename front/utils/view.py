@@ -285,15 +285,19 @@ def present_addr_announcement(announcement):
         st.markdown("*No announcement information was found for the given query*")
 
     # Parses the object
+    parsed_announcement = {}
     for key in announcement.keys():
-        announcement[key]["overlap"] = (
+        parsed_announcement[key] = {}
+        parsed_announcement[key]["overlap"] = (
             "🔴 Detected"
             if len(announcement[key]["announced_by"]) > 1
             else "🟢 Not detected"
         )
-        announcement[key]["announced_by"] = ", ".join(announcement[key]["announced_by"])
+        parsed_announcement[key]["announced_by"] = ", ".join(
+            announcement[key]["announced_by"]
+        )
 
-    df = pd.DataFrame.from_dict(announcement, orient="index")
+    df = pd.DataFrame.from_dict(parsed_announcement, orient="index")
     df = df.reset_index()
 
     # Presents
