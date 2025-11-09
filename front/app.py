@@ -16,13 +16,16 @@ st.set_page_config(
 
 # Header
 _, logo_space, _, _ = st.columns([0.2, 0.15, 0.45, 0.2], vertical_alignment="bottom")
-_, search_space, _ = st.columns([0.2, 0.6, 0.2], vertical_alignment="top")
+_, search_space, back_space, reset_space, _ = st.columns(
+    [0.2, 0.50, 0.05, 0.05, 0.2], vertical_alignment="bottom"
+)
 
 # Displays the logo
 logo_space.image("assets/logo.png")
 
 # Search box
 if "query" not in ss:
+    ss["query_history"] = []
     ss["last_query"] = None
     ss["query"] = None
 
@@ -33,6 +36,20 @@ with search_space:
         key="search_bar",
         on_change=submit,
     )
+with back_space:
+    back = st.button("<", width=40)
+    if back and ss["query_history"]:
+        ss["query"] = ss["query_history"].pop()
+        if ss["query_history"]:
+            ss["last_query"] = ss["query_history"][-1]
+        else:
+            ss["last_query"] = None
+with reset_space:
+    reset = st.button("⟳", width=40)
+    if reset:
+        ss["query_history"] = []
+        ss["last_query"] = None
+        ss["query"] = None
 
 # Body
 _, results_space, _ = st.columns([0.2, 0.6, 0.2], vertical_alignment="center")
@@ -58,8 +75,10 @@ if not ss["query"]:
 else:
     # Clears cache if query has changed
     if ss["query"] != ss["last_query"]:
+        if (not back) and (not reset):
+            ss["query_history"].append(ss["last_query"])
         ss["last_query"] = ss["query"]
-        clear_cache(["last_query", "query", "search_bar"])
+        clear_cache(["last_query", "query", "search_bar", "query_history"])
 
     # Matches the results function to the query type
     with results_space:

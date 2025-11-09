@@ -7,8 +7,9 @@ from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 
 def present_attributes(attributes):
     # Treats the case in which there are no results
-    if attributes == None:
+    if (attributes == None) or (len(attributes) == 0):
         st.markdown("*No basic information was found for the given query*")
+        return
 
     # Parses the object
     attributes_str = ""
@@ -60,6 +61,7 @@ def present_asn_rules(rules, type: str):
     # Treats the case in which there are no results
     if (rules == None) or (len(rules) == 0):
         st.markdown("*No rules were found for the given query*")
+        return
 
     # Parses the object
     parsed_rules = []
@@ -80,6 +82,8 @@ def present_asn_rules(rules, type: str):
             parsed_rules[-1]["version"] = "🟣 ipv4"
         elif parsed_rules[-1]["version"] == "ipv6":
             parsed_rules[-1]["version"] = "🟠 ipv6"
+        elif parsed_rules[-1]["version"] == "any":
+            parsed_rules[-1]["version"] = "⚪ any"
 
         if parsed_rules[-1]["cast"] == "unicast":
             parsed_rules[-1]["cast"] = "🔵 unicast"
@@ -88,7 +92,7 @@ def present_asn_rules(rules, type: str):
         elif parsed_rules[-1]["cast"] == "any":
             parsed_rules[-1]["cast"] = "⚪ any"
 
-    df = pd.DataFrame(parsed_rules)
+    df = pd.DataFrame(parsed_rules).astype(str)
 
     # Presents the results
     builder = GridOptionsBuilder.from_dataframe(df)
@@ -125,6 +129,7 @@ def present_asn_relationships(relationships):
     # Treats the case in which there are no results
     if (relationships == None) or (len(relationships) == 0):
         st.markdown("*No relationships were found for the given query*")
+        return
 
     # Parses the dictionary
     parsed_relationships = {}
@@ -148,7 +153,7 @@ def present_asn_relationships(relationships):
             "🔵 Internal" if link["source"] == "internal" else "🟠 External"
         )
         parsed_relationships[key] = link
-    df = pd.DataFrame.from_dict(parsed_relationships, orient="index")
+    df = pd.DataFrame.from_dict(parsed_relationships, orient="index").astype(str)
     df = df.reset_index()
 
     # Presents the results
@@ -222,6 +227,7 @@ def present_asn_set_membership(membership):
     # Treats the case in which there are no results
     if (membership == None) or (len(membership) == 0):
         st.markdown("*No set membership information was found for the given query*")
+        return
 
     # Parses the object
     for key in membership.keys():
@@ -232,7 +238,7 @@ def present_asn_set_membership(membership):
             "🟢 True" if membership[key]["is_any"] == True else "🔴 False"
         )
 
-    df = pd.DataFrame.from_dict(membership, orient="index")
+    df = pd.DataFrame.from_dict(membership, orient="index").astype(str)
     df = df.reset_index()
 
     # Presents
@@ -283,6 +289,7 @@ def present_addr_announcement(announcement):
     # Treats the case in which there are no results
     if (announcement == None) or (len(announcement) == 0):
         st.markdown("*No announcement information was found for the given query*")
+        return
 
     # Parses the object
     parsed_announcement = {}
@@ -297,7 +304,7 @@ def present_addr_announcement(announcement):
             announcement[key]["announced_by"]
         )
 
-    df = pd.DataFrame.from_dict(parsed_announcement, orient="index")
+    df = pd.DataFrame.from_dict(parsed_announcement, orient="index").astype(str)
     df = df.reset_index()
 
     # Presents
