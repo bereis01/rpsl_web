@@ -64,35 +64,33 @@ def present_asn_rules(rules, type: str):
         return
 
     # Parses the object
-    parsed_rules = []
-    for rule in rules:
-        parsed_rules.append(rule.copy())
-        if "value" in parsed_rules[-1]["peering"]["remote_as"].keys():
-            parsed_rules[-1]["peering"] = parsed_rules[-1]["peering"]["remote_as"][
-                "value"
-            ]
-        else:
-            parsed_rules[-1]["peering"] = "Other"
-        if "value" in parsed_rules[-1]["filter"].keys():
-            parsed_rules[-1]["filter"] = parsed_rules[-1]["filter"]["value"]
-        else:
-            parsed_rules[-1]["filter"] = "Other"
+    if ss[f"{type}_changed"]:
+        for rule in rules:
+            if "value" in rule["peering"]["remote_as"].keys():
+                rule["peering"] = rule["peering"]["remote_as"]["value"]
+            else:
+                rule["peering"] = "Other"
 
-        if parsed_rules[-1]["version"] == "ipv4":
-            parsed_rules[-1]["version"] = "🟣 ipv4"
-        elif parsed_rules[-1]["version"] == "ipv6":
-            parsed_rules[-1]["version"] = "🟠 ipv6"
-        elif parsed_rules[-1]["version"] == "any":
-            parsed_rules[-1]["version"] = "⚪ any"
+            if "value" in rule["filter"].keys():
+                rule["filter"] = rule["filter"]["value"]
+            else:
+                rule["filter"] = "Other"
 
-        if parsed_rules[-1]["cast"] == "unicast":
-            parsed_rules[-1]["cast"] = "🔵 unicast"
-        elif parsed_rules[-1]["cast"] == "multicast":
-            parsed_rules[-1]["cast"] = "🟡 multicast"
-        elif parsed_rules[-1]["cast"] == "any":
-            parsed_rules[-1]["cast"] = "⚪ any"
+            if rule["version"] == "ipv4":
+                rule["version"] = "🟣 ipv4"
+            elif rule["version"] == "ipv6":
+                rule["version"] = "🟠 ipv6"
+            elif rule["version"] == "any":
+                rule["version"] = "⚪ any"
 
-    df = pd.DataFrame(parsed_rules).astype(str)
+            if rule["cast"] == "unicast":
+                rule["cast"] = "🔵 unicast"
+            elif rule["cast"] == "multicast":
+                rule["cast"] = "🟡 multicast"
+            elif rule["cast"] == "any":
+                rule["cast"] = "⚪ any"
+
+    df = pd.DataFrame(rules).astype(str)
 
     # Presents the results
     builder = GridOptionsBuilder.from_dataframe(df)
@@ -115,12 +113,14 @@ def present_asn_rules(rules, type: str):
 
     asn_rules_grid_return = AgGrid(
         df,
-        key=f"{ss["query"]}_{type}_grid",
+        key=f"{type}_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
         theme="streamlit",
         height=325,
     )
+
+    del df
 
     navigation_controls(f"{type}")
 
@@ -132,28 +132,43 @@ def present_asn_relationships(relationships):
         return
 
     # Parses the dictionary
-    parsed_relationships = {}
-    for key in relationships.keys():
-        link = relationships[key].copy()
-        link["bidirectional"] = (
-            "🟢 True" if link["bidirectional"] == True else "🔴 False"
-        )
-        link["agreement"] = "🟢 True" if link["agreement"] == True else "🔴 False"
-        link["reliability"] = float(link["reliability"])
-        if link["reliability"] >= 0.66:
-            link["reliability"] = "🟢 " + str(link["reliability"])[:4]
-        elif link["reliability"] < 0.33:
-            link["reliability"] = "🔴 " + str(link["reliability"])[:4]
-        else:
-            link["reliability"] = "🟡 " + str(link["reliability"])[:4]
-        link["representative"] = (
-            "🟢 True" if link["representative"] == True else "🔴 False"
-        )
-        link["source"] = (
-            "🔵 Internal" if link["source"] == "internal" else "🟠 External"
-        )
-        parsed_relationships[key] = link
-    df = pd.DataFrame.from_dict(parsed_relationships, orient="index").astype(str)
+    if ss["tor_changed"]:
+        for key in relationships.keys():
+            relationships[key]["bidirectional"] = (
+                "🟢 True" if relationships[key]["bidirectional"] == True else "🔴 False"
+            )
+
+            relationships[key]["agreement"] = (
+                "🟢 True" if relationships[key]["agreement"] == True else "🔴 False"
+            )
+
+            relationships[key]["reliability"] = float(relationships[key]["reliability"])
+            if relationships[key]["reliability"] >= 0.66:
+                relationships[key]["reliability"] = (
+                    "🟢 " + str(relationships[key]["reliability"])[:4]
+                )
+            elif relationships[key]["reliability"] < 0.33:
+                relationships[key]["reliability"] = (
+                    "🔴 " + str(relationships[key]["reliability"])[:4]
+                )
+            else:
+                relationships[key]["reliability"] = (
+                    "🟡 " + str(relationships[key]["reliability"])[:4]
+                )
+
+            relationships[key]["representative"] = (
+                "🟢 True"
+                if relationships[key]["representative"] == True
+                else "🔴 False"
+            )
+
+            relationships[key]["source"] = (
+                "🔵 Internal"
+                if relationships[key]["source"] == "internal"
+                else "🟠 External"
+            )
+
+    df = pd.DataFrame.from_dict(relationships, orient="index").astype(str)
     df = df.reset_index()
 
     # Presents the results
@@ -206,12 +221,14 @@ def present_asn_relationships(relationships):
 
     asn_relationships_grid_return = AgGrid(
         df,
-        key=f"{ss["query"]}_relationships_grid",
+        key="relationships_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
         theme="streamlit",
         height=325,
     )
+
+    del df
 
     # Controls redirecting the search
     if (asn_relationships_grid_return.event_data != None) and (
@@ -230,13 +247,17 @@ def present_asn_set_membership(membership):
         return
 
     # Parses the object
-    for key in membership.keys():
-        membership[key]["members"] = str(len(membership[key]["members"]))
-        membership[key]["set_members"] = str(len(membership[key]["set_members"]))
-        membership[key].pop("body", None)
-        membership[key]["is_any"] = (
-            "🟢 True" if membership[key]["is_any"] == True else "🔴 False"
-        )
+    if ss["memb_changed"]:
+        for key in membership.keys():
+            membership[key]["members"] = str(len(membership[key]["members"]))
+
+            membership[key]["set_members"] = str(len(membership[key]["set_members"]))
+
+            membership[key].pop("body", None)
+
+            membership[key]["is_any"] = (
+                "🟢 True" if membership[key]["is_any"] == True else "🔴 False"
+            )
 
     df = pd.DataFrame.from_dict(membership, orient="index").astype(str)
     df = df.reset_index()
@@ -268,12 +289,14 @@ def present_asn_set_membership(membership):
 
     set_membership_grid_return = AgGrid(
         df,
-        key=f"{ss["query"]}_set_membership_grid",
+        key="set_membership_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
         theme="streamlit",
         height=325,
     )
+
+    del df
 
     # Controls redirecting the search
     if (set_membership_grid_return.event_data != None) and (
@@ -292,19 +315,19 @@ def present_addr_announcement(announcement):
         return
 
     # Parses the object
-    parsed_announcement = {}
-    for key in announcement.keys():
-        parsed_announcement[key] = {}
-        parsed_announcement[key]["overlap"] = (
-            "🔴 Detected"
-            if len(announcement[key]["announced_by"]) > 1
-            else "🟢 Not detected"
-        )
-        parsed_announcement[key]["announced_by"] = ", ".join(
-            announcement[key]["announced_by"]
-        )
+    if ss["route_changed"]:
+        for key in announcement.keys():
+            announcement[key]["overlap"] = (
+                "🔴 Detected"
+                if len(announcement[key]["announced_by"]) > 1
+                else "🟢 Not detected"
+            )
 
-    df = pd.DataFrame.from_dict(parsed_announcement, orient="index").astype(str)
+            announcement[key]["announced_by"] = ", ".join(
+                announcement[key]["announced_by"]
+            )
+
+    df = pd.DataFrame.from_dict(announcement, orient="index").astype(str)
     df = df.reset_index()
 
     # Presents
@@ -337,12 +360,14 @@ def present_addr_announcement(announcement):
 
     addr_announcement_grid_return = AgGrid(
         df,
-        key=f"{ss["query"]}_addr_announcement_grid",
+        key="addr_announcement_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
         theme="streamlit",
         height=325,
     )
+
+    del df
 
     # Controls redirecting the search
     if (addr_announcement_grid_return.event_data != None) and (

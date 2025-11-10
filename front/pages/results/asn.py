@@ -65,11 +65,14 @@ def show_policies_info(query: str):
                 f"asn/imports/{query}?skip={ss["imports_skip"]}&limit={ss["imports_limit"]}"
                 + (f"&search={imports_search}" if imports_search else "")
             ).json()
-            ss["imports_changed"] = False
             ss["imports_count"] = ss["imports_page"]["count"]
 
     # Showing results
     view.present_asn_rules(ss["imports_page"]["result"], "imports")
+
+    # Resets parsing
+    if ss["imports_changed"]:
+        ss["imports_changed"] = False
 
     # Formatting
     exports_header, exports_search = st.columns([0.7, 0.3], vertical_alignment="center")
@@ -109,11 +112,14 @@ def show_policies_info(query: str):
                 f"asn/exports/{query}?skip={ss["exports_skip"]}&limit={ss["exports_limit"]}"
                 + (f"&search={exports_search}" if exports_search else "")
             ).json()
-            ss["exports_changed"] = False
             ss["exports_count"] = ss["exports_page"]["count"]
 
     # Showing results
     view.present_asn_rules(ss["exports_page"]["result"], "exports")
+
+    # Resets parsing
+    if ss["exports_changed"]:
+        ss["exports_changed"] = False
 
     st.divider()
 
@@ -158,11 +164,14 @@ def show_relationship_info(query: str):
                 f"asn/relationships/{query}?skip={ss["tor_skip"]}&limit={ss["tor_limit"]}"
                 + (f"&search={tor_search}" if tor_search else "")
             ).json()
-            ss["tor_changed"] = False
             ss["tor_count"] = ss["relationships_page"]["count"]
 
     # Showing results
     view.present_asn_relationships(ss["relationships_page"]["result"])
+
+    # Resets parsing
+    if ss["tor_changed"]:
+        ss["tor_changed"] = False
 
     # Gettings exchanged objects
     with st.spinner("Getting results..."):
@@ -220,11 +229,14 @@ def show_set_information(query: str):
                 f"asset/membership/{query}?skip={ss["memb_skip"]}&limit={ss["memb_limit"]}"
                 + (f"&search={memb_search}" if memb_search else "")
             ).json()
-            ss["memb_changed"] = False
-        ss["memb_count"] = ss["membership_page"]["count"]
+            ss["memb_count"] = ss["membership_page"]["count"]
 
     # Showing results
     view.present_asn_set_membership(ss["membership_page"]["result"])
+
+    # Resets parsing
+    if ss["memb_changed"]:
+        ss["memb_changed"] = False
 
     st.divider()
 
@@ -268,11 +280,14 @@ def show_addr_information(query: str):
                 f"addr/announcement/{query}?skip={ss["route_skip"]}&limit={ss["route_limit"]}"
                 + (f"&search={route_search}" if route_search else "")
             ).json()
-            ss["route_changed"] = False
-        ss["route_count"] = ss["announcement_page"]["count"]
+            ss["route_count"] = ss["announcement_page"]["count"]
 
     # Showing results
     view.present_addr_announcement(ss["announcement_page"]["result"])
+
+    # Resets parsing
+    if ss["route_changed"]:
+        ss["route_changed"] = False
 
     st.divider()
 
