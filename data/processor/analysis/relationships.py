@@ -46,6 +46,11 @@ def process_relationships(store: ObjStr):
     store.set_key("analysis", "set_metadata", set_metadata)
     store.set_key("analysis", "set_heuristic_detailed", set_heuristic_detailed)
 
+    # Cleans some variables that are not necessary anymore
+    del exchanged_objects
+    del ie_heuristic
+    del set_heuristic
+
     # Generating results per heuristic
     ie_heuristic_final = generate_final_results_per_heuristic(
         ie_metadata, ie_heuristic_detailed
@@ -57,9 +62,23 @@ def process_relationships(store: ObjStr):
     )
     store.set_key("analysis", "set_heuristic_final", set_heuristic_final)
 
+    # Cleans some variables that are not necessary anymore
+    del ie_metadata
+    del ie_heuristic_detailed
+    del set_metadata
+    del set_heuristic_detailed
+
     # Uniting results
+    print("test")
     result = unite_heuristics(ie_heuristic_final, set_heuristic_final)
-    store.set("analysis-relationships", result)
+    del ie_heuristic_final
+    del set_heuristic_final
+
+    # Persisting the final result
+    print("test")
+    for key in result.keys():
+        store.set_key("analysis-relationships", str(key), result[key])
+        result.pop(key, None)
 
 
 def expand_as_sets(as_sets):
