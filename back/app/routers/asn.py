@@ -88,7 +88,7 @@ def get_exports(request: Request, asn: str, skip: int = None, limit: int = None)
 def get_relationships(
     request: Request, asn: str, skip: int = None, limit: int = None, search: str = None
 ):
-    result = request.app.state.storage.get("analysis-relationships", asn)
+    result = request.app.state.storage.get_key("analysis-relationships", asn)
 
     # If nothing is found
     if result == None:
