@@ -72,7 +72,7 @@ def process_relationships(store: ObjStr):
     del set_heuristic_final
 
     # Persisting the final result
-    for key in result.keys():
+    for key in list(result.keys()):
         store.set_key("analysis-relationships", str(key), result[key])
         result.pop(key, None)
 
