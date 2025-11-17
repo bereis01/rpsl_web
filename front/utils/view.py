@@ -105,11 +105,11 @@ def present_asn_rules(rules, type: str):
     grid_options["tooltipShowDelay"] = 0
 
     grid_options["columnDefs"] = [
-        {"field": "version", "headerName": "Version"},
-        {"field": "cast", "headerName": "Cast"},
-        {"field": "peering", "headerName": "Peer"},
-        {"field": "actions", "headerName": "Actions"},
-        {"field": "filter", "headerName": "Filter"},
+        {"field": "version", "tooltipField": "version", "headerName": "Version"},
+        {"field": "cast", "tooltipField": "cast", "headerName": "Cast"},
+        {"field": "peering", "tooltipField": "peering", "headerName": "Peer"},
+        {"field": "actions", "tooltipField": "actions", "headerName": "Actions"},
+        {"field": "filter", "tooltipField": "filter", "headerName": "Filter"},
     ]
 
     asn_rules_grid_return = AgGrid(
@@ -186,35 +186,41 @@ def present_asn_relationships(relationships):
     grid_options["columnDefs"] = [
         {
             "field": "index",
+            "tooltipField": "index",
             "headerName": "ASN",
             "cellStyle": {
                 "color": "#0000EE",
                 "text-decoration": "underline",
             },
         },
-        {"field": "tor", "headerName": "Relationship"},
+        {"field": "tor", "tooltipField": "tor", "headerName": "Relationship"},
         {
             "field": "bidirectional",
+            "tooltipField": "bidirectional",
             "headerName": "Bidirectionality",
             "headerTooltip": "If the relationship can be infered from both ends.",
         },
         {
             "field": "agreement",
+            "tooltipField": "agreement",
             "headerName": "Agreement",
             "headerTooltip": "If the relationships infered from both ends agree (e.g. provider infered from one end and customer infered from the other).",
         },
         {
             "field": "reliability",
+            "tooltipField": "reliability",
             "headerName": "Reliability",
             "headerTooltip": "Score based on amount the of relationships that agree from the AS from which they were infered.",
         },
         {
             "field": "representative",
+            "tooltipField": "representative",
             "headerName": "Representative",
             "headerTooltip": "If the object exchanged (exported by the client and imported by the provider) is the one that the client most exports. Always false for peers.",
         },
         {
             "field": "source",
+            "tooltipField": "source",
             "headerName": "Source",
             "headerTooltip": "If the relationship was infered from this AS or from the other end.",
         },
@@ -277,15 +283,24 @@ def present_asn_set_membership(membership):
     grid_options["columnDefs"] = [
         {
             "field": "index",
+            "tooltipField": "index",
             "headerName": "Name",
             "cellStyle": {
                 "color": "#0000EE",
                 "text-decoration": "underline",
             },
         },
-        {"field": "members", "headerName": "AS Members Count"},
-        {"field": "set_members", "headerName": "Set Members Count"},
-        {"field": "is_any", "headerName": "Is Any?"},
+        {
+            "field": "members",
+            "tooltipField": "members",
+            "headerName": "AS Members Count",
+        },
+        {
+            "field": "set_members",
+            "tooltipField": "set_members",
+            "headerName": "Set Members Count",
+        },
+        {"field": "is_any", "tooltipField": "is_any", "headerName": "Is Any?"},
     ]
 
     set_membership_grid_return = AgGrid(
@@ -345,6 +360,7 @@ def present_addr_announcement(announcement):
     grid_options["columnDefs"] = [
         {
             "field": "index",
+            "tooltipField": "index",
             "headerName": "Address/Prefix",
             "cellStyle": {
                 "color": "#0000EE",
@@ -353,10 +369,15 @@ def present_addr_announcement(announcement):
         },
         {
             "field": "overlap",
+            "tooltipField": "overlap",
             "headerName": "Overlap",
             "headerTooltip": "If the object is registered with more than one AS.",
         },
-        {"field": "announced_by", "headerName": "Registered By"},
+        {
+            "field": "announced_by",
+            "tooltipField": "announced_by",
+            "headerName": "Registered By",
+        },
     ]
 
     addr_announcement_grid_return = AgGrid(
