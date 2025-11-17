@@ -108,15 +108,22 @@ Keys are AS numbers as strings. Returns list of strings refering to the routes i
 
 ### relationships
 
-Keys are AS numbers as strings. Returns a list of the following object.
+Each file refers to an ASN whose relationships are registered. The objects keys are ASNs refering to the relationship's peer and they have the following structure.
 
 ```json
 {
-    'asn': Str,
-    'peer': PEERING_OBJ,
-    'tor': ["Provider", "Customer", "Peer"],
-    'import': RULE_OBJ,
-    'export': RULE_OBJ,
+    ASN:
+    {
+        PEER_ASN:
+        {
+            'tor': Str,
+            'bidirectional': bool,
+            'agreement': bool,
+            'reliability': float,
+            'representative': bool,
+            'source': ['internal', 'external']
+        }
+    }
 }
 ```
 ## asset
