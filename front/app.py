@@ -1,6 +1,7 @@
 import streamlit as st
 from utils import backend
 from utils.regex import process_query
+from streamlit import query_params as qp
 from streamlit import session_state as ss
 from utils.state import clear_cache, submit
 from pages.results.asn import show_results_asn
@@ -16,18 +17,14 @@ st.set_page_config(
 
 # Header
 _, logo_space, _, _ = st.columns([0.2, 0.15, 0.45, 0.2], vertical_alignment="bottom")
-_, search_space, back_space, reset_space, _ = st.columns(
-    [0.2, 0.50, 0.05, 0.05, 0.2], vertical_alignment="bottom"
-)
+_, search_space, _ = st.columns([0.2, 0.6, 0.2], vertical_alignment="top")
 
 # Displays the logo
 logo_space.image("assets/logo.png")
 
 # Search box
-if "query" not in ss:
-    ss["query_history"] = []
+if "last_query" not in ss:
     ss["last_query"] = None
-    ss["query"] = None
 
 with search_space:
     query = st.text_input(
@@ -36,27 +33,13 @@ with search_space:
         key="search_bar",
         on_change=submit,
     )
-with back_space:
-    back = st.button("<", width=40)
-    if back and ss["query_history"]:
-        ss["query"] = ss["query_history"].pop()
-        if ss["query_history"]:
-            ss["last_query"] = ss["query_history"][-1]
-        else:
-            ss["last_query"] = None
-with reset_space:
-    reset = st.button("⟳", width=40)
-    if reset:
-        ss["query_history"] = []
-        ss["last_query"] = None
-        ss["query"] = None
 
 # Body
 _, results_space, _ = st.columns([0.2, 0.6, 0.2], vertical_alignment="center")
 _, results_space_condensed, _ = st.columns([0.3, 0.4, 0.3], vertical_alignment="center")
 
 # Shows temporary text before any query is made
-if not ss["query"]:
+if "query" not in qp:
     with results_space_condensed:
         st.markdown(
             """
@@ -74,15 +57,13 @@ if not ss["query"]:
 # Shows results after query was made
 else:
     # Clears cache if query has changed
-    if ss["query"] != ss["last_query"]:
-        if (not back) and (not reset):
-            ss["query_history"].append(ss["last_query"])
-        ss["last_query"] = ss["query"]
-        clear_cache(["last_query", "query", "search_bar", "query_history"])
+    if qp["query"] != ss["last_query"]:
+        ss["last_query"] = qp["query"]
+        clear_cache(["last_query", "search_bar"])
 
     # Matches the results function to the query type
     with results_space:
-        query_type, processed_query = process_query(ss["query"])
+        query_type, processed_query = process_query(qp["query"])
         match query_type:
             case "asn":
                 r = backend.get(
@@ -92,7 +73,7 @@ else:
                     st.title(f"Results for AS{processed_query}")
                     show_results_asn(processed_query)
                 else:
-                    st.title(f"No results for AS{ss["query"]}")
+                    st.title(f"No results for AS{qp["query"]}")
             case "asset":
                 r = backend.get(
                     f"asset/{processed_query}"
@@ -101,7 +82,7 @@ else:
                     st.title(f"Results for {processed_query}")
                     show_results_as_set(processed_query)
                 else:
-                    st.title(f"No results for {ss["query"]}")
+                    st.title(f"No results for {qp["query"]}")
             case "addr":
                 r = backend.get(
                     f"addr/{processed_query}"
@@ -110,7 +91,7 @@ else:
                     st.title(f"Results for {processed_query}")
                     show_results_prefix(processed_query)
                 else:
-                    st.title(f"No results for {ss["query"]}")
+                    st.title(f"No results for {qp["query"]}")
             case "rs":
                 r = backend.get(
                     f"rs/{processed_query}"
@@ -119,6 +100,6 @@ else:
                     st.title(f"Results for {processed_query}")
                     show_results_route_set(processed_query)
                 else:
-                    st.title(f"No results for {ss["query"]}")
+                    st.title(f"No results for {qp["query"]}")
             case "invalid":
-                st.title(f"No results for {ss["query"]}")
+                st.title(f"No results for {qp["query"]}")

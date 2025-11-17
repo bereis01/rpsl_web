@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+from streamlit import query_params as qp
 from streamlit import session_state as ss
 from utils.elements import navigation_controls
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
@@ -234,7 +235,7 @@ def present_asn_relationships(relationships):
     if (asn_relationships_grid_return.event_data != None) and (
         asn_relationships_grid_return.event_data["column"]["colId"] == "index"
     ):
-        ss["query"] = asn_relationships_grid_return.event_data["value"]
+        qp["query"] = asn_relationships_grid_return.event_data["value"]
         st.rerun()
 
     navigation_controls("tor")
@@ -302,7 +303,7 @@ def present_asn_set_membership(membership):
     if (set_membership_grid_return.event_data != None) and (
         set_membership_grid_return.event_data["column"]["colId"] == "index"
     ):
-        ss["query"] = set_membership_grid_return.event_data["value"]
+        qp["query"] = set_membership_grid_return.event_data["value"]
         st.rerun()
 
     navigation_controls("memb")
@@ -373,7 +374,7 @@ def present_addr_announcement(announcement):
     if (addr_announcement_grid_return.event_data != None) and (
         addr_announcement_grid_return.event_data["column"]["colId"] == "index"
     ):
-        ss["query"] = addr_announcement_grid_return.event_data["value"]
+        qp["query"] = addr_announcement_grid_return.event_data["value"]
         st.rerun()
 
     navigation_controls("route")
