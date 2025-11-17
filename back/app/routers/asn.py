@@ -95,9 +95,9 @@ def get_relationships(
         return {"count": 0, "skip": 0, "limit": 0, "result": result}
 
     # Applies search
-    unfiltered_result = result
-    result = {}
     if search:
+        unfiltered_result = result
+        result = {}
         for key in unfiltered_result.keys():
             keywords = search.split(",")
             contains_all = True
