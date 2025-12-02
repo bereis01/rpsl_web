@@ -367,11 +367,6 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
     # Populates the final data structure
     for key in heuristic_detailed.keys():
         for link in heuristic_detailed[key]:
-            # Filters external links based on reliability
-            isReliable = True
-            if metadata[key]["r"] < T_r:
-                isReliable = False
-
             host = link[0]
             peer = link[1]
 
@@ -395,15 +390,14 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
                     "representative": link[5],
                     "source": "internal",
                 }
-                if isReliable:
-                    heuristic_final[peer][host] = {
-                        "tor": opposite_tor,
-                        "bidirectional": link[3],
-                        "agreement": link[4],
-                        "reliability": metadata[key]["r"],
-                        "representative": link[5],
-                        "source": "external",
-                    }
+                heuristic_final[peer][host] = {
+                    "tor": opposite_tor,
+                    "bidirectional": link[3],
+                    "agreement": link[4],
+                    "reliability": metadata[key]["r"],
+                    "representative": link[5],
+                    "source": "external",
+                }
 
             # The other end was already added, needs to reevaluate
             elif metadata[key]["r"] > heuristic_final[host][peer]["reliability"]:
@@ -415,15 +409,14 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
                     "representative": link[5],
                     "source": "internal",
                 }
-                if isReliable:
-                    heuristic_final[peer][host] = {
-                        "tor": opposite_tor,
-                        "bidirectional": link[3],
-                        "agreement": link[4],
-                        "reliability": metadata[key]["r"],
-                        "representative": link[5],
-                        "source": "external",
-                    }
+                heuristic_final[peer][host] = {
+                    "tor": opposite_tor,
+                    "bidirectional": link[3],
+                    "agreement": link[4],
+                    "reliability": metadata[key]["r"],
+                    "representative": link[5],
+                    "source": "external",
+                }
 
     return heuristic_final
 
