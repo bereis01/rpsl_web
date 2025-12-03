@@ -11,7 +11,6 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /rpslweb
 COPY shared/ ./shared
 COPY back/ ./back
-COPY data/ ./data
 
 # Move to app folder and install requirements.
 WORKDIR /rpslweb/back

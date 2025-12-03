@@ -1,5 +1,28 @@
 services:
 
+  rpslyzer:
+    build:
+      context: .
+      dockerfile: ./internet_route_verification/Dockerfile
+    image: bereis01/rpslweb-rpslyzer:latest
+    container_name: rpslyzer
+    volumes:
+      - rpslweb_data:/rpslweb_data
+    environment:
+      RAW_DATA_OUTPUT_PATH: "/rpslweb_data/parsed_all"
+
+  data:
+    build:
+      context: .
+      dockerfile: ./data/Dockerfile
+    image: bereis01/rpslweb-data:latest
+    container_name: dataprocessor
+    volumes:
+      - rpslweb_data:/rpslweb_data
+    environment:
+      DATA_INPUT_PATH: "/rpslweb_data/parsed_all"
+      DATA_OUTPUT_PATH: "/rpslweb_data/objects"
+
   back:
     build:
       context: .
@@ -8,8 +31,10 @@ services:
     container_name: fastapi
     ports:
       - "8000:8000"
+    volumes:
+      - rpslweb_data:/rpslweb_data
     environment:
-      OBJSTR_PATH: "../data/objects"
+      OBJSTR_PATH: "/rpslweb_data/objects"
 
   front:
     build:
@@ -21,3 +46,7 @@ services:
       - "8501:8501"
     environment:
       ENDPOINT_ROOT: "fastapi"
+
+volumes:
+  rpslweb_data:
+    external: True

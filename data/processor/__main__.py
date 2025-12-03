@@ -1,5 +1,6 @@
 import os
 import json
+import pickle
 import argparse
 from . import context
 from shared.storage import ObjStr
@@ -8,6 +9,9 @@ from . import cleaning, restructuring, parsing, analysis
 # Instantiates connection to storage
 rpslyzer_output_path = os.getenv("DATA_INPUT_PATH")
 objects_path = os.getenv("DATA_OUTPUT_PATH")
+
+if not os.path.isdir(objects_path):
+    os.mkdir(objects_path)
 storage = ObjStr(objects_path)
 
 # Parses command line arguments
@@ -50,8 +54,9 @@ def organize():
         parse_int=lambda x: str(x),
         parse_constant=lambda x: str(x),
     )
-    for key in data.keys():
+    if not os.path.isdir(f"{objects_path}/raw"):
         os.mkdir(f"{objects_path}/raw")
+    for key in data.keys():
         with open(f"{objects_path}/raw/{key}", "wb") as f:
             pickle.dump(data[key], f)
     f.close()
