@@ -33,11 +33,12 @@ args = parser.parse_args()
 # Organizes the raw output of rpslyzer
 def organize():
     # Unites the output from rpslyzer
-    input_file = open(f"{rpslyzer_output_path}/0.json")
+    files = os.listdir(rpslyzer_output_path)
+    input_file = open(f"{rpslyzer_output_path}/{files[0]}")
     united = json.load(input_file)
     input_file.close()
-    for i in range(1, 48):
-        input_file = open(f"{rpslyzer_output_path}/{i}.json")
+    for i in range(1, len(files)):
+        input_file = open(f"{rpslyzer_output_path}/{files[i]}")
         data = json.load(input_file)
         for key in united.keys():
             united[key] = united[key] | data[key]
