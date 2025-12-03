@@ -1,0 +1,30 @@
+[package]
+name = "route_verification_bgp"
+version = "0.7.1"
+edition = "2021"
+
+description.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+dashmap.workspace = true
+hashbrown.workspace = true
+ipnet.workspace = true
+itertools.workspace = true
+lazy-regex.workspace = true
+rayon.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+as_path_regex.workspace = true
+as_rel.workspace = true
+bgpmap.workspace = true
+io.workspace = true
+ir.workspace = true
+lex.workspace = true
+
+[dev-dependencies]
+maplit.workspace = true

@@ -1,0 +1,20 @@
+on:
+  push:
+    paths:
+      - ".github/workflows/rpsl_lexer_python.yml"
+      - "rpsl_lexer/**.py"
+      - "rpsl_lexer/pyproject.toml"
+jobs:
+  python:
+    name: Python checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: eifinger/setup-rye@v2
+        with:
+          enable-cache: true
+          working-directory: rpsl_lexer/
+      - run: rye sync
+        working-directory: rpsl_lexer/
+      - run: rye test
+        working-directory: rpsl_lexer/

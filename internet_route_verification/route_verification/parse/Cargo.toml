@@ -1,0 +1,26 @@
+[package]
+name = "route_verification_parse"
+version = "0.3.2"
+edition = "2021"
+
+description.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+ipnet.workspace = true
+lazy-regex.workspace = true
+log.workspace = true
+rayon.workspace = true
+
+ir.workspace = true
+lex.workspace = true
+shared_struct.workspace = true
+
+[dev-dependencies]
+maplit.workspace = true
+net-literals.workspace = true
+
+lex = { workspace = true, features = ["test_util"] }

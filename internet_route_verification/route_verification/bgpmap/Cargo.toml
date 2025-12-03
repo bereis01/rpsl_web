@@ -1,0 +1,15 @@
+[package]
+name = "route_verification_bgpmap"
+version = "0.1.2"
+edition = "2021"
+
+description.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+ipnet.workspace = true
+lazy-regex.workspace = true
+serde.workspace = true

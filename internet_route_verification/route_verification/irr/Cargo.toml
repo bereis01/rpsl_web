@@ -1,0 +1,20 @@
+[package]
+name = "route_verification_irr"
+version = "0.2.3"
+edition = "2021"
+
+description.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+lazy-regex.workspace = true
+log.workspace = true
+rayon.workspace = true
+
+lex.workspace = true
+io.workspace = true
+ir.workspace = true
+parse.workspace = true
