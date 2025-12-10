@@ -15,7 +15,9 @@ def navigation_controls(key: str = ""):
         """,
         unsafe_allow_html=True,
     )
-    _, left, middle, right, _ = st.columns([0.3, 0.1, 0.2, 0.1, 0.3])
+    _, left, middle, right, _ = st.columns(
+        [0.2, 0.1, 0.4, 0.1, 0.2], vertical_alignment="center"
+    )
 
     with middle:
         count = st.session_state[f"{key}_count"]
@@ -28,7 +30,9 @@ def navigation_controls(key: str = ""):
             unsafe_allow_html=True,
         )
     with left:
-        left_click = st.button("←", key=f"{key}_back_button")
+        left_click = st.button(
+            "", key=f"{key}_back_button", icon=":material/arrow_back:", width="stretch"
+        )
         if (
             left_click
             and st.session_state[f"{key}_skip"] >= st.session_state[f"{key}_limit"]
@@ -39,7 +43,12 @@ def navigation_controls(key: str = ""):
             st.session_state[f"{key}_changed"] = True
             st.rerun()
     with right:
-        right_click = st.button("→", key=f"{key}_next_button")
+        right_click = st.button(
+            "",
+            key=f"{key}_next_button",
+            icon=":material/arrow_forward:",
+            width="stretch",
+        )
         if (
             right_click
             and st.session_state[f"{key}_skip"] + st.session_state[f"{key}_limit"]
