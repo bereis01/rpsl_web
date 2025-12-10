@@ -32,7 +32,10 @@ args = parser.parse_args()
 
 # Organizes the raw output of rpslyzer
 def organize():
+    print("\n***STARTING ORGANIZATION***\n")
+
     # Unites the output from rpslyzer
+    print("Uniting RPSLyzer's output...", end="", flush=True)
     files = os.listdir(rpslyzer_output_path)
     input_file = open(f"{rpslyzer_output_path}/{files[0]}")
     united = json.load(input_file)
@@ -46,8 +49,10 @@ def organize():
     output_file = open(f"{rpslyzer_output_path}/full.json", "w")
     json.dump(united, output_file)
     output_file.close()
+    print("DONE")
 
     # Converts every entry of the data to string
+    print("Converting all data to strings...", end="", flush=True)
     f = open(f"{rpslyzer_output_path}/full.json")
     data = json.load(
         f,
@@ -55,45 +60,71 @@ def organize():
         parse_int=lambda x: str(x),
         parse_constant=lambda x: str(x),
     )
+    print("DONE")
+
+    print("Writing to disk...", end="", flush=True)
     if not os.path.isdir(f"{objects_path}/raw"):
         os.mkdir(f"{objects_path}/raw")
     for key in data.keys():
         with open(f"{objects_path}/raw/{key}", "wb") as f:
             pickle.dump(data[key], f)
     f.close()
+    print("DONE")
+
+    print("\n***FINISHING ORGANIZATION***\n")
 
 
 # Function for restructuring rpslyzers output
 def restructure():
+    print("\n***STARTING RESTRUCTURING***\n")
+
     # Opens the data
+    print("Reading data...", end="", flush=True)
     data = storage.get_bucket("raw")
+    print("DONE")
 
     # Calls the restructure module
     # Inplace modifications on data
+    print("Restructuring data...", end="", flush=True)
     restructuring.process(data)
+    print("DONE")
 
     # Writes back the cleaned data
+    print("Writing to disk...", end="", flush=True)
     storage.set_bucket("preprocessed", data)
+    print("DONE")
+
+    print("\n***FINISHING RESTRUCTURING***\n")
 
 
 # Function for cleaning the restructured data
 def clean():
+    print("\n***STARTING CLEANING***\n")
+
     # Opens the data
+    print("Reading data...", end="", flush=True)
     data = storage.get_bucket("preprocessed")
+    print("DONE")
 
     # Calls the cleaning module
     # Inplace modifications on data
+    print("Cleaning data...", end="", flush=True)
     cleaning.process(data)
+    print("DONE")
 
     # Writes back the cleaned data
+    print("Writing to disk...", end="", flush=True)
     storage.set_bucket("preprocessed", data)
+    print("DONE")
+
+    print("\n***FINISHING CLEANING***\n")
 
 
 # Function for parsing rpslyzers output
 def parse():
     # Reads the output from RPSLyzer
     # Converts all numeric data types to string
-    print("\n***STARTING***\n")
+    print("\n***STARTING PARSING***\n")
     print("Reading input data...", end="", flush=True)
     data = storage.get_bucket("preprocessed")
     print("DONE")
@@ -112,20 +143,20 @@ def parse():
         parsing.process(key, data[key], storage)
         print("DONE")
 
-    print("\n***FINISHING***\n")
+    print("\n***FINISHING PARSING***\n")
     del data
 
 
 # Function for generating more data on top of RPSLyzer
 def analyze():
-    print("\n***STARTING***\n")
+    print("\n***STARTING ANALYSIS***\n")
 
     # Processes the 'aut_nums' key
     print("Processing relationships...", end="", flush=True)
     analysis.process_relationships(storage)
-
     print("DONE")
-    print("\n***FINISHING***\n")
+
+    print("\n***FINISHING ANALYSIS***\n")
 
 
 # Executes actions based on arguments
