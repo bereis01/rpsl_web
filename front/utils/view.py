@@ -271,15 +271,21 @@ def present_asn_set_membership(membership):
     # Parses the object
     if ss["memb_changed"]:
         for key in membership.keys():
-            membership[key]["members"] = str(len(membership[key]["members"]))
+            if membership[key]["members"]:
+                membership[key]["members"] = ", ".join(membership[key]["members"])
+            else:
+                membership[key]["members"] = ""
 
-            membership[key]["set_members"] = str(len(membership[key]["set_members"]))
+            if membership[key]["set_members"]:
+                membership[key]["set_members"] = ", ".join(
+                    membership[key]["set_members"]
+                )
+            else:
+                membership[key]["set_members"] = ""
 
             membership[key].pop("body", None)
 
-            membership[key]["is_any"] = (
-                "🟢 True" if membership[key]["is_any"] == True else "🔴 False"
-            )
+            membership[key].pop("is_any", None)
 
     df = pd.DataFrame.from_dict(membership, orient="index").astype(str)
     df = df.reset_index()
@@ -305,14 +311,13 @@ def present_asn_set_membership(membership):
         {
             "field": "members",
             "tooltipField": "members",
-            "headerName": "AS Members Count",
+            "headerName": "AS Members",
         },
         {
             "field": "set_members",
             "tooltipField": "set_members",
-            "headerName": "Set Members Count",
+            "headerName": "Set Members",
         },
-        {"field": "is_any", "tooltipField": "is_any", "headerName": "Is Any?"},
     ]
 
     set_membership_grid_return = AgGrid(
@@ -346,15 +351,14 @@ def present_addr_announcement(announcement):
     # Parses the object
     if ss["route_changed"]:
         for key in announcement.keys():
-            announcement[key]["overlap"] = (
-                "🔴 Detected"
-                if len(announcement[key]["announced_by"]) > 1
-                else "🟢 Not detected"
-            )
-
-            announcement[key]["announced_by"] = ", ".join(
-                announcement[key]["announced_by"]
-            )
+            if len(announcement[key]["announced_by"]) > 1:
+                announcement[key]["announced_by"] = "🔴 " + ", ".join(
+                    announcement[key]["announced_by"]
+                )
+            else:
+                announcement[key]["announced_by"] = "🟢 " + ", ".join(
+                    announcement[key]["announced_by"]
+                )
 
     df = pd.DataFrame.from_dict(announcement, orient="index").astype(str)
     df = df.reset_index()
@@ -378,15 +382,10 @@ def present_addr_announcement(announcement):
             "cellRenderer": hyperlinkRenderer,
         },
         {
-            "field": "overlap",
-            "tooltipField": "overlap",
-            "headerName": "Overlap",
-            "headerTooltip": "If the object is registered with more than one AS.",
-        },
-        {
             "field": "announced_by",
             "tooltipField": "announced_by",
             "headerName": "Registered By",
+            "headerTooltip": "🟢 If the object is registered in a single AS. 🔴 If the object is registered with more than one AS.",
         },
     ]
 
