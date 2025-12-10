@@ -5,6 +5,23 @@ from streamlit import session_state as ss
 from utils.elements import navigation_controls
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 
+hyperlinkRenderer = JsCode(
+    """
+    class UrlCellRenderer {
+        init(params) {
+        this.eGui = document.createElement('a');
+        this.eGui.innerText = params.value;
+        this.eGui.setAttribute('href', 'https://rpslweb.snes.dcc.ufmg.br/?query=' + params.value);
+        this.eGui.setAttribute('style', "text-decoration:none");
+        this.eGui.setAttribute('target', "_blank");
+        }
+        getGui() {
+        return this.eGui;
+        }
+    }
+    """
+)
+
 
 def present_attributes(attributes):
     # Treats the case in which there are no results
@@ -114,7 +131,7 @@ def present_asn_rules(rules, type: str):
 
     asn_rules_grid_return = AgGrid(
         df,
-        key=f"{type}_grid",
+        key=f"{qp["query"]}_{type}_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
         theme="streamlit",
@@ -188,10 +205,7 @@ def present_asn_relationships(relationships):
             "field": "index",
             "tooltipField": "index",
             "headerName": "ASN",
-            "cellStyle": {
-                "color": "#0000EE",
-                "text-decoration": "underline",
-            },
+            "cellRenderer": hyperlinkRenderer,
         },
         {"field": "tor", "tooltipField": "tor", "headerName": "Relationship"},
         {
@@ -231,8 +245,9 @@ def present_asn_relationships(relationships):
         key=f"{qp["query"]}_relationships_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
-        theme="streamlit",
+        # theme="streamlit",
         height=325,
+        allow_unsafe_jscode=True,
     )
 
     del df
@@ -285,10 +300,7 @@ def present_asn_set_membership(membership):
             "field": "index",
             "tooltipField": "index",
             "headerName": "Name",
-            "cellStyle": {
-                "color": "#0000EE",
-                "text-decoration": "underline",
-            },
+            "cellRenderer": hyperlinkRenderer,
         },
         {
             "field": "members",
@@ -310,6 +322,7 @@ def present_asn_set_membership(membership):
         update_on=["cellDoubleClicked"],
         theme="streamlit",
         height=325,
+        allow_unsafe_jscode=True,
     )
 
     del df
@@ -362,10 +375,7 @@ def present_addr_announcement(announcement):
             "field": "index",
             "tooltipField": "index",
             "headerName": "Address/Prefix",
-            "cellStyle": {
-                "color": "#0000EE",
-                "text-decoration": "underline",
-            },
+            "cellRenderer": hyperlinkRenderer,
         },
         {
             "field": "overlap",
@@ -387,6 +397,7 @@ def present_addr_announcement(announcement):
         update_on=["cellDoubleClicked"],
         theme="streamlit",
         height=325,
+        allow_unsafe_jscode=True,
     )
 
     del df
