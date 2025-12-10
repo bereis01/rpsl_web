@@ -141,7 +141,7 @@ def show_relationship_info(query: str):
     # Header
     with tor_header:
         st.header("Relationship Inference", divider="gray")
-    st.write("Infered relationships with other ASes based on various heuristics.")
+    st.write("Inferred relationships with other ASes based on various heuristics.")
 
     # Search bar
     with tor_search:
