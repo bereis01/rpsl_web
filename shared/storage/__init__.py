@@ -36,38 +36,45 @@ class ObjStr:
         # Cleans cache
         self._clean_cache()
 
-        # Loads bucket to cache
+        # If whole bucket is requested, reads it directly from disk (no caching in this case)
+        if not key:
+            file = open(self.path + bucket, "rb")
+            result = pickle.load(file)
+            file.close()
+
+            # Paging
+            if not skip:
+                skip = 0
+            if not limit:
+                limit = len(result)
+
+            if isinstance(result, dict):
+                return dict(itertools.islice(result.items(), skip, skip + limit))
+            else:
+                return result[skip : skip + limit]
+
+        # Creates bucket entry in cache if it is not there
         if bucket not in self.object_cache.keys():
             # Checks if bucket exists
             if not os.path.isfile(self.path + bucket):
                 return None
 
-            # Opens the file and puts it in the cache if it exists
-            file = open(self.path + bucket, "rb")
-            self.object_cache[bucket] = pickle.load(file)
-            file.close()
+            self.object_cache[bucket] = {}
 
-        # If a key is given, checks if it is in the bucket
-        if key and key not in self.object_cache[bucket].keys():
+        # Checks if key is in cached bucket
+        if key in self.object_cache[bucket].keys():
+            return self.object_cache[bucket][key]
+
+        # If not, loads the key to the cache before returning it
+        file = open(self.path + bucket, "rb")
+        temp_bucket = pickle.load(file)
+        file.close()
+
+        if key not in temp_bucket.keys():
             return None
 
-        # Applies paging, if given
-        if not skip:
-            skip = 0
-        if not limit:
-            limit = len(self.object_cache[bucket])
-
-        if key:
-            return self.object_cache[bucket][key]
-        else:
-            if isinstance(self.object_cache[bucket], dict):
-                return dict(
-                    itertools.islice(
-                        self.object_cache[bucket].items(), skip, skip + limit
-                    )
-                )
-            else:
-                return self.object_cache[bucket][skip : skip + limit]
+        self.object_cache[bucket][key] = temp_bucket[key]
+        return self.object_cache[bucket][key]
 
     def set(self, bucket: str, obj):
         # Cleans cache
