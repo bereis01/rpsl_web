@@ -32,13 +32,13 @@ def process_relationships(store: ObjStr):
 
     # Filtering unreliable data
     exchanged_objects = store.get("asn-exchanged_objects")
-    ie_metadata, ie_heuristic_detailed = filter_unreliable_data(
+    ie_metadata, ie_heuristic_detailed = calculate_reliability(
         ie_heuristic, ie_heuristic, exchanged_objects
     )
     store.set_key("analysis", "ie_metadata", ie_metadata)
     store.set_key("analysis", "ie_heuristic_detailed", ie_heuristic_detailed)
 
-    set_metadata, set_heuristic_detailed = filter_unreliable_data(
+    set_metadata, set_heuristic_detailed = calculate_reliability(
         set_heuristic, ie_heuristic, exchanged_objects
     )
     store.set_key("analysis", "set_metadata", set_metadata)
@@ -70,6 +70,9 @@ def process_relationships(store: ObjStr):
     result = unite_heuristics(ie_heuristic_final, set_heuristic_final)
     del ie_heuristic_final
     del set_heuristic_final
+
+    # Filtering the result
+    result = filter_unreliable_data(result)
 
     # Persisting the final result
     for key in list(result.keys()):
@@ -291,7 +294,7 @@ def apply_set_heuristic(as_sets):
     return set_heuristic
 
 
-def filter_unreliable_data(heuristic: dict, baseline: dict, exchanged_objects: dict):
+def calculate_reliability(heuristic: dict, baseline: dict, exchanged_objects: dict):
     # Checks link bidirectionality and agreement
     metadata = {}
     heuristic_detailed = {}
@@ -491,3 +494,16 @@ def unite_heuristics(ie_heuristic_final: dict, set_heuristic_final: dict):
                 result[host][peer] = set_heuristic_final[host][peer]
 
     return result
+
+
+def filter_unreliable_data(relationships: dict):
+    # Removes relationships if they are external
+    # and do not meet the reliability criterion
+    for host in list(relationships.keys()):
+        for peer in list(relationships[host].keys()):
+            reliability = relationships[host][peer]["reliability"]
+            source = relationships[host][peer]["source"]
+            if (reliability < T_r) and (source == "external"):
+                relationships[host].pop(peer, None)
+
+    return relationships
