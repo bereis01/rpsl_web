@@ -210,7 +210,7 @@ def present_asn_relationships(relationships):
             "field": "reliability",
             "tooltipField": "reliability",
             "headerName": "Reliability",
-            "headerTooltip": "Score based on amount the of relationships that agree from the AS from which they were infered.",
+            "headerTooltip": "Score based on the amount of the relationships that agree from the AS from which they were infered.",
         },
         {
             "field": "representative",

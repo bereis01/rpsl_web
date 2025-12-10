@@ -126,6 +126,7 @@ Each file refers to an ASN whose relationships are registered. The objects keys 
     }
 }
 ```
+
 ## asset
 
 ### attributes
