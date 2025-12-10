@@ -183,9 +183,19 @@ def show_relationship_info(query: str):
     # Showing exchanged objects
     with st.expander("Exchanged objects"):
         st.subheader("Imported Objects")
-        st.table(ss["exchanged_objects"]["imports"], border="horizontal")
+        df = pd.DataFrame.from_dict(
+            ss["exchanged_objects"]["imports"],
+            orient="index",
+            columns=["N° of times imported"],
+        )
+        st.table(df, border="horizontal")
         st.subheader("Exported Objects")
-        st.table(ss["exchanged_objects"]["exports"], border="horizontal")
+        df = pd.DataFrame.from_dict(
+            ss["exchanged_objects"]["exports"],
+            orient="index",
+            columns=["N° of times exported"],
+        )
+        st.table(df, border="horizontal")
 
     st.divider()
 
