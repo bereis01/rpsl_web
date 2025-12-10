@@ -228,7 +228,7 @@ def present_asn_relationships(relationships):
 
     asn_relationships_grid_return = AgGrid(
         df,
-        key="relationships_grid",
+        key=f"{qp["query"]}_relationships_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
         theme="streamlit",
@@ -305,7 +305,7 @@ def present_asn_set_membership(membership):
 
     set_membership_grid_return = AgGrid(
         df,
-        key="set_membership_grid",
+        key=f"{qp["query"]}_set_membership_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
         theme="streamlit",
@@ -382,7 +382,7 @@ def present_addr_announcement(announcement):
 
     addr_announcement_grid_return = AgGrid(
         df,
-        key="addr_announcement_grid",
+        key=f"{qp["query"]}_addr_announcement_grid",
         gridOptions=grid_options,
         update_on=["cellDoubleClicked"],
         theme="streamlit",
