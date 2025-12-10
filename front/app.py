@@ -11,6 +11,7 @@ from pages.results.rs import show_results_route_set
 
 st.set_page_config(
     page_title="rpslweb",
+    page_icon="assets/icon.png",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
