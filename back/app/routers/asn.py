@@ -1,5 +1,6 @@
 import itertools
 from fastapi import APIRouter, Request
+from ..search import search_dict, search_list
 
 # Initializes router
 router = APIRouter(prefix="/asn")
@@ -43,12 +44,17 @@ def get_exchanged_objects(request: Request, asn: str):
 
 
 @router.get("/imports/{asn}")
-def get_imports(request: Request, asn: str, skip: int = None, limit: int = None):
+def get_imports(
+    request: Request, asn: str, skip: int = None, limit: int = None, search: str = None
+):
     result = request.app.state.storage.get("asn-imports", asn)
 
     # If nothing is found
     if result == None:
         return {"count": 0, "skip": 0, "limit": 0, "result": result}
+
+    # Applies search
+    result = search_list(result, search)
 
     if not skip:
         skip = 0
@@ -64,12 +70,17 @@ def get_imports(request: Request, asn: str, skip: int = None, limit: int = None)
 
 
 @router.get("/exports/{asn}")
-def get_exports(request: Request, asn: str, skip: int = None, limit: int = None):
+def get_exports(
+    request: Request, asn: str, skip: int = None, limit: int = None, search: str = None
+):
     result = request.app.state.storage.get("asn-exports", asn)
 
     # If nothing is found
     if result == None:
         return {"count": 0, "skip": 0, "limit": 0, "result": result}
+
+    # Applies search
+    result = search_list(result, search)
 
     if not skip:
         skip = 0
@@ -95,21 +106,7 @@ def get_relationships(
         return {"count": 0, "skip": 0, "limit": 0, "result": result}
 
     # Applies search
-    if search:
-        unfiltered_result = result
-        result = {}
-        for key in unfiltered_result.keys():
-            keywords = search.split(",")
-            contains_all = True
-            for keyword in keywords:
-                if not (
-                    keyword.strip().lower()
-                    in (key + str(unfiltered_result[key])).lower()
-                ):
-                    contains_all = False
-                    break
-            if contains_all:
-                result[key] = unfiltered_result[key]
+    result = search_dict(result, search)
 
     # Applies paging
     if not skip:
