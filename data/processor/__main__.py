@@ -149,12 +149,10 @@ def parse():
 
 # Function for generating more data on top of RPSLyzer
 def analyze():
-    print("\n***STARTING ANALYSIS***\n")
+    print("\n***STARTING ANALYSIS***\n")  # Analysis logging is done within the module
 
     # Processes the 'aut_nums' key
-    print("Processing relationships...", end="", flush=True)
     analysis.process_relationships(storage)
-    print("DONE")
 
     print("\n***FINISHING ANALYSIS***\n")
 

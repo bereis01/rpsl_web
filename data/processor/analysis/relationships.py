@@ -9,40 +9,49 @@ T_r = 0.6
 
 def process_relationships(store: ObjStr):
     # Expands as sets
-    as_sets = store.get("asset-members")
+    print("Expanding AS sets...", end="", flush=True)
+    """ as_sets = store.get("asset-members")
     as_sets = expand_as_sets(as_sets)
-    store.set_key("analysis", "as_sets", as_sets)
+    store.set_key("analysis", "as_sets", as_sets) """
+    as_sets = store.get_key("analysis", "as_sets")
+    print("DONE")
 
     # Pre-processes import and export rules
+    print("Pre-processing import and export rules...", end="", flush=True)
     imports = store.get("asn-imports")
     exports = store.get("asn-exports")
     aut_nums = pre_process_rules(imports, exports, as_sets)
     store.set_key("analysis", "aut_nums", aut_nums)
+    print("DONE")
+
+    # Cleans some variables that are not necessary anymore
+    del imports
+    del exports
 
     # Applies heuristics
+    print("Applying heuristics...", end="", flush=True)
     ie_heuristic = apply_ie_heuristic(aut_nums)
     store.set_key("analysis", "ie_heuristic", ie_heuristic)
-
     set_heuristic = apply_set_heuristic(as_sets)
     store.set_key("analysis", "set_heuristic", set_heuristic)
+    print("DONE")
 
     # Cleans some variables that are not necessary anymore
     del as_sets
     del aut_nums
 
-    # Filtering unreliable data
+    # Calculating reliability
+    print("Calculating reliability...", end="", flush=True)
     exchanged_objects = store.get("asn-exchanged_objects")
-    ie_metadata, ie_heuristic_detailed = calculate_reliability(
+    ie_heuristic_detailed = calculate_reliability(
         ie_heuristic, ie_heuristic, exchanged_objects
     )
-    store.set_key("analysis", "ie_metadata", ie_metadata)
     store.set_key("analysis", "ie_heuristic_detailed", ie_heuristic_detailed)
-
-    set_metadata, set_heuristic_detailed = calculate_reliability(
+    set_heuristic_detailed = calculate_reliability(
         set_heuristic, ie_heuristic, exchanged_objects
     )
-    store.set_key("analysis", "set_metadata", set_metadata)
     store.set_key("analysis", "set_heuristic_detailed", set_heuristic_detailed)
+    print("DONE")
 
     # Cleans some variables that are not necessary anymore
     del exchanged_objects
@@ -50,34 +59,37 @@ def process_relationships(store: ObjStr):
     del set_heuristic
 
     # Generating results per heuristic
-    ie_heuristic_final = generate_final_results_per_heuristic(
-        ie_metadata, ie_heuristic_detailed
-    )
+    print("Unifying entities per heuristic...", end="", flush=True)
+    ie_heuristic_final = generate_final_results_per_heuristic(ie_heuristic_detailed)
     store.set_key("analysis", "ie_heuristic_final", ie_heuristic_final)
-
-    set_heuristic_final = generate_final_results_per_heuristic(
-        set_metadata, set_heuristic_detailed
-    )
+    set_heuristic_final = generate_final_results_per_heuristic(set_heuristic_detailed)
     store.set_key("analysis", "set_heuristic_final", set_heuristic_final)
+    print("DONE")
 
     # Cleans some variables that are not necessary anymore
-    del ie_metadata
     del ie_heuristic_detailed
-    del set_metadata
     del set_heuristic_detailed
 
     # Uniting results
+    print("Unifying heuristics...", end="", flush=True)
     result = unite_heuristics(ie_heuristic_final, set_heuristic_final)
+    print("DONE")
+
+    # Cleans some variables that are not necessary anymore
     del ie_heuristic_final
     del set_heuristic_final
 
     # Filtering the result
+    print("Filtering unreliable data...", end="", flush=True)
     result = filter_unreliable_data(result)
+    print("DONE")
 
     # Persisting the final result
+    print("Writing to disk...", end="", flush=True)
     for key in list(result.keys()):
         store.set_key("analysis-relationships", str(key), result[key])
         result.pop(key, None)
+    print("DONE")
 
 
 def expand_as_sets(as_sets):
@@ -296,24 +308,22 @@ def apply_set_heuristic(as_sets):
 
 def calculate_reliability(heuristic: dict, baseline: dict, exchanged_objects: dict):
     # Checks link bidirectionality and agreement
-    metadata = {}
     heuristic_detailed = {}
     for key in heuristic.keys():
-        metadata[key] = {"L": 0, "B": 0, "A": 0}
-        heuristic_detailed[key] = []
+        heuristic_detailed[key] = {"metadata": {"L": 0, "B": 0, "A": 0}, "links": []}
 
         for link in heuristic[key]:
             host, peer, tor, x_obj = link
             bidirectional, agreement, representative = False, False, False
 
             # Counts the link
-            metadata[key]["L"] += 1
+            heuristic_detailed[key]["metadata"]["L"] += 1
 
             # Check if it is bidirectional
             if peer in baseline.keys():
                 peer_peers = [peer_link[1] for peer_link in baseline[peer]]
                 if host in peer_peers:
-                    metadata[key]["B"] += 1
+                    heuristic_detailed[key]["metadata"]["B"] += 1
                     bidirectional = True
 
             # Check if it agrees with the other end
@@ -326,7 +336,7 @@ def calculate_reliability(heuristic: dict, baseline: dict, exchanged_objects: di
                     or (tor == "Provider" and reverse_tor == "Customer")
                     or (tor == "Peer" and reverse_tor == "Peer")
                 ):
-                    metadata[key]["A"] += 1
+                    heuristic_detailed[key]["metadata"]["A"] += 1
                     agreement = True
 
             # Checks if the exchanged object is representative
@@ -341,25 +351,28 @@ def calculate_reliability(heuristic: dict, baseline: dict, exchanged_objects: di
                     representative = True
 
             # Updates results
-            heuristic_detailed[key].append(
+            heuristic_detailed[key]["links"].append(
                 (host, peer, tor, bidirectional, agreement, representative)
             )
 
     # Calculates reliability score
-    for key in metadata.keys():
-        if metadata[key]["B"] > T_b:
-            metadata[key]["r"] = metadata[key]["A"] / metadata[key]["B"]
+    for key in heuristic_detailed.keys():
+        if heuristic_detailed[key]["metadata"]["B"] > T_b:
+            heuristic_detailed[key]["metadata"]["r"] = (
+                heuristic_detailed[key]["metadata"]["A"]
+                / heuristic_detailed[key]["metadata"]["B"]
+            )
         else:
-            metadata[key]["r"] = 0
+            heuristic_detailed[key]["metadata"]["r"] = 0
 
-    return metadata, heuristic_detailed
+    return heuristic_detailed
 
 
-def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dict):
+def generate_final_results_per_heuristic(heuristic_detailed: dict):
     # Structures the final data structure
     heuristic_final = {}
     for key in heuristic_detailed.keys():
-        for link in heuristic_detailed[key]:
+        for link in heuristic_detailed[key]["links"]:
             if link[0] not in heuristic_final.keys():
                 heuristic_final[link[0]] = {}
             heuristic_final[link[0]][link[1]] = None
@@ -369,7 +382,7 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
 
     # Populates the final data structure
     for key in heuristic_detailed.keys():
-        for link in heuristic_detailed[key]:
+        for link in heuristic_detailed[key]["links"]:
             host = link[0]
             peer = link[1]
 
@@ -389,7 +402,7 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
                     "tor": tor,
                     "bidirectional": link[3],
                     "agreement": link[4],
-                    "reliability": metadata[key]["r"],
+                    "reliability": heuristic_detailed[key]["metadata"]["r"],
                     "representative": link[5],
                     "source": "internal",
                 }
@@ -397,18 +410,21 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
                     "tor": opposite_tor,
                     "bidirectional": link[3],
                     "agreement": link[4],
-                    "reliability": metadata[key]["r"],
+                    "reliability": heuristic_detailed[key]["metadata"]["r"],
                     "representative": link[5],
                     "source": "external",
                 }
 
             # The other end was already added, needs to reevaluate
-            elif metadata[key]["r"] > heuristic_final[host][peer]["reliability"]:
+            elif (
+                heuristic_detailed[key]["metadata"]["r"]
+                > heuristic_final[host][peer]["reliability"]
+            ):
                 heuristic_final[host][peer] = {
                     "tor": tor,
                     "bidirectional": link[3],
                     "agreement": link[4],
-                    "reliability": metadata[key]["r"],
+                    "reliability": heuristic_detailed[key]["metadata"]["r"],
                     "representative": link[5],
                     "source": "internal",
                 }
@@ -416,7 +432,7 @@ def generate_final_results_per_heuristic(metadata: dict, heuristic_detailed: dic
                     "tor": opposite_tor,
                     "bidirectional": link[3],
                     "agreement": link[4],
-                    "reliability": metadata[key]["r"],
+                    "reliability": heuristic_detailed[key]["metadata"]["r"],
                     "representative": link[5],
                     "source": "external",
                 }
@@ -492,6 +508,16 @@ def unite_heuristics(ie_heuristic_final: dict, set_heuristic_final: dict):
                 result[host][peer] = ie_heuristic_final[host][peer]
             else:
                 result[host][peer] = set_heuristic_final[host][peer]
+
+            # Removes from the original dicts after done
+            if isClassifiedByIE:
+                ie_heuristic_final[host].pop(peer, None)
+                if len(ie_heuristic_final[host].keys()) == 0:
+                    ie_heuristic_final.pop(host, None)
+            if isClassifiedBySet:
+                set_heuristic_final[host].pop(peer, None)
+                if len(set_heuristic_final[host].keys()) == 0:
+                    set_heuristic_final.pop(host, None)
 
     return result
 
