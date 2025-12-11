@@ -35,6 +35,19 @@ def process_router(remote_router):
         }
         return processed_remote_router
 
+    elif type in ["Group"]:  # Need to treat this case better later
+        # Catches abnormal cases
+        if not isinstance(remote_router[type], dict):
+            print(remote_router)
+            raise Exception
+
+        members = [process_router({k: v}) for k, v in remote_router[type].items()]
+        processed_remote_router = {
+            "type": type,
+            "members": members,
+        }
+        return processed_remote_router
+
     else:  # Unkown case
         print(remote_router)
         raise Exception
