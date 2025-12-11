@@ -441,7 +441,7 @@ def present_asset_members(members, type):
         },
     ]
 
-    asn_rules_grid_return = AgGrid(
+    asset_members_grid_return = AgGrid(
         df,
         key=f"{qp["query"]}_{type}_grid",
         gridOptions=grid_options,
@@ -454,3 +454,48 @@ def present_asset_members(members, type):
     del df
 
     navigation_controls(f"{type}")
+
+
+def present_addr_announced_by(announced_by):
+    # Treats the case in which there are no results
+    if (announced_by == None) or (len(announced_by) == 0):
+        st.markdown("*No results were found for the given query*")
+        return
+
+    announced_by = [{"ASN": asn} for asn in announced_by]
+
+    df = pd.DataFrame(announced_by).astype(str)
+
+    # Presents the results
+    builder = GridOptionsBuilder.from_dataframe(df)
+    grid_options = builder.build()
+
+    grid_options["autoSizeStrategy"]["type"] = "fitGridWidth"
+    grid_options["defaultColDef"]["resizable"] = False
+    grid_options["defaultColDef"]["sortable"] = False
+    grid_options["defaultColDef"]["suppressMovable"] = True
+    grid_options["defaultColDef"]["suppressHeaderFilterButton"] = True
+    grid_options["tooltipShowDelay"] = 0
+
+    grid_options["columnDefs"] = [
+        {
+            "field": "ASN",
+            "tooltipField": "ASN",
+            "headerName": "ASN",
+            "cellRenderer": hyperlinkRenderer,
+        },
+    ]
+
+    addr_announced_by_grid_return = AgGrid(
+        df,
+        key=f"{qp["query"]}_addr_announced_by_grid",
+        gridOptions=grid_options,
+        update_on=["cellDoubleClicked"],
+        theme="streamlit",
+        height=325,
+        allow_unsafe_jscode=True,
+    )
+
+    del df
+
+    navigation_controls("announced_by")
