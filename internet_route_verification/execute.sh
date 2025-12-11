@@ -4,7 +4,7 @@ set -eu
 if ($MODE -eq "LIVE")
 
     # Defines output path
-    outdir="./parsed_all"
+    outdir="./data"
     mkdir -p "$outdir"
 
     # Downloads IRR data
@@ -48,8 +48,8 @@ if ($MODE -eq "LIVE")
     rye sync
     . .venv/bin/activate
     time cargo r --release -- parse_ordered \
-        ../data/apnic.db.* \
-        ../data/*.db \
+        $outdir/apnic.db.* \
+        $outdir/*.db \
         $RAW_DATA_OUTPUT_PATH |& tee parse_out.txt
     deactivate
     cd ..
