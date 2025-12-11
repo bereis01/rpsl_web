@@ -5,7 +5,7 @@ RUN apt-get update
 RUN apt-get -y upgrade
 
 # Installs dependencies
-RUN apt-get -y install git ripgrep bgpdump zstd python3 curl build-essential
+RUN apt-get -y install git ripgrep bgpdump zstd python3 curl build-essential wget gzip
 
 # Installs Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y

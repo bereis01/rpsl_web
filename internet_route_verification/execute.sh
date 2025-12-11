@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu
 
-if ($MODE -eq "LIVE")
+if [ $MODE == "LIVE" ]; then
 
     # Defines output path
     outdir="./data"
@@ -48,8 +48,8 @@ if ($MODE -eq "LIVE")
     rye sync
     . .venv/bin/activate
     time cargo r --release -- parse_ordered \
-        $outdir/apnic.db.* \
-        $outdir/*.db \
+        ../$outdir/apnic.db.* \
+        ../$outdir/*.db \
         $RAW_DATA_OUTPUT_PATH |& tee parse_out.txt
     deactivate
     cd ..
