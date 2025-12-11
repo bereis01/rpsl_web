@@ -10,10 +10,9 @@ T_r = 0.6
 def process_relationships(store: ObjStr):
     # Expands as sets
     print("Expanding AS sets...", end="", flush=True)
-    """ as_sets = store.get("asset-members")
+    as_sets = store.get("asset-members")
     as_sets = expand_as_sets(as_sets)
-    store.set_key("analysis", "as_sets", as_sets) """
-    as_sets = store.get_key("analysis", "as_sets")
+    store.set_key("analysis", "as_sets", as_sets)
     print("DONE")
 
     # Pre-processes import and export rules
