@@ -11,7 +11,7 @@ if [ $MODE == "LIVE" ]; then
     wget --quiet http://ftp.arin.net/pub/rr/arin.db.gz -O "$outdir/arin.db.gz"
     wget --quiet https://ftp.ripe.net/ripe/dbase/ripe.db.gz -O "$outdir/ripe.db.gz"
     #wget --quiet http://ftp.afrinic.net/dbase/afrinic.db.gz -O "$outdir/afrinic.db.gz"
-    wget --quiet ftp://ftp.radb.net/radb/dbase/radb.db.gz -O "$outdir/radb.db.gz"
+    #wget --quiet ftp://ftp.radb.net/radb/dbase/radb.db.gz -O "$outdir/radb.db.gz"
     #wget --quiet https://irr.lacnic.net/lacnic.db.gz -O "$outdir/lacnic.db.gz"
     wget --quiet http://ftp.apnic.net/apnic/whois/apnic.db.as-block.gz -O "$outdir/apnic.db.as-block.gz"
     wget --quiet http://ftp.apnic.net/apnic/whois/apnic.db.as-set.gz -O "$outdir/apnic.db.as-set.gz"
