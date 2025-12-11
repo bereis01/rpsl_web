@@ -9,6 +9,7 @@ services:
     volumes:
       - rpslweb_data:/rpslweb_data
     environment:
+      MODE: "LIVE"
       RAW_DATA_OUTPUT_PATH: "/rpslweb_data/parsed_all"
 
   data:
