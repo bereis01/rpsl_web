@@ -110,6 +110,10 @@ def present_asn_rules(rules, type: str):
 
     df = pd.DataFrame(rules).astype(str)
 
+    # Creates a tags column with various values merged
+    df["tags"] = df["version"] + ", " + df["cast"]
+    df = df.drop(["version", "cast"], axis=1)
+
     # Presents the results
     builder = GridOptionsBuilder.from_dataframe(df)
     grid_options = builder.build()
@@ -122,11 +126,10 @@ def present_asn_rules(rules, type: str):
     grid_options["tooltipShowDelay"] = 0
 
     grid_options["columnDefs"] = [
-        {"field": "version", "tooltipField": "version", "headerName": "Version"},
-        {"field": "cast", "tooltipField": "cast", "headerName": "Cast"},
         {"field": "peering", "tooltipField": "peering", "headerName": "Peer"},
         {"field": "actions", "tooltipField": "actions", "headerName": "Actions"},
         {"field": "filter", "tooltipField": "filter", "headerName": "Filter"},
+        {"field": "tags", "tooltipField": "tags", "headerName": "Tags"},
     ]
 
     asn_rules_grid_return = AgGrid(
