@@ -12,9 +12,6 @@ WORKDIR /rpslweb
 COPY shared/ ./shared
 COPY back/ ./back
 
-# This is temporary and should be removed once the automation is fully working
-COPY data/objects ./data/objects
-
 # Move to app folder and install requirements.
 WORKDIR /rpslweb/back
 RUN pip install -r requirements.txt

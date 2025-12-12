@@ -36,7 +36,7 @@ services:
       - rpslweb_data:/rpslweb_data
     environment:
       OBJSTR_PATH: "/rpslweb_data/objects"
-      #OBJSTR_PATH: "../data/objects"
+      #OBJSTR_PATH: "./objects"
 
   front:
     build:

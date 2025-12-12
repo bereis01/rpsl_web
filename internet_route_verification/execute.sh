@@ -5,6 +5,7 @@ if [ $MODE == "LIVE" ]; then
 
     # Defines output path
     outdir="./data"
+    if [ -d "$outdir" ]; then rm -Rf $outdir; fi
     mkdir -p "$outdir"
 
     # Downloads IRR data
