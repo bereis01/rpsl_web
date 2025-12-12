@@ -51,5 +51,5 @@ def get_members(
         "count": len(result),
         "skip": skip,
         "limit": limit,
-        "result": result,
+        "result": result[skip : skip + limit],
     }
