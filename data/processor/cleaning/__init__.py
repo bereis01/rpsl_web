@@ -49,12 +49,15 @@ def process(data):
         route_set = data["route_sets"][key]
         for member in route_set["members"][:]:
             match member["type"]:
-                case "RSRange":
+                case "address_prefix":
                     if not match.match_ip_address(member["value"]):
                         route_set["members"].remove(member)
-                case "NameOp":
+                case "route_set":
+                    if not match.match_route_set_name(member["value"]):
+                        route_set["members"].remove(member)
+                case "as_set":  # AS or AS Set
                     if not (
-                        match.match_route_set_name(member["value"])
+                        match.match_as_num(member["value"])
                         or match.match_as_set_name(member["value"])
                     ):
                         route_set["members"].remove(member)

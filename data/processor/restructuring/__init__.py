@@ -23,16 +23,25 @@ def process(data):
             match member_type:
                 case "RSRange":
                     route_set["members"][i] = {
-                        "type": member_type,
+                        "type": "address_prefix",
                         "value": member[member_type]["address_prefix"],
-                        "op": member[member_type]["range_operator"],
+                        "operation": member[member_type]["range_operator"],
                     }
                 case "NameOp":
-                    route_set["members"][i] = {
-                        "type": member_type,
-                        "value": member[member_type][0],
-                        "op": member[member_type][1],
-                    }
+                    if (member["NameOp"][0][0:3].lower() == "rs-") or (
+                        member["NameOp"][0][0:5].lower() == "m#rs-"
+                    ):
+                        route_set["members"][i] = {
+                            "type": "route_set",
+                            "value": member[member_type][0],
+                            "operation": member[member_type][1],
+                        }
+                    else:
+                        route_set["members"][i] = {
+                            "type": "as_set",  # AS or AS Set
+                            "value": member[member_type][0],
+                            "operation": member[member_type][1],
+                        }
 
     # Restructure the as_routes key
     data["as_routes"] = {k: {"routes": v} for k, v in data["as_routes"].items()}

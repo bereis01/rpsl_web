@@ -16,9 +16,6 @@ def process_route_sets(route_sets, storage):
     # Aggregates the raw data
     attributes = {}
     for route_set in route_sets.keys():
-        route_sets[route_set]["members"] = process_members(
-            route_sets[route_set]["members"]
-        )
         attributes[route_set] = process_attributes(route_sets[route_set]["body"])
 
     # Inverts the route_sets object in terms of AS names and address prefixes
