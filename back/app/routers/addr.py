@@ -31,11 +31,13 @@ def get_announced_by(
     result = request.app.state.storage.get(
         "addr-announced_by", addr_prefix.replace("\\", "/")
     )
-    result = result["announced_by"]
 
     # If nothing is found
     if result == None:
         return {"count": 0, "skip": 0, "limit": 0, "result": result}
+
+    # Minor fix
+    result = result["announced_by"]
 
     # Applies search
     result = search_list(result, search)

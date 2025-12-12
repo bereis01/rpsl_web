@@ -48,7 +48,7 @@ def test_get_addr_announced_by():
 
     assert response.status_code == 200
     assert "2.58.60.0/22" in app.state.storage.get.call_args[0]
-    assert response.json()["result"] == {"announced_by": ["201813", "57916", "174"]}
+    assert response.json()["result"] == ["201813", "57916", "174"]
 
     # Mocks calls to storage
     app.state.storage.get = Mock(return_value=None)
