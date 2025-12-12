@@ -502,3 +502,63 @@ def present_addr_announced_by(announced_by):
     del df
 
     navigation_controls("announced_by")
+
+
+def present_rs_members(members):
+    # Treats the case in which there are no results
+    if (members == None) or (len(members) == 0):
+        st.markdown("*No results were found for the given query*")
+        return
+
+    df = pd.DataFrame.from_records(members).astype(str)
+    df["type"] = df["type"].map(
+        {
+            "as_set": "AS or AS Set",
+            "address_prefix": "Address Prefix",
+            "route_set": "Route Set",
+        }
+    )
+
+    # Presents the results
+    builder = GridOptionsBuilder.from_dataframe(df)
+    grid_options = builder.build()
+
+    grid_options["autoSizeStrategy"]["type"] = "fitGridWidth"
+    grid_options["defaultColDef"]["resizable"] = False
+    grid_options["defaultColDef"]["sortable"] = False
+    grid_options["defaultColDef"]["suppressMovable"] = True
+    grid_options["defaultColDef"]["suppressHeaderFilterButton"] = True
+    grid_options["tooltipShowDelay"] = 0
+
+    grid_options["columnDefs"] = [
+        {
+            "field": "type",
+            "tooltipField": "type",
+            "headerName": "Type",
+        },
+        {
+            "field": "value",
+            "tooltipField": "value",
+            "headerName": "Member",
+            "cellRenderer": hyperlinkRenderer,
+        },
+        {
+            "field": "operation",
+            "tooltipField": "operation",
+            "headerName": "Operation",
+        },
+    ]
+
+    rs_members_grid_return = AgGrid(
+        df,
+        key=f"{qp["query"]}_rs_members_grid",
+        gridOptions=grid_options,
+        update_on=["cellDoubleClicked"],
+        theme="streamlit",
+        height=325,
+        allow_unsafe_jscode=True,
+    )
+
+    del df
+
+    navigation_controls("rs_members")

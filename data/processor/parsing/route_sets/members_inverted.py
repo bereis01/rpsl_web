@@ -8,10 +8,10 @@ def process_members_inverted_as(route_sets):
             # If the route_set member is an AS or AS Set,
             # adds the route_set to its list of route_sets
             if member["type"] == "as_set":
-                if member["name"] in processed_inverted_as.keys():
-                    processed_inverted_as[member["name"]].append(key)
+                if member["value"] in processed_inverted_as.keys():
+                    processed_inverted_as[member["value"]].append(key)
                 else:
-                    processed_inverted_as[member["name"]] = [key]
+                    processed_inverted_as[member["value"]] = [key]
 
     return processed_inverted_as
 
@@ -26,10 +26,10 @@ def process_members_inverted_addr(route_sets):
             # If the route_set member is an address,
             # adds the route_set to its list of route_sets
             if member["type"] == "address_prefix":
-                if member["address_prefix"] in processed_inverted_addr.keys():
-                    processed_inverted_addr[member["address_prefix"]].append(key)
+                if member["value"] in processed_inverted_addr.keys():
+                    processed_inverted_addr[member["value"]].append(key)
                 else:
-                    processed_inverted_addr[member["address_prefix"]] = [key]
+                    processed_inverted_addr[member["value"]] = [key]
 
     return processed_inverted_addr
 
@@ -44,9 +44,9 @@ def process_members_inverted_rs(route_sets):
             # If the route_set member is an address,
             # adds the route_set to its list of route_sets
             if member["type"] == "route_set":
-                if member["name"] in processed_inverted_rs.keys():
-                    processed_inverted_rs[member["name"]].append(key)
+                if member["value"] in processed_inverted_rs.keys():
+                    processed_inverted_rs[member["value"]].append(key)
                 else:
-                    processed_inverted_rs[member["name"]] = [key]
+                    processed_inverted_rs[member["value"]] = [key]
 
     return processed_inverted_rs
